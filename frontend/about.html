@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tentang BaldGuard — Dasar Ilmiah</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+    .about-hero { background: linear-gradient(135deg,#2c3e50 0%,#1a5276 100%); color:#fff; padding:80px 20px 60px; text-align:center; }
+    .about-hero h1 { font-size:2.4rem; margin-bottom:.5rem; }
+    .about-hero p  { font-size:1.1rem; opacity:.85; max-width:640px; margin:0 auto; }
+    .content-section { max-width:900px; margin:0 auto; padding:50px 20px; }
+    .content-section h2 { font-size:1.6rem; color:#2c3e50; border-left:5px solid #27ae60; padding-left:14px; margin-bottom:1.2rem; }
+    .content-section h3 { font-size:1.15rem; color:#34495e; margin:1.5rem 0 .6rem; }
+    .content-section p  { line-height:1.75; color:#444; margin-bottom:1rem; }
+    .info-table { width:100%; border-collapse:collapse; margin:1.2rem 0; font-size:.9rem; }
+    .info-table th { background:#2c3e50; color:#fff; padding:10px 14px; text-align:left; }
+    .info-table td { padding:9px 14px; border-bottom:1px solid #e8ecef; }
+    .info-table tr:nth-child(even) td { background:#f8f9fa; }
+    .info-table td:first-child { font-weight:600; color:#2c3e50; }
+    .risk-tag { display:inline-block; padding:2px 10px; border-radius:20px; font-size:.8rem; font-weight:700; }
+    .tag-sangat-tinggi { background:#fde8e8; color:#c0392b; }
+    .tag-tinggi   { background:#fdf0e0; color:#d35400; }
+    .tag-sedang   { background:#fef9e7; color:#b7950b; }
+    .tag-rendah   { background:#e9f7ef; color:#1e8449; }
+    .tag-protektif{ background:#eaf6ff; color:#1a5276; }
+    .pathway-box { background:#eaf6ff; border:2px solid #3498db; border-radius:12px; padding:20px 24px; margin:1.2rem 0; }
+    .pathway-box h4 { color:#1a5276; margin-bottom:.8rem; font-size:1rem; }
+    .pathway-step { display:flex; align-items:center; gap:10px; margin:.4rem 0; font-size:.92rem; color:#2c3e50; }
+    .pathway-arrow { color:#3498db; font-size:1.1rem; }
+    .formula-box { background:#f4f9f4; border:2px solid #27ae60; border-radius:12px; padding:18px 22px; margin:1.2rem 0; font-family:'Courier New',monospace; font-size:.9rem; color:#2c3e50; line-height:1.8; }
+    .formula-box .formula-title { font-family:inherit; font-weight:700; color:#1e8449; margin-bottom:.5rem; display:block; font-size:.85rem; text-transform:uppercase; letter-spacing:.5px; }
+    .warn-box { background:#fff8e1; border-left:4px solid #f39c12; border-radius:8px; padding:14px 18px; margin:1rem 0; font-size:.9rem; color:#6d4c41; }
+    .warn-box i { color:#f39c12; margin-right:6px; }
+    .ref-list { list-style:none; padding:0; }
+    .ref-list li { padding:10px 0; border-bottom:1px solid #eee; font-size:.88rem; line-height:1.6; color:#444; }
+    .ref-list li strong { color:#2c3e50; }
+    .divider { border:none; border-top:2px solid #ecf0f1; margin:40px 0; }
+    .snp-badge { display:inline-block; padding:1px 7px; border-radius:4px; font-size:.78rem; font-weight:700; }
+    .snp-x { background:#fde8e8; color:#c0392b; }
+    .snp-auto { background:#e9f7ef; color:#1e8449; }
+    .limit-list { list-style:none; padding:0; }
+    .limit-list li { padding:8px 0 8px 30px; position:relative; border-bottom:1px dashed #eee; color:#555; font-size:.9rem; }
+    .limit-list li::before { content:'\f071'; font-family:'Font Awesome 6 Free'; font-weight:900; color:#e67e22; position:absolute; left:0; top:10px; }
+  </style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar">
+  <div class="nav-container">
+    <a class="nav-logo" href="index.html"><i class="fa-solid fa-dna"></i> BaldGuard</a>
+    <ul class="nav-links">
+      <li><a href="index.html">Beranda</a></li>
+      <li><a href="analyze.html">Analisis</a></li>
+      <li><a href="about.html" class="active">Tentang</a></li>
+      <li><a href="database.html">Database SNP</a></li>
+    </ul>
+    <button class="hamburger" id="hamburger" aria-label="Menu"><i class="fa-solid fa-bars"></i></button>
+  </div>
+</nav>
+
+<!-- Hero -->
+<section class="about-hero">
+  <h1><i class="fa-solid fa-flask-vial"></i> Dasar Ilmiah BaldGuard</h1>
+  <p>Memahami Androgenetic Alopecia melalui perspektif genetika molekuler dan biologi komputasi</p>
+</section>
+
+<!-- Section 1: AGA -->
+<section class="content-section">
+  <h2><i class="fa-solid fa-circle-info" style="color:#27ae60;"></i> Apa itu Androgenetic Alopecia?</h2>
+  <p>
+    <strong>Androgenetic Alopecia (AGA)</strong> — atau kerontokan rambut pola androgenetik — adalah
+    bentuk kebotakan paling umum pada manusia. AGA mempengaruhi sekitar <strong>50% pria di atas usia
+    50 tahun</strong> dan <strong>25-40% wanita</strong> sepanjang hidup mereka. Pada pria, kondisi ini
+    sering disebut "male pattern baldness" dengan pola karakteristik penipisan di hairline dan vertex
+    (puncak kepala). Pada wanita, terjadi penipisan difus di bagian tengah kepala.
+  </p>
+  <p>
+    Mekanisme utama AGA melibatkan <strong>dihidrotestosteron (DHT)</strong>, metabolit aktif dari
+    testosteron yang diproduksi oleh enzim 5α-reduktase. DHT berikatan dengan reseptor androgen (AR)
+    di folikel rambut, memicu proses <em>miniaturisasi folikel</em> — folikel mengecil secara bertahap,
+    menghasilkan rambut yang semakin tipis dan pendek, hingga akhirnya berhenti tumbuh sama sekali.
+  </p>
+
+  <div class="pathway-box">
+    <h4><i class="fa-solid fa-arrow-trend-down"></i> Jalur Molekuler DHT → Kebotakan</h4>
+    <div class="pathway-step"><i class="fa-solid fa-circle-dot pathway-arrow"></i> Testosteron diproduksi di testis/ovarium dan kelenjar adrenal</div>
+    <div class="pathway-step"><i class="fa-solid fa-arrow-down pathway-arrow"></i> Enzim <strong>5α-reduktase tipe 2 (SRD5A2)</strong> mengkonversi testosteron → <strong>DHT</strong> di folikel rambut</div>
+    <div class="pathway-step"><i class="fa-solid fa-arrow-down pathway-arrow"></i> DHT berikatan dengan <strong>Androgen Receptor (AR)</strong> di sitoplasma sel papilla dermal</div>
+    <div class="pathway-step"><i class="fa-solid fa-arrow-down pathway-arrow"></i> Kompleks DHT-AR masuk ke nukleus → mengaktivasi gen target</div>
+    <div class="pathway-step"><i class="fa-solid fa-arrow-down pathway-arrow"></i> Perubahan ekspresi gen memperpendek <strong>fase anagen</strong> (pertumbuhan) dan memanjangkan <strong>fase telogen</strong></div>
+    <div class="pathway-step"><i class="fa-solid fa-arrow-down pathway-arrow"></i> <strong>Miniaturisasi folikel</strong> progresif → rambut vellus → kebotakan</div>
+  </div>
+
+  <p>
+    AGA bersifat <strong>poligenik</strong> — dipengaruhi oleh banyak gen — dengan heritabilitas diperkirakan
+    <strong>80-95%</strong>. Namun faktor lingkungan seperti stres, nutrisi, dan hormonal juga berperan
+    signifikan dalam kecepatan progresivitasnya.
+  </p>
+</section>
+
+<hr class="divider" />
+
+<!-- Section 2: Gen AR -->
+<section class="content-section">
+  <h2><i class="fa-solid fa-dna" style="color:#3498db;"></i> Gen AR dan Repeats CAG/GGN</h2>
+
+  <h3>Informasi Gen AR</h3>
+  <table class="info-table">
+    <tr><td>Nama Gen</td><td>AR (Androgen Receptor)</td></tr>
+    <tr><td>NCBI Gene ID</td><td>367</td></tr>
+    <tr><td>Lokasi Kromosom</td><td>Xq12 (kromosom X, lengan panjang, pita 12)</td></tr>
+    <tr><td>RefSeq mRNA</td><td>NM_000044.6</td></tr>
+    <tr><td>RefSeq Protein</td><td>NP_000035.2</td></tr>
+    <tr><td>Panjang mRNA</td><td>~4,3 kb (8 exon)</td></tr>
+    <tr><td>Ukuran Protein</td><td>919 asam amino</td></tr>
+  </table>
+
+  <h3>Signifikansi X-Linked dalam Pewarisan AGA</h3>
+  <p>
+    Karena gen AR terletak di kromosom X, pola pewarisannya bersifat <strong>X-linked</strong>. Pria
+    memiliki satu salinan kromosom X (dari ibu) dan satu Y (dari ayah). Artinya, pria mewarisi gen AR
+    <em>sepenuhnya dari ibu mereka</em>. Dan ibu mewarisi kromosom X dari ayah mereka (kakek dari sisi ibu).
+    Inilah mengapa <strong>kakek dari sisi ibu yang botak</strong> adalah prediktor paling kuat untuk
+    risiko kebotakan pada cucu laki-lakinya.
+  </p>
+
+  <h3>CAG Repeat Tract (Poliglutamin)</h3>
+  <p>
+    Exon 1 gen AR mengandung sekuens tandem repetitif <strong>(CAG)n</strong> yang mengkode
+    poliglutamin (polyQ tract) pada N-terminal domain protein AR. Panjang repeat ini bervariasi
+    antara individu dan merupakan penentu kunci sensitivitas reseptor terhadap DHT.
+  </p>
+
+  <table class="info-table">
+    <thead><tr><th>Jumlah CAG Repeats</th><th>Kategori Risiko</th><th>Mekanisme</th><th>Referensi</th></tr></thead>
+    <tbody>
+      <tr><td>&lt; 18</td><td><span class="risk-tag tag-sangat-tinggi">SANGAT TINGGI</span></td><td>Reseptor sangat sensitif DHT; transkripsi androgen-responsif meningkat drastis</td><td>Choong et al. 1996</td></tr>
+      <tr><td>18 – 21</td><td><span class="risk-tag tag-tinggi">TINGGI</span></td><td>Sensitivitas AR tinggi; efek androgenik kuat pada folikel rambut</td><td>Hillmer et al. 2005</td></tr>
+      <tr><td>22 – 24</td><td><span class="risk-tag tag-sedang">SEDANG</span></td><td>Sensitivitas AR moderat; risiko progresivitas sedang</td><td>Hillmer et al. 2005</td></tr>
+      <tr><td>25 – 29</td><td><span class="risk-tag tag-rendah">RENDAH</span></td><td>Sensitivitas AR relatif rendah; folikel lebih tahan terhadap DHT</td><td>Ellis et al. 2001</td></tr>
+      <tr><td>≥ 30</td><td><span class="risk-tag tag-protektif">PROTEKTIF</span></td><td>CAG panjang menurunkan aktivitas transkripsi AR; efek protektif</td><td>Giovannucci et al. 1999</td></tr>
+    </tbody>
+  </table>
+
+  <h3>GGN Repeat Tract (Poliglisin)</h3>
+  <p>
+    Selain CAG, exon 1 AR juga mengandung <strong>(GGN)n</strong> yang mengkode poliglisin (polyG).
+    Repeat ini berinteraksi dengan CAG dalam regulasi aktivitas AR. GGN pendek (&lt;18) dikaitkan dengan
+    risiko lebih tinggi, sementara GGN panjang (&ge;24) bersifat protektif. Efeknya lebih lemah
+    dibandingkan CAG (bobot 15% vs 40% dalam formula PRS BaldGuard).
+  </p>
+</section>
+
+<hr class="divider" />
+
+<!-- Section 3: SNP Panel -->
+<section class="content-section">
+  <h2><i class="fa-solid fa-table-cells" style="color:#e74c3c;"></i> Panel 9 SNP Terkait AGA</h2>
+  <p>
+    Selain gen AR, studi GWAS (<em>Genome-Wide Association Studies</em>) telah mengidentifikasi
+    banyak lokus genomik yang berkontribusi terhadap risiko AGA. BaldGuard mengimplementasikan
+    9 SNP yang paling kuat berdasarkan bukti literatur peer-reviewed:
+  </p>
+
+  <table class="info-table" style="font-size:.85rem;">
+    <thead>
+      <tr>
+        <th>rs ID</th><th>Gen</th><th>Chr</th><th>Alel Risiko</th>
+        <th>Odds Ratio</th><th>Bobot PRS</th><th>Fungsi Biologis</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a href="https://www.ncbi.nlm.nih.gov/snp/rs6152" target="_blank" rel="noopener">rs6152</a></td>
+        <td>AR <span class="snp-badge snp-x">X-linked</span></td><td>X</td><td>G</td>
+        <td>2.50×</td><td>0.90</td>
+        <td>Varian exon 1 AR — meningkatkan sensitivitas reseptor androgen terhadap DHT</td>
+      </tr>
+      <tr>
+        <td><a href="https://www.ncbi.nlm.nih.gov/snp/rs1385699" target="_blank" rel="noopener">rs1385699</a></td>
+        <td>EDA2R <span class="snp-badge snp-x">X-linked</span></td><td>X</td><td>C</td>
+        <td>2.20×</td><td>0.85</td>
+        <td>Ectodysplasin A2 receptor — mengatur sinyal folikel rambut via EDA pathway</td>
+      </tr>
+      <tr>
+        <td><a href="https://www.ncbi.nlm.nih.gov/snp/rs12558842" target="_blank" rel="noopener">rs12558842</a></td>
+        <td>AR <span class="snp-badge snp-x">X-linked</span></td><td>X</td><td>G</td>
+        <td>1.80×</td><td>0.70</td>
+        <td>Daerah regulatori AR — mempengaruhi ekspresi gen di folikel rambut</td>
+      </tr>
+      <tr>
+        <td><a href="https://www.ncbi.nlm.nih.gov/snp/rs2497938" target="_blank" rel="noopener">rs2497938</a></td>
+        <td>AR <span class="snp-badge snp-x">X-linked</span></td><td>X</td><td>C</td>
+        <td>1.75×</td><td>0.65</td>
+        <td>Varian intronik AR — modulator transkripsi androgen receptor</td>
+      </tr>
+      <tr>
+        <td><a href="https://www.ncbi.nlm.nih.gov/snp/rs7349332" target="_blank" rel="noopener">rs7349332</a></td>
+        <td>WNT10A <span class="snp-badge snp-auto">Autosomal</span></td><td>2</td><td>T</td>
+        <td>1.45×</td><td>0.50</td>
+        <td>WNT signaling — mengatur siklus folikel rambut via jalur Wnt/β-catenin</td>
+      </tr>
+      <tr>
+        <td><a href="https://www.ncbi.nlm.nih.gov/snp/rs9479482" target="_blank" rel="noopener">rs9479482</a></td>
+        <td>HDAC9 <span class="snp-badge snp-auto">Autosomal</span></td><td>7</td><td>C</td>
+        <td>1.35×</td><td>0.45</td>
+        <td>Histone deacetylase 9 — regulasi epigenetik ekspresi gen folikel</td>
+      </tr>
+      <tr>
+        <td><a href="https://www.ncbi.nlm.nih.gov/snp/rs1160312" target="_blank" rel="noopener">rs1160312</a></td>
+        <td>PAX1/FOXA2 <span class="snp-badge snp-auto">Autosomal</span></td><td>20</td><td>A</td>
+        <td>1.60×</td><td>0.60</td>
+        <td>Faktor transkripsi PAX1 — mengatur diferensiasi folikel rambut</td>
+      </tr>
+      <tr>
+        <td><a href="https://www.ncbi.nlm.nih.gov/snp/rs929626" target="_blank" rel="noopener">rs929626</a></td>
+        <td>EBF1 <span class="snp-badge snp-auto">Autosomal</span></td><td>5</td><td>C</td>
+        <td>1.30×</td><td>0.35</td>
+        <td>Early B-cell factor 1 — regulasi siklus pertumbuhan rambut</td>
+      </tr>
+      <tr>
+        <td><a href="https://www.ncbi.nlm.nih.gov/snp/rs523349" target="_blank" rel="noopener">rs523349</a></td>
+        <td>SRD5A2 <span class="snp-badge snp-auto">Autosomal</span></td><td>2</td><td>G</td>
+        <td>1.40×</td><td>0.55</td>
+        <td>5α-reduktase tipe 2 — enzim konversi testosteron → DHT di folikel</td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+<hr class="divider" />
+
+<!-- Section 4: Formula -->
+<section class="content-section">
+  <h2><i class="fa-solid fa-calculator" style="color:#9b59b6;"></i> Formula Polygenic Risk Score (PRS)</h2>
+
+  <h3>Mode Hybrid (Data Genetik + Klinis)</h3>
+  <div class="formula-box">
+    <span class="formula-title">Formula Hybrid</span>
+    HybridScore = 0.45 × GeneticScore + 0.30 × ClinicalScore + 0.15 × FamilyScore + 0.10 × LifestyleScore
+    <br/><br/>
+    GeneticScore  = 0.40 × CagScore + 0.15 × GgnScore + 0.45 × SNPScore<br/>
+    ClinicalScore = 0.35 × NorwoodLudwig + 0.20 × PatternArea + 0.15 × HairPull + 0.10 × LossVolume + 0.10 × Miniaturization + 0.10 × Duration<br/>
+    FamilyScore   = 0.35 × MaternalGrandfather + 0.25 × Father + 0.15 × PaternalGrandfather + 0.10 × Brothers + 0.08 × MotherThinning + 0.07 × Generations<br/>
+    LifestyleScore = 0.25 × Comorbidities + 0.25 × Stress + 0.20 × Smoking + 0.15 × Diet + 0.15 × Sleep
+    <br/><br/>
+    Semua skor komponen dalam rentang 0–100.<br/>
+    Modifier usia diterapkan pada skor akhir (onset dini = ×1.15).
+  </div>
+
+  <h3>Mode Klinis Saja (Tanpa Data DNA)</h3>
+  <div class="formula-box">
+    <span class="formula-title">Formula Klinis-Only</span>
+    ClinicalOnlyScore = 0.55 × ClinicalScore + 0.30 × FamilyScore + 0.15 × LifestyleScore
+  </div>
+
+  <h3>Kategori Risiko</h3>
+  <table class="info-table">
+    <thead><tr><th>Rentang Skor</th><th>Kategori</th><th>Warna</th><th>Interpretasi</th></tr></thead>
+    <tbody>
+      <tr><td>0 – 19</td><td><span class="risk-tag tag-protektif">MINIMAL</span></td><td>Hijau</td><td>Tidak ada tanda kerentanan signifikan</td></tr>
+      <tr><td>20 – 39</td><td><span class="risk-tag tag-rendah">RENDAH</span></td><td>Hijau tua</td><td>Kerentanan rendah; monitor secara berkala</td></tr>
+      <tr><td>40 – 59</td><td><span class="risk-tag tag-sedang">SEDANG</span></td><td>Oranye</td><td>Peringatan dini; pertimbangkan konsultasi</td></tr>
+      <tr><td>60 – 79</td><td><span class="risk-tag tag-tinggi">TINGGI</span></td><td>Merah oranye</td><td>Risiko signifikan; intervensi dini dianjurkan</td></tr>
+      <tr><td>80 – 100</td><td><span class="risk-tag tag-sangat-tinggi">SANGAT TINGGI</span></td><td>Merah</td><td>Risiko sangat tinggi; konsultasi segera</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<hr class="divider" />
+
+<!-- Section 5: Limitasi -->
+<section class="content-section">
+  <h2><i class="fa-solid fa-triangle-exclamation" style="color:#f39c12;"></i> Limitasi Proyek</h2>
+
+  <div class="warn-box">
+    <i class="fa-solid fa-circle-exclamation"></i>
+    <strong>Penting:</strong> BaldGuard adalah proyek edukasi untuk mata kuliah Computational Biology dan
+    <em>tidak dirancang sebagai alat diagnostik klinis</em>. Hasilnya tidak boleh menggantikan penilaian
+    medis profesional dari dermatolog atau dokter berlisensi.
+  </div>
+
+  <ul class="limit-list">
+    <li>Panel 9 SNP bersifat <strong>representatif</strong>, bukan komprehensif — lebih dari 200 lokus genomik telah dikaitkan dengan AGA dalam studi GWAS skala besar.</li>
+    <li>Threshold CAG/GGN berdasarkan studi populasi tertentu (mayoritas Kaukasian) — mungkin berbeda untuk populasi Asia atau Afrika.</li>
+    <li>Tidak memperhitungkan <strong>interaksi gen-lingkungan</strong> (epistasis) yang kompleks.</li>
+    <li>Data sekuens FASTA yang diinput adalah sekuens sintetis/individual — bukan data klinis tervalidasi.</li>
+    <li>Formula PRS disederhanakan untuk tujuan edukasi — model PRS klinis nyata menggunakan jutaan varian dan koefisien yang lebih presisi.</li>
+    <li>Tidak mencakup jenis alopecia lain (alopecia areata, telogen effluvium, alopecia sifilitika, dll.).</li>
+    <li>Kuesioner klinis merupakan <strong>self-report</strong> — rentan terhadap bias pelaporan.</li>
+    <li>Tidak divalidasi pada kohort pasien nyata — perlu studi validasi klinis untuk penggunaan diagnostik.</li>
+  </ul>
+</section>
+
+<hr class="divider" />
+
+<!-- Section 6: Referensi -->
+<section class="content-section">
+  <h2><i class="fa-solid fa-book-open" style="color:#3498db;"></i> Referensi Literatur</h2>
+  <ul class="ref-list">
+    <li>
+      <strong>Hillmer AM, Hanneken S, Ritzmann S, et al. (2005).</strong>
+      Genetic variation in the human androgen receptor gene is the major determinant of common early-onset androgenetic alopecia.
+      <em>American Journal of Human Genetics</em>, 77(1), 140–148.
+    </li>
+    <li>
+      <strong>Heilmann-Heimbach S, Herold C, Hochfeld LM, et al. (2017).</strong>
+      Meta-analysis identifies novel risk loci and yields systematic insights into the biology of male-pattern baldness.
+      <em>Nature Communications</em>, 8, 14694.
+    </li>
+    <li>
+      <strong>Choong CS, Kemppainen JA, Zhou ZX, Wilson EM. (1996).</strong>
+      Reduced androgen receptor gene expression with first exon CAG repeat expansion.
+      <em>Molecular Endocrinology</em>, 10(12), 1527–1535.
+    </li>
+    <li>
+      <strong>Ellis JA, Stebbing M, Harrap SB. (2001).</strong>
+      Polymorphism of the androgen receptor gene is associated with male pattern baldness.
+      <em>Journal of Investigative Dermatology</em>, 116(3), 452–455.
+    </li>
+    <li>
+      <strong>Prodi DA, Pirastu N, Maninchedda G, et al. (2008).</strong>
+      EDA2R is associated with androgenetic alopecia.
+      <em>Journal of Investigative Dermatology</em>, 128(9), 2268–2270.
+    </li>
+    <li>
+      <strong>Norwood OT. (1975).</strong>
+      Male pattern baldness: Classification and incidence.
+      <em>Southern Medical Journal</em>, 68(11), 1359–1365.
+    </li>
+    <li>
+      <strong>Ludwig E. (1977).</strong>
+      Classification of the types of androgenetic alopecia (common baldness) occurring in the female sex.
+      <em>British Journal of Dermatology</em>, 97(3), 247–254.
+    </li>
+    <li>
+      <strong>Giovannucci E, Stampfer MJ, Krithivas K, et al. (1997).</strong>
+      The CAG repeat within the androgen receptor gene and its relationship to prostate cancer.
+      <em>Proceedings of the National Academy of Sciences</em>, 94(7), 3320–3323.
+    </li>
+    <li>
+      <strong>Yip L, Zaloumis S, Irwin D, et al. (2009).</strong>
+      Gene-wide association study between the aromatase gene (CYP19A1) and female pattern hair loss.
+      <em>British Journal of Dermatology</em>, 161(2), 289–294.
+    </li>
+  </ul>
+</section>
+
+<!-- Footer -->
+<footer class="site-footer">
+  <div class="footer-container">
+    <p><i class="fa-solid fa-dna"></i> <strong>BaldGuard</strong> — Project UAS Computational Biology</p>
+    <p class="footer-disclaimer">
+      <i class="fa-solid fa-triangle-exclamation"></i>
+      Proyek edukasi, bukan alat diagnostik klinis. Konsultasikan kondisi Anda dengan dokter berlisensi.
+    </p>
+  </div>
+</footer>
+
+<script>
+  // Mobile hamburger
+  document.getElementById('hamburger').addEventListener('click', function() {
+    document.querySelector('.nav-links').classList.toggle('open');
+  });
+</script>
+</body>
+</html>

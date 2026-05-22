@@ -1,0 +1,1839 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Analisis Risiko — BaldGuard</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --green:   #2ecc71; --green-d: #27ae60; --blue: #3498db;
+      --warn:    #f39c12; --danger: #e74c3c;
+      --dark:    #2c3e50; --dark2: #34495e;
+      --light:   #ecf0f1; --light2: #f8f9fa; --white: #ffffff;
+      --radius:  10px; --shadow: 0 4px 20px rgba(0,0,0,.1);
+    }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: var(--dark); background: var(--light2); }
+
+    /* NAVBAR */
+    .navbar {
+      position: sticky; top: 0; z-index: 100; background: var(--dark);
+      padding: 0 2rem; display: flex; align-items: center; justify-content: space-between;
+      height: 64px; box-shadow: 0 2px 12px rgba(0,0,0,.3);
+    }
+    .navbar-brand { display: flex; align-items: center; gap: .6rem; text-decoration: none; color: #fff; font-size: 1.35rem; font-weight: 700; }
+    .brand-icon { background: linear-gradient(135deg,var(--green),var(--green-d)); width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center; }
+    .navbar-nav { display: flex; gap: .25rem; list-style: none; }
+    .navbar-nav a { color: rgba(255,255,255,.8); text-decoration: none; padding: .5rem .9rem; border-radius: 6px; font-size: .92rem; transition: all .2s; }
+    .navbar-nav a:hover { background: rgba(255,255,255,.1); color: #fff; }
+    .navbar-nav a.active { color: var(--green); }
+    .nav-cta { background: var(--green) !important; color: #fff !important; font-weight: 600; }
+    .nav-cta:hover { background: var(--green-d) !important; }
+
+    /* PAGE HEADER */
+    .page-header {
+      background: linear-gradient(135deg, var(--dark), var(--dark2));
+      color: #fff; padding: 2.5rem 2rem; text-align: center;
+    }
+    .page-header h1 { font-size: 1.9rem; font-weight: 700; }
+    .page-header p { opacity: .8; margin-top: .4rem; }
+
+    /* TABS */
+    .tab-bar {
+      background: var(--white); border-bottom: 2px solid var(--light);
+      display: flex; gap: 0; overflow-x: auto;
+      padding: 0 2rem; position: sticky; top: 64px; z-index: 90;
+      box-shadow: 0 2px 8px rgba(0,0,0,.06);
+    }
+    .tab-btn {
+      padding: 1rem 1.5rem; border: none; background: none;
+      font-size: .95rem; font-weight: 600; color: #888; cursor: pointer;
+      border-bottom: 3px solid transparent; margin-bottom: -2px;
+      display: flex; align-items: center; gap: .5rem; white-space: nowrap;
+      transition: all .2s;
+    }
+    .tab-btn:hover { color: var(--dark); }
+    .tab-btn.active { color: var(--green-d); border-bottom-color: var(--green); }
+    .tab-btn .tab-num {
+      width: 22px; height: 22px; border-radius: 50%; background: var(--light);
+      display: inline-flex; align-items: center; justify-content: center;
+      font-size: .75rem; color: #888;
+    }
+    .tab-btn.active .tab-num { background: var(--green); color: #fff; }
+
+    /* TAB PANELS */
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+    .tab-content { max-width: 880px; margin: 0 auto; padding: 2rem; }
+
+    /* PROGRESS BAR (WIZARD) */
+    .wizard-progress {
+      background: var(--white); border-radius: var(--radius);
+      padding: 1.2rem 1.5rem; margin-bottom: 1.5rem;
+      box-shadow: var(--shadow); border: 1px solid var(--light);
+    }
+    .progress-header { display: flex; justify-content: space-between; margin-bottom: .8rem; }
+    .progress-header span { font-size: .88rem; color: #666; }
+    .progress-bar-track {
+      height: 8px; background: var(--light); border-radius: 4px; overflow: hidden;
+    }
+    .progress-bar-fill {
+      height: 100%; background: linear-gradient(90deg, var(--green), var(--green-d));
+      border-radius: 4px; transition: width .4s ease;
+    }
+    .step-dots { display: flex; gap: .5rem; margin-top: .8rem; }
+    .step-dot {
+      flex: 1; height: 4px; border-radius: 2px;
+      background: var(--light); transition: background .3s;
+    }
+    .step-dot.done { background: var(--green-d); }
+    .step-dot.active { background: var(--green); }
+
+    /* FORM SECTIONS */
+    .form-section { display: none; }
+    .form-section.active { display: block; animation: fadeIn .3s ease; }
+    @keyframes fadeIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:none; } }
+
+    .section-card {
+      background: var(--white); border-radius: var(--radius);
+      box-shadow: var(--shadow); border: 1px solid var(--light);
+      overflow: hidden; margin-bottom: 1.5rem;
+    }
+    .section-card-header {
+      padding: 1.2rem 1.5rem;
+      background: linear-gradient(135deg, #f8fffe, #e8f8f0);
+      border-bottom: 1px solid var(--light);
+      display: flex; align-items: center; gap: .7rem;
+    }
+    .section-card-header h2 { font-size: 1.1rem; font-weight: 700; color: var(--dark); }
+    .section-card-header .icon { font-size: 1.2rem; color: var(--green-d); }
+    .section-card-body { padding: 1.5rem; }
+
+    /* FORM CONTROLS */
+    .form-group { margin-bottom: 1.3rem; }
+    .form-group label {
+      display: block; font-weight: 600; font-size: .88rem;
+      color: var(--dark2); margin-bottom: .45rem;
+    }
+    .form-group .sublabel { font-weight: 400; color: #888; font-size: .8rem; }
+    .form-control {
+      width: 100%; padding: .6rem .9rem;
+      border: 1.5px solid #ddd; border-radius: 7px;
+      font-size: .92rem; color: var(--dark); background: #fff;
+      transition: border-color .2s, box-shadow .2s;
+    }
+    .form-control:focus { outline: none; border-color: var(--green); box-shadow: 0 0 0 3px rgba(46,204,113,.15); }
+    .form-control-sm { padding: .45rem .75rem; font-size: .85rem; }
+
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    @media(max-width:600px){ .form-row { grid-template-columns: 1fr; } }
+
+    /* RADIO / CHECK GROUPS */
+    .radio-group, .check-group { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: .3rem; }
+    .radio-option, .check-option {
+      display: flex; align-items: center; gap: .45rem;
+      padding: .5rem .9rem; border-radius: 7px;
+      border: 1.5px solid #ddd; cursor: pointer;
+      font-size: .88rem; color: var(--dark2); transition: all .2s;
+      background: var(--light2);
+    }
+    .radio-option:hover, .check-option:hover { border-color: var(--green); background: #e8f8f0; }
+    .radio-option input, .check-option input { accent-color: var(--green); }
+    .radio-option.selected, .check-option.selected { border-color: var(--green); background: #e8f8f0; font-weight: 600; }
+
+    /* RANGE SLIDER */
+    .range-container { position: relative; }
+    .range-slider { width: 100%; accent-color: var(--green); cursor: pointer; }
+    .range-value {
+      display: inline-block; min-width: 40px; text-align: center;
+      background: var(--green); color: #fff; padding: .15rem .5rem;
+      border-radius: 5px; font-size: .85rem; font-weight: 700; margin-left: .5rem;
+    }
+    .range-labels { display: flex; justify-content: space-between; font-size: .75rem; color: #999; margin-top: .2rem; }
+
+    /* INFO BOXES */
+    .info-box {
+      padding: .9rem 1.1rem; border-radius: 8px; font-size: .87rem;
+      display: flex; gap: .6rem; align-items: flex-start; margin-bottom: 1rem;
+    }
+    .info-box.info  { background: #ebf5fb; border-left: 4px solid var(--blue); color: #1a5276; }
+    .info-box.warn  { background: #fef9e7; border-left: 4px solid var(--warn); color: #7d6608; }
+    .info-box.success { background: #e8f8f5; border-left: 4px solid var(--green); color: #1e8449; }
+    .info-box.danger  { background: #fdf2f2; border-left: 4px solid var(--danger); color: #922b21; }
+
+    /* NORWOOD SCALE */
+    .scale-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px,1fr)); gap: .6rem; }
+    .scale-option {
+      padding: .6rem; border: 1.5px solid #ddd; border-radius: 8px;
+      cursor: pointer; text-align: center; transition: all .2s; background: var(--light2);
+    }
+    .scale-option:hover, .scale-option.selected { border-color: var(--green); background: #e8f8f0; }
+    .scale-option .scale-label { font-weight: 700; font-size: .9rem; color: var(--dark); }
+    .scale-option .scale-desc { font-size: .76rem; color: #666; margin-top: .2rem; }
+    .scale-option input { display: none; }
+
+    /* PULL TEST STEPS */
+    .test-steps { counter-reset: step; }
+    .test-step {
+      display: flex; gap: .75rem; align-items: flex-start;
+      margin-bottom: .8rem; font-size: .9rem;
+    }
+    .test-step-num {
+      counter-increment: step; min-width: 26px; height: 26px;
+      background: var(--green); color: #fff; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: .78rem; font-weight: 700; flex-shrink: 0;
+    }
+
+    /* INTERPRETATION BAR */
+    .interpret-bar { margin-top: .8rem; }
+    .interpret-segments { display: flex; height: 10px; border-radius: 5px; overflow: hidden; }
+    .interpret-seg { flex: 1; }
+    .seg-normal { background: var(--green); }
+    .seg-active { background: var(--warn); }
+    .seg-very   { background: var(--danger); }
+    .interpret-labels { display: flex; justify-content: space-between; font-size: .75rem; color: #777; margin-top: .3rem; }
+
+    /* NAV BUTTONS */
+    .form-nav { display: flex; justify-content: space-between; align-items: center; margin-top: 2rem; }
+    .btn { display: inline-flex; align-items: center; gap: .5rem; padding: .7rem 1.6rem; border-radius: 8px; font-size: .95rem; font-weight: 600; text-decoration: none; border: 2px solid transparent; cursor: pointer; transition: all .2s; }
+    .btn-primary { background: var(--green); color: #fff; border-color: var(--green); }
+    .btn-primary:hover { background: var(--green-d); border-color: var(--green-d); }
+    .btn-secondary { background: var(--white); color: var(--dark2); border-color: #ddd; }
+    .btn-secondary:hover { border-color: var(--dark2); }
+    .btn-lg { padding: .85rem 2rem; font-size: 1rem; }
+    .btn:disabled { opacity: .5; cursor: not-allowed; }
+
+    /* GENETIC TAB */
+    .sub-toggle { display: flex; gap: 0; margin-bottom: 1.2rem; border: 1.5px solid #ddd; border-radius: 8px; overflow: hidden; }
+    .sub-toggle-btn { flex: 1; padding: .6rem; border: none; background: var(--light2); font-size: .88rem; font-weight: 600; cursor: pointer; transition: all .2s; }
+    .sub-toggle-btn.active { background: var(--green); color: #fff; }
+    .upload-area {
+      border: 2px dashed #ccc; border-radius: var(--radius);
+      padding: 2.5rem; text-align: center; cursor: pointer;
+      transition: all .2s; background: var(--light2);
+    }
+    .upload-area:hover { border-color: var(--green); background: #e8f8f0; }
+    .upload-area i { font-size: 2.5rem; color: #bbb; margin-bottom: .8rem; display: block; }
+    .upload-area p { font-size: .9rem; color: #888; }
+    .sample-btns { display: flex; gap: .5rem; flex-wrap: wrap; margin-top: .8rem; }
+    .btn-sample {
+      padding: .4rem .9rem; border-radius: 6px; font-size: .8rem; font-weight: 600;
+      border: 1.5px solid; cursor: pointer; transition: all .2s;
+    }
+    .btn-sample.danger { border-color: var(--danger); color: var(--danger); background: transparent; }
+    .btn-sample.danger:hover { background: var(--danger); color: #fff; }
+    .btn-sample.warn { border-color: var(--warn); color: var(--warn); background: transparent; }
+    .btn-sample.warn:hover { background: var(--warn); color: #fff; }
+    .btn-sample.success { border-color: var(--green); color: var(--green-d); background: transparent; }
+    .btn-sample.success:hover { background: var(--green); color: #fff; }
+    .btn-sample.info { border-color: var(--blue); color: var(--blue); background: transparent; }
+    .btn-sample.info:hover { background: var(--blue); color: #fff; }
+
+    /* SNP TABLE */
+    .snp-table { width: 100%; border-collapse: collapse; font-size: .85rem; }
+    .snp-table th { background: var(--dark); color: #fff; padding: .6rem .9rem; text-align: left; font-size: .8rem; }
+    .snp-table td { padding: .55rem .9rem; border-bottom: 1px solid var(--light); vertical-align: middle; }
+    .snp-table tr:hover td { background: #f0faf4; }
+    .snp-table select { padding: .3rem .6rem; border: 1px solid #ddd; border-radius: 5px; font-size: .8rem; }
+
+    /* RESULTS TAB */
+    .results-placeholder {
+      text-align: center; padding: 4rem 2rem;
+    }
+    .results-placeholder i { font-size: 4rem; color: #ccc; margin-bottom: 1rem; display: block; }
+    .results-placeholder p { color: #888; max-width: 400px; margin: 0 auto; }
+
+    /* GAUGE */
+    .gauge-container { text-align: center; margin-bottom: 2rem; }
+    .gauge-bar-track {
+      height: 28px; background: linear-gradient(90deg, #2ecc71, #f39c12, #e74c3c);
+      border-radius: 14px; position: relative; margin: 1rem auto;
+      max-width: 600px; box-shadow: var(--shadow);
+    }
+    .gauge-marker {
+      position: absolute; top: -8px;
+      width: 2px; height: 44px; background: var(--dark);
+      transform: translateX(-50%); transition: left .8s ease;
+    }
+    .gauge-marker::after {
+      content: ''; position: absolute; bottom: -6px; left: 50%;
+      transform: translateX(-50%);
+      border: 6px solid transparent; border-top: 8px solid var(--dark);
+    }
+    .gauge-score { font-size: 4rem; font-weight: 800; line-height: 1; margin: .5rem 0; }
+    .gauge-labels { display: flex; justify-content: space-between; max-width: 600px; margin: .3rem auto 0; font-size: .78rem; color: #888; }
+    .risk-category-badge {
+      display: inline-block; padding: .45rem 1.4rem; border-radius: 50px;
+      font-weight: 700; font-size: 1rem; margin: .5rem 0;
+    }
+    .analysis-type-badge {
+      display: inline-flex; align-items: center; gap: .4rem;
+      padding: .3rem .9rem; border-radius: 50px; font-size: .82rem; font-weight: 600;
+      background: #ebf5fb; color: var(--blue); border: 1px solid #aed6f1;
+    }
+
+    /* SCORE CARDS */
+    .score-cards-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px,1fr)); gap: 1rem; margin-bottom: 2rem; }
+    .score-card {
+      background: var(--white); border-radius: var(--radius);
+      padding: 1.2rem; border: 1px solid var(--light); box-shadow: var(--shadow);
+      text-align: center;
+    }
+    .score-card .sc-label { font-size: .8rem; color: #888; text-transform: uppercase; letter-spacing: .5px; }
+    .score-card .sc-val { font-size: 1.8rem; font-weight: 800; margin: .3rem 0; }
+    .score-card .sc-bar { height: 6px; background: var(--light); border-radius: 3px; overflow: hidden; }
+    .score-card .sc-bar-fill { height: 100%; border-radius: 3px; transition: width .8s; }
+
+    /* CHARTS AREA */
+    .charts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin: 1.5rem 0; }
+    @media(max-width:700px){ .charts-grid { grid-template-columns: 1fr; } }
+    .chart-card { background: var(--white); border-radius: var(--radius); padding: 1.2rem; box-shadow: var(--shadow); border: 1px solid var(--light); }
+    .chart-card h4 { font-size: .9rem; color: var(--dark2); margin-bottom: 1rem; font-weight: 700; }
+    .chart-card canvas { max-height: 260px; }
+
+    /* RECOMMENDATIONS */
+    .rec-list { list-style: none; }
+    .rec-item {
+      display: flex; gap: .8rem; align-items: flex-start;
+      padding: .8rem; margin-bottom: .5rem;
+      border-radius: 8px; background: var(--light2); border: 1px solid var(--light);
+    }
+    .rec-icon { font-size: 1.1rem; min-width: 24px; margin-top: .1rem; }
+
+    /* COLLAPSIBLE DETAILS */
+    .collapse-card { background: var(--white); border-radius: var(--radius); margin-bottom: .8rem; border: 1px solid var(--light); overflow: hidden; }
+    .collapse-header {
+      padding: .9rem 1.2rem; font-weight: 700; font-size: .92rem;
+      cursor: pointer; display: flex; justify-content: space-between; align-items: center;
+      background: var(--light2); transition: background .2s;
+    }
+    .collapse-header:hover { background: #e8f8f0; }
+    .collapse-body { display: none; padding: 1rem 1.2rem; font-size: .88rem; color: #555; }
+    .collapse-body.open { display: block; }
+
+    /* MODAL */
+    .modal-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,.65);
+      z-index: 999; display: flex; align-items: center; justify-content: center;
+      padding: 1rem;
+    }
+    .modal-overlay.hidden { display: none; }
+    .modal-box {
+      background: var(--white); border-radius: 14px; max-width: 520px; width: 100%;
+      padding: 2rem; box-shadow: 0 20px 60px rgba(0,0,0,.3);
+    }
+    .modal-box h3 { font-size: 1.2rem; font-weight: 700; margin-bottom: 1rem; color: var(--dark); }
+    .modal-box p { font-size: .9rem; color: #555; margin-bottom: .8rem; }
+    .modal-footer { display: flex; gap: .8rem; justify-content: flex-end; margin-top: 1.5rem; }
+
+    /* LOADING SPINNER */
+    #loadingSpinner {
+      display: none; text-align: center; padding: 3rem;
+    }
+    .spinner {
+      width: 50px; height: 50px; border: 5px solid var(--light);
+      border-top-color: var(--green); border-radius: 50%;
+      animation: spin 1s linear infinite; margin: 0 auto 1rem;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .hidden { display: none !important; }
+    .male-only, .female-only { display: none; }
+
+    /* SEQUENCE PREVIEW */
+    .seq-preview {
+      background: #1e272e; color: #2ecc71; padding: 1rem; border-radius: 8px;
+      font-family: 'Courier New', monospace; font-size: .8rem;
+      margin-top: .8rem; max-height: 100px; overflow-y: auto;
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <a href="index.html" class="navbar-brand">
+    <div class="brand-icon"><i class="fa-solid fa-dna" style="color:#fff;font-size:.85rem;"></i></div>
+    BaldGuard
+  </a>
+  <ul class="navbar-nav">
+    <li><a href="index.html">Beranda</a></li>
+    <li><a href="analyze.html" class="active nav-cta"><i class="fa-solid fa-microscope"></i> Analisis</a></li>
+    <li><a href="about.html">Tentang</a></li>
+    <li><a href="database.html">Database SNP</a></li>
+  </ul>
+</nav>
+
+<!-- PAGE HEADER -->
+<div class="page-header">
+  <h1><i class="fa-solid fa-flask-vial" style="margin-right:.5rem;color:var(--green);"></i>Analisis Risiko Kebotakan</h1>
+  <p>Masukkan data klinis dan/atau genetik untuk mendapatkan perkiraan risiko androgenetic alopecia Anda</p>
+</div>
+
+<!-- TAB BAR -->
+<div class="tab-bar">
+  <button class="tab-btn active" data-tab="clinical">
+    <span class="tab-num">1</span>
+    <i class="fa-solid fa-clipboard-list"></i> Analisis Klinis
+  </button>
+  <button class="tab-btn" data-tab="genetic">
+    <span class="tab-num">2</span>
+    <i class="fa-solid fa-dna"></i> Analisis Genetik <em style="font-size:.78rem;opacity:.7;">(Opsional)</em>
+  </button>
+  <button class="tab-btn" data-tab="results">
+    <span class="tab-num">3</span>
+    <i class="fa-solid fa-chart-pie"></i> Hasil Analisis
+  </button>
+</div>
+
+<!-- ============================== TAB 1: KLINIS ============================== -->
+<div id="tab-clinical" class="tab-panel active">
+  <div class="tab-content">
+
+    <!-- PROGRESS BAR -->
+    <div class="wizard-progress">
+      <div class="progress-header">
+        <span id="progressText">Langkah 1 dari 5 — Demografi</span>
+        <span style="font-weight:700;color:var(--green-d);" id="progressPercent">20%</span>
+      </div>
+      <div class="progress-bar-track">
+        <div class="progress-bar-fill" id="progressBar" style="width:20%;"></div>
+      </div>
+      <div class="step-dots">
+        <div class="step-dot active" id="dot-1"></div>
+        <div class="step-dot" id="dot-2"></div>
+        <div class="step-dot" id="dot-3"></div>
+        <div class="step-dot" id="dot-4"></div>
+        <div class="step-dot" id="dot-5"></div>
+      </div>
+    </div>
+
+    <form id="clinicalForm" novalidate>
+
+      <!-- SECTION 1: DEMOGRAFI -->
+      <div class="form-section active" id="section-1">
+        <div class="section-card">
+          <div class="section-card-header">
+            <span class="icon"><i class="fa-solid fa-user-circle"></i></span>
+            <h2>Demografi &amp; Informasi Dasar</h2>
+          </div>
+          <div class="section-card-body">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="age">Usia <span class="sublabel">(15–80 tahun)</span></label>
+                <input type="number" id="age" name="age" class="form-control" min="15" max="80" placeholder="Contoh: 30" />
+              </div>
+              <div class="form-group">
+                <label for="ethnicity">Etnis</label>
+                <select id="ethnicity" name="ethnicity" class="form-control">
+                  <option value="">— Pilih Etnis —</option>
+                  <option value="asia">Asia</option>
+                  <option value="caucasian">Kaukasian</option>
+                  <option value="africa">Afrika</option>
+                  <option value="other">Lainnya</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Jenis Kelamin</label>
+              <div class="radio-group" id="genderGroup">
+                <label class="radio-option">
+                  <input type="radio" name="gender" value="male" id="genderMale" />
+                  <i class="fa-solid fa-mars" style="color:#3498db;"></i> Pria
+                </label>
+                <label class="radio-option">
+                  <input type="radio" name="gender" value="female" id="genderFemale" />
+                  <i class="fa-solid fa-venus" style="color:#e91e8c;"></i> Wanita
+                </label>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="puberty_age">
+                Usia Pubertas
+                <span class="sublabel">&nbsp;(opsional, 9–18 tahun)
+                  <i class="fa-solid fa-circle-question" style="color:var(--blue);cursor:help;" title="Pubertas lebih awal berarti paparan androgen lebih lama. Relevan untuk risiko AGA."></i>
+                </span>
+              </label>
+              <input type="number" id="puberty_age" name="puberty_age" class="form-control form-control-sm" min="9" max="18" placeholder="Opsional" style="max-width:160px;" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SECTION 2: GEJALA -->
+      <div class="form-section" id="section-2">
+        <div class="section-card">
+          <div class="section-card-header">
+            <span class="icon"><i class="fa-solid fa-head-side-cough"></i></span>
+            <h2>Gejala Kerontokan Rambut</h2>
+          </div>
+          <div class="section-card-body">
+
+            <div class="form-group">
+              <label>Helai Rambut Rontok per Hari
+                <span class="range-value" id="val-hair_loss">50</span>
+              </label>
+              <input type="range" class="range-slider" id="hair_loss" name="hair_loss" min="0" max="300" value="50"
+                     oninput="document.getElementById('val-hair_loss').textContent=this.value" />
+              <div class="range-labels"><span>0</span><span>100</span><span>200</span><span>300 helai</span></div>
+              <div class="info-box info" style="margin-top:.6rem;">
+                <i class="fa-solid fa-circle-info"></i>
+                <span>Normal: &lt;100 helai/hari. Kerontokan &gt;100 helai secara konsisten perlu diperhatikan.</span>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="duration_months">Durasi Kerontokan Berlebihan <span class="sublabel">(bulan)</span></label>
+              <input type="number" id="duration_months" name="duration_months" class="form-control form-control-sm" min="0" placeholder="0" style="max-width:160px;" />
+            </div>
+
+            <div class="form-group">
+              <label>Pola Kerontokan</label>
+              <div class="radio-group" style="flex-direction:column;gap:.4rem;">
+                <label class="radio-option" style="width:100%;">
+                  <input type="radio" name="pattern" value="none" />
+                  🟢 Tidak ada pola kerontokan yang jelas
+                </label>
+                <label class="radio-option" style="width:100%;">
+                  <input type="radio" name="pattern" value="diffuse" />
+                  🟡 Difus merata (seluruh kepala merata)
+                </label>
+                <label class="radio-option" style="width:100%;">
+                  <input type="radio" name="pattern" value="m_shape" />
+                  🔴 M-shape depan (hairline mundur di sisi)
+                </label>
+                <label class="radio-option" style="width:100%;">
+                  <input type="radio" name="pattern" value="vertex" />
+                  🔴 Vertex / puncak kepala (mahkota)
+                </label>
+                <label class="radio-option" style="width:100%;">
+                  <input type="radio" name="pattern" value="patchy" />
+                  🟡 Patchy (bercak tidak merata)
+                </label>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>Area Penipisan <span class="sublabel">(boleh pilih lebih dari satu)</span></label>
+              <div class="check-group">
+                <label class="check-option"><input type="checkbox" name="thinning_area" value="hairline" /> Hairline depan</label>
+                <label class="check-option"><input type="checkbox" name="thinning_area" value="crown" /> Crown / puncak</label>
+                <label class="check-option"><input type="checkbox" name="thinning_area" value="temple" /> Pelipis</label>
+                <label class="check-option"><input type="checkbox" name="thinning_area" value="all" /> Seluruh kepala</label>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>Persepsi Penipisan Rambut
+                <span class="range-value" id="val-thinning_perception">5</span>
+                <span class="sublabel"> / 10</span>
+              </label>
+              <input type="range" class="range-slider" id="thinning_perception" name="thinning_perception" min="1" max="10" value="5"
+                     oninput="document.getElementById('val-thinning_perception').textContent=this.value" />
+              <div class="range-labels"><span>1 Tidak ada</span><span>5 Sedang</span><span>10 Sangat parah</span></div>
+            </div>
+
+            <div class="form-group">
+              <div class="check-group">
+                <label class="check-option">
+                  <input type="checkbox" id="diameter_decrease" name="diameter_decrease" value="1" />
+                  <i class="fa-solid fa-ruler" style="color:var(--warn);"></i>
+                  Diameter rambut menurun — <em style="font-weight:400;">rambut terasa lebih halus/tipis dari sebelumnya</em>
+                </label>
+              </div>
+            </div>
+
+            <!-- NORWOOD — pria -->
+            <div class="male-only" id="norwoodGroup">
+              <div class="form-group">
+                <label>Skala Norwood-Hamilton <span class="sublabel">(pria)</span></label>
+                <div class="scale-grid" id="norwoodScale">
+                  <label class="scale-option">
+                    <input type="radio" name="norwood" value="1" />
+                    <div class="scale-label">Norwood I</div>
+                    <div class="scale-desc">Normal, tidak ada kerontokan</div>
+                  </label>
+                  <label class="scale-option">
+                    <input type="radio" name="norwood" value="2" />
+                    <div class="scale-label">Norwood II</div>
+                    <div class="scale-desc">Garis depan sedikit mundur</div>
+                  </label>
+                  <label class="scale-option">
+                    <input type="radio" name="norwood" value="3" />
+                    <div class="scale-label">Norwood III</div>
+                    <div class="scale-desc">Penipisan depan signifikan</div>
+                  </label>
+                  <label class="scale-option">
+                    <input type="radio" name="norwood" value="4" />
+                    <div class="scale-label">Norwood IV</div>
+                    <div class="scale-desc">Penipisan parah depan + vertex</div>
+                  </label>
+                  <label class="scale-option">
+                    <input type="radio" name="norwood" value="5" />
+                    <div class="scale-label">Norwood V</div>
+                    <div class="scale-desc">Separasi area vertex mulai terjadi</div>
+                  </label>
+                  <label class="scale-option">
+                    <input type="radio" name="norwood" value="6" />
+                    <div class="scale-label">Norwood VI</div>
+                    <div class="scale-desc">Area depan &amp; vertex terhubung</div>
+                  </label>
+                  <label class="scale-option">
+                    <input type="radio" name="norwood" value="7" />
+                    <div class="scale-label">Norwood VII</div>
+                    <div class="scale-desc">Hanya rambut sisi yang tersisa</div>
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <!-- LUDWIG — wanita -->
+            <div class="female-only" id="ludwigGroup">
+              <div class="form-group">
+                <label>Skala Ludwig <span class="sublabel">(wanita)</span></label>
+                <div class="scale-grid">
+                  <label class="scale-option">
+                    <input type="radio" name="ludwig" value="1" />
+                    <div class="scale-label">Ludwig I</div>
+                    <div class="scale-desc">Penipisan ringan di area puncak</div>
+                  </label>
+                  <label class="scale-option">
+                    <input type="radio" name="ludwig" value="2" />
+                    <div class="scale-label">Ludwig II</div>
+                    <div class="scale-desc">Penipisan lebih luas, garis tengah melebar</div>
+                  </label>
+                  <label class="scale-option">
+                    <input type="radio" name="ludwig" value="3" />
+                    <div class="scale-label">Ludwig III</div>
+                    <div class="scale-desc">Penipisan parah, kepala terlihat nyata</div>
+                  </label>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- SECTION 3: HAIR PULL TEST -->
+      <div class="form-section" id="section-3">
+        <div class="section-card">
+          <div class="section-card-header">
+            <span class="icon"><i class="fa-solid fa-hand"></i></span>
+            <h2>Hair Pull Test <span style="font-size:.8rem;font-weight:400;color:#888;">(Opsional)</span></h2>
+          </div>
+          <div class="section-card-body">
+            <div class="info-box info">
+              <i class="fa-solid fa-circle-info"></i>
+              <span>Tes ini bersifat opsional. Anda bisa melewati bagian ini dengan mengosongkan inputan.</span>
+            </div>
+            <div class="test-steps">
+              <div class="test-step">
+                <div class="test-step-num">1</div>
+                <p>Ambil sekitar <strong>60 helai rambut</strong> yang berdekatan antara jari telunjuk dan ibu jari</p>
+              </div>
+              <div class="test-step">
+                <div class="test-step-num">2</div>
+                <p>Tarik secara <strong>perlahan namun tegas</strong> dari pangkal ke ujung rambut (jangan menyentak)</p>
+              </div>
+              <div class="test-step">
+                <div class="test-step-num">3</div>
+                <p>Hitung dengan cermat jumlah helai rambut yang <strong>tercabut lengkap dengan akarnya</strong></p>
+              </div>
+            </div>
+            <div class="form-group" style="margin-top:1.2rem;">
+              <label for="pull_test">Jumlah rambut tercabut <span class="sublabel">(0–60 helai)</span></label>
+              <input type="number" id="pull_test" name="pull_test" class="form-control" min="0" max="60" placeholder="Kosongkan jika tidak dilakukan" style="max-width:200px;" />
+              <div class="interpret-bar" id="pullTestInterpret" style="display:none;margin-top:.8rem;">
+                <div class="interpret-segments">
+                  <div class="interpret-seg seg-normal" style="flex:6;"></div>
+                  <div class="interpret-seg seg-active" style="flex:4;"></div>
+                  <div class="interpret-seg seg-very"   style="flex:10;"></div>
+                </div>
+                <div class="interpret-labels">
+                  <span>0–5: Normal (&lt;10%)</span>
+                  <span>6–10: Aktif</span>
+                  <span>&gt;10: Sangat Aktif</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SECTION 4: RIWAYAT KELUARGA -->
+      <div class="form-section" id="section-4">
+        <div class="section-card">
+          <div class="section-card-header">
+            <span class="icon"><i class="fa-solid fa-people-group"></i></span>
+            <h2>Riwayat Keluarga</h2>
+          </div>
+          <div class="section-card-body">
+
+            <div class="form-group">
+              <label>Apakah Ayah Anda Mengalami Kebotakan?</label>
+              <div class="radio-group" id="fatherBaldGroup">
+                <label class="radio-option"><input type="radio" name="father_bald" value="yes" /> Ya</label>
+                <label class="radio-option"><input type="radio" name="father_bald" value="no" /> Tidak</label>
+              </div>
+              <div id="fatherAgeGroup" style="display:none;margin-top:.7rem;">
+                <label for="father_bald_age" style="font-size:.85rem;color:#555;">Usia ayah mulai botak:</label>
+                <input type="number" id="father_bald_age" name="father_bald_age" class="form-control form-control-sm" min="10" max="80" placeholder="Usia" style="max-width:120px;margin-top:.3rem;" />
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>
+                Apakah Kakek dari Pihak Ibu Mengalami Kebotakan?
+              </label>
+              <div class="info-box warn" style="margin-bottom:.6rem;">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+                <span><strong>Paling berpengaruh!</strong> Gen AR bersifat X-linked — pria mewarisi kromosom X dari ibu. Kebotakan kakek dari ibu menjadi predictor terkuat.</span>
+              </div>
+              <div class="radio-group">
+                <label class="radio-option"><input type="radio" name="maternal_gf_bald" value="yes" /> Ya</label>
+                <label class="radio-option"><input type="radio" name="maternal_gf_bald" value="no" /> Tidak</label>
+                <label class="radio-option"><input type="radio" name="maternal_gf_bald" value="unknown" /> Tidak Tahu</label>
+              </div>
+              <div id="maternalGfAgeGroup" style="display:none;margin-top:.7rem;">
+                <label for="maternal_gf_bald_age" style="font-size:.85rem;color:#555;">Usia mulai botak:</label>
+                <input type="number" id="maternal_gf_bald_age" name="maternal_gf_bald_age" class="form-control form-control-sm" min="10" max="80" placeholder="Usia" style="max-width:120px;margin-top:.3rem;" />
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>Apakah Kakek dari Pihak Ayah Mengalami Kebotakan?</label>
+              <div class="radio-group">
+                <label class="radio-option"><input type="radio" name="paternal_gf_bald" value="yes" /> Ya</label>
+                <label class="radio-option"><input type="radio" name="paternal_gf_bald" value="no" /> Tidak</label>
+                <label class="radio-option"><input type="radio" name="paternal_gf_bald" value="unknown" /> Tidak Tahu</label>
+              </div>
+            </div>
+
+            <div class="form-group male-only" id="brotherBaldGroup">
+              <label>Apakah Saudara Laki-Laki Anda Mengalami Kebotakan?</label>
+              <div class="radio-group">
+                <label class="radio-option"><input type="radio" name="brother_bald" value="yes" /> Ya</label>
+                <label class="radio-option"><input type="radio" name="brother_bald" value="no" /> Tidak</label>
+                <label class="radio-option"><input type="radio" name="brother_bald" value="na" /> Tidak Ada</label>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>Apakah Ibu Mengalami Penipisan Rambut?</label>
+              <div class="radio-group">
+                <label class="radio-option"><input type="radio" name="mother_thinning" value="yes" /> Ya</label>
+                <label class="radio-option"><input type="radio" name="mother_thinning" value="no" /> Tidak</label>
+              </div>
+            </div>
+
+            <div class="form-group female-only" id="sisterThinningGroup">
+              <label>Apakah Saudara Perempuan Mengalami Penipisan?</label>
+              <div class="radio-group">
+                <label class="radio-option"><input type="radio" name="sister_thinning" value="yes" /> Ya</label>
+                <label class="radio-option"><input type="radio" name="sister_thinning" value="no" /> Tidak</label>
+                <label class="radio-option"><input type="radio" name="sister_thinning" value="na" /> Tidak Relevan</label>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>Jumlah Generasi yang Mengalami Kebotakan
+                <span class="range-value" id="val-generations">0</span>
+              </label>
+              <input type="range" class="range-slider" id="generations" name="generations" min="0" max="4" value="0"
+                     oninput="document.getElementById('val-generations').textContent=this.value" />
+              <div class="range-labels"><span>0</span><span>1</span><span>2</span><span>3</span><span>4 generasi</span></div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- SECTION 5: GAYA HIDUP -->
+      <div class="form-section" id="section-5">
+        <div class="section-card">
+          <div class="section-card-header">
+            <span class="icon"><i class="fa-solid fa-heart-pulse"></i></span>
+            <h2>Gaya Hidup &amp; Kondisi Kesehatan</h2>
+          </div>
+          <div class="section-card-body">
+
+            <div class="form-group">
+              <label>Tingkat Stres
+                <span class="range-value" id="val-stress">5</span>
+                <span id="stressEmoji" style="font-size:1.2rem;margin-left:.3rem;">😐</span>
+              </label>
+              <input type="range" class="range-slider" id="stress" name="stress" min="1" max="10" value="5"
+                     oninput="updateStress(this.value)" />
+              <div class="range-labels"><span>1 😊 Santai</span><span>5 😐 Sedang</span><span>10 😰 Sangat Stres</span></div>
+            </div>
+
+            <div class="form-group">
+              <label>Jam Tidur per Hari
+                <span class="range-value" id="val-sleep">7</span>
+                <span class="sublabel" id="sleepNote" style="color:var(--green);"> jam (cukup)</span>
+              </label>
+              <input type="range" class="range-slider" id="sleep" name="sleep" min="3" max="12" value="7"
+                     oninput="updateSleep(this.value)" />
+              <div class="range-labels"><span>3 jam</span><span>6</span><span>8</span><span>12 jam</span></div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label>Pola Makan</label>
+                <div class="radio-group" style="flex-direction:column;gap:.4rem;">
+                  <label class="radio-option"><input type="radio" name="diet" value="poor" /> Buruk (tidak seimbang)</label>
+                  <label class="radio-option"><input type="radio" name="diet" value="balanced" checked /> Seimbang</label>
+                  <label class="radio-option"><input type="radio" name="diet" value="great" /> Sangat Baik</label>
+                </div>
+              </div>
+              <div class="form-group">
+                <label>Frekuensi Olahraga</label>
+                <div class="radio-group" style="flex-direction:column;gap:.4rem;">
+                  <label class="radio-option"><input type="radio" name="exercise" value="none" /> Tidak Pernah</label>
+                  <label class="radio-option"><input type="radio" name="exercise" value="light" checked /> Ringan (1–2x/mgg)</label>
+                  <label class="radio-option"><input type="radio" name="exercise" value="moderate" /> Sedang (3–4x/mgg)</label>
+                  <label class="radio-option"><input type="radio" name="exercise" value="heavy" /> Berat (&gt;5x/mgg)</label>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>Konsumsi Alkohol</label>
+              <select id="alcohol" name="alcohol" class="form-control" style="max-width:280px;">
+                <option value="never">Tidak pernah</option>
+                <option value="rare">Jarang (sesekali)</option>
+                <option value="regular">Rutin (mingguan)</option>
+                <option value="heavy">Berat (harian)</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <div class="check-group" style="flex-direction:column;gap:.4rem;">
+                <label class="check-option" id="smokingLabel">
+                  <input type="checkbox" id="smoking" name="smoking" value="1" onchange="toggleSmokingInput(this)" />
+                  <i class="fa-solid fa-smoking" style="color:var(--danger);"></i> Merokok
+                </label>
+              </div>
+              <div id="smokingDetails" style="display:none;margin-top:.7rem;padding:.8rem;background:var(--light2);border-radius:8px;border:1px solid #ddd;">
+                <label for="cigarettes_per_day" style="font-size:.85rem;">Jumlah batang per hari:</label>
+                <input type="number" id="cigarettes_per_day" name="cigarettes_per_day" class="form-control form-control-sm" min="1" max="60" value="10" style="max-width:120px;margin-top:.3rem;" />
+              </div>
+            </div>
+
+            <div class="form-group">
+              <div class="check-group">
+                <label class="check-option">
+                  <input type="checkbox" name="aggressive_styling" value="1" />
+                  <i class="fa-solid fa-scissors" style="color:var(--warn);"></i>
+                  Styling agresif <em style="font-weight:400;font-size:.82rem;">(bleaching, ekstensi, kuncir ketat, rebonding)</em>
+                </label>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>Obat-Obatan yang Dikonsumsi <span class="sublabel">(boleh pilih lebih dari satu)</span></label>
+              <div class="check-group" style="flex-direction:column;gap:.4rem;">
+                <label class="check-option"><input type="checkbox" name="medications" value="steroids" /> Steroid anabolik</label>
+                <label class="check-option"><input type="checkbox" name="medications" value="antidepressant" /> Antidepresan</label>
+                <label class="check-option"><input type="checkbox" name="medications" value="antihypertensive" /> Antihipertensi (beta-blocker)</label>
+                <label class="check-option"><input type="checkbox" name="medications" value="hormonal_contraceptive" /> Kontrasepsi hormonal</label>
+                <label class="check-option"><input type="checkbox" name="medications" value="none" /> Tidak mengonsumsi obat-obatan tersebut</label>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>Kondisi Kesehatan <span class="sublabel">(boleh pilih lebih dari satu)</span></label>
+              <div class="check-group" style="flex-direction:column;gap:.4rem;">
+                <label class="check-option"><input type="checkbox" name="conditions" value="pcos" /> PCOS (Polycystic Ovary Syndrome)</label>
+                <label class="check-option"><input type="checkbox" name="conditions" value="metabolic" /> Sindrom metabolik</label>
+                <label class="check-option"><input type="checkbox" name="conditions" value="thyroid" /> Gangguan tiroid (hipo/hipertiroid)</label>
+                <label class="check-option"><input type="checkbox" name="conditions" value="anemia" /> Anemia</label>
+                <label class="check-option"><input type="checkbox" name="conditions" value="autoimmune" /> Penyakit autoimun</label>
+                <label class="check-option"><input type="checkbox" name="conditions" value="none" /> Tidak ada kondisi di atas</label>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>Defisiensi Vitamin / Mineral <span class="sublabel">(boleh pilih lebih dari satu)</span></label>
+              <div class="check-group" style="flex-direction:column;gap:.4rem;">
+                <label class="check-option"><input type="checkbox" name="deficiencies" value="vitd" /> Vitamin D rendah</label>
+                <label class="check-option"><input type="checkbox" name="deficiencies" value="b12" /> Vitamin B12 rendah</label>
+                <label class="check-option"><input type="checkbox" name="deficiencies" value="zinc" /> Zinc rendah</label>
+                <label class="check-option"><input type="checkbox" name="deficiencies" value="ferritin" /> Ferritin rendah (zat besi)</label>
+                <label class="check-option"><input type="checkbox" name="deficiencies" value="unknown" /> Belum pernah cek</label>
+                <label class="check-option"><input type="checkbox" name="deficiencies" value="none" /> Tidak ada defisiensi</label>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- ANALYZE BUTTON (last step) -->
+        <div class="info-box warn">
+          <i class="fa-solid fa-triangle-exclamation"></i>
+          <span>Hasil analisis ini adalah <strong>estimasi edukatif</strong>, bukan diagnosis klinis. Konsultasikan hasilnya dengan dokter spesialis dermatologi.</span>
+        </div>
+      </div>
+
+      <!-- NAVIGATION BUTTONS -->
+      <div class="form-nav">
+        <button type="button" class="btn btn-secondary" id="prevBtn" onclick="changeStep(-1)" style="visibility:hidden;">
+          <i class="fa-solid fa-arrow-left"></i> Kembali
+        </button>
+        <span id="stepLabel" style="font-size:.85rem;color:#888;">Langkah 1 dari 5</span>
+        <button type="button" class="btn btn-primary" id="nextBtn" onclick="changeStep(1)">
+          Lanjut <i class="fa-solid fa-arrow-right"></i>
+        </button>
+      </div>
+
+    </form>
+  </div>
+</div>
+
+<!-- ============================== TAB 2: GENETIK ============================== -->
+<div id="tab-genetic" class="tab-panel">
+  <div class="tab-content">
+
+    <!-- SECTION A: FASTA -->
+    <div class="section-card">
+      <div class="section-card-header">
+        <span class="icon"><i class="fa-solid fa-file-code"></i></span>
+        <h2>Sekuens FASTA — Gen AR</h2>
+      </div>
+      <div class="section-card-body">
+        <div class="info-box info">
+          <i class="fa-solid fa-circle-info"></i>
+          <div>
+            <strong>Darimana mendapat data DNA?</strong><br/>
+            Dari layanan tes genetik seperti 23andMe, AncestryDNA, atau hasil sequencing klinik.
+            Unggah file FASTA (.fa / .fasta) yang berisi sekuens gen AR (kromosom X, lokus Xq11-12).
+          </div>
+        </div>
+
+        <div class="sub-toggle" id="fastaToggle">
+          <button class="sub-toggle-btn active" onclick="toggleFastaInput('file')">
+            <i class="fa-solid fa-upload"></i> Upload File
+          </button>
+          <button class="sub-toggle-btn" onclick="toggleFastaInput('paste')">
+            <i class="fa-solid fa-paste"></i> Paste Teks
+          </button>
+        </div>
+
+        <div id="fastaFileSection">
+          <div class="upload-area" onclick="document.getElementById('fastaFileInput').click()">
+            <i class="fa-solid fa-file-arrow-up"></i>
+            <p>Klik untuk memilih file atau <strong>seret file ke sini</strong></p>
+            <p style="font-size:.78rem;margin-top:.3rem;">Format: .fa, .fasta, .txt — Maks 10MB</p>
+          </div>
+          <input type="file" id="fastaFileInput" name="fastaFile" accept=".fa,.fasta,.txt" style="display:none;" onchange="handleFastaFile(this)" />
+        </div>
+
+        <div id="fastaPasteSection" style="display:none;">
+          <textarea id="fastaTextarea" class="form-control" rows="8"
+                    placeholder=">Sample_AR_sequence&#10;ATGCTGATCGATCGATCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAG..." style="font-family:monospace;font-size:.82rem;"></textarea>
+        </div>
+
+        <div style="margin-top:1rem;">
+          <p style="font-size:.85rem;color:#555;margin-bottom:.5rem;"><strong>Gunakan Sample Data:</strong></p>
+          <div class="sample-btns">
+            <button class="btn-sample danger" onclick="loadFastaSample('very_high')">
+              <i class="fa-solid fa-triangle-exclamation"></i> Risiko Sangat Tinggi
+            </button>
+            <button class="btn-sample warn" onclick="loadFastaSample('high')">
+              <i class="fa-solid fa-exclamation"></i> Risiko Tinggi
+            </button>
+            <button class="btn-sample success" onclick="loadFastaSample('low')">
+              <i class="fa-solid fa-check"></i> Risiko Rendah
+            </button>
+            <button class="btn-sample info" onclick="loadFastaSample('protective')">
+              <i class="fa-solid fa-shield"></i> Protektif
+            </button>
+          </div>
+        </div>
+
+        <div id="fastaPreview" style="display:none;">
+          <div class="seq-preview" id="fastaPreviewText"></div>
+          <div style="margin-top:.6rem;font-size:.82rem;color:#555;" id="fastaStats"></div>
+        </div>
+
+        <!-- NCBI REFERENCE -->
+        <div style="margin-top:1.2rem;border-top:1px solid var(--light);padding-top:1.2rem;">
+          <div style="display:flex;align-items:center;gap:.8rem;flex-wrap:wrap;">
+            <button class="btn btn-secondary" id="ncbiFetchBtn" onclick="loadNCBIReference()" style="font-size:.85rem;padding:.5rem 1.1rem;">
+              <i class="fa-solid fa-database" style="color:#3498db;"></i> Cek Referensi NCBI (NM_000044.6)
+            </button>
+            <span style="font-size:.8rem;color:#888;">Ambil sekuens AR referensi dari NCBI RefSeq sebagai pembanding</span>
+          </div>
+          <div id="ncbiResult" style="display:none;margin-top:.9rem;">
+            <div class="info-box success" id="ncbiSuccess" style="display:none;">
+              <i class="fa-solid fa-circle-check"></i>
+              <div>
+                <strong>NCBI RefSeq — <span id="ncbiAccession"></span></strong><br/>
+                <span style="font-size:.82rem;">Panjang sekuens: <strong id="ncbiLength"></strong> bp &nbsp;|&nbsp;
+                CAG repeat referensi: <strong id="ncbiCAG"></strong> &nbsp;|&nbsp;
+                <span style="color:#888;" id="ncbiDesc"></span></span>
+                <div class="seq-preview" id="ncbiSeqPreview" style="margin-top:.5rem;font-size:.72rem;max-height:60px;"></div>
+              </div>
+            </div>
+            <div class="info-box danger" id="ncbiError" style="display:none;">
+              <i class="fa-solid fa-circle-xmark"></i>
+              <div><strong>Gagal menghubungi NCBI</strong><br/><span id="ncbiErrorMsg" style="font-size:.82rem;"></span></div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- SECTION B: SNP GENOTYPE -->
+    <div class="section-card">
+      <div class="section-card-header">
+        <span class="icon"><i class="fa-solid fa-table-cells"></i></span>
+        <h2>Genotip SNP</h2>
+      </div>
+      <div class="section-card-body">
+        <div class="info-box info">
+          <i class="fa-solid fa-circle-info"></i>
+          <div>
+            Masukkan genotip dari laporan tes genetik Anda untuk 9 SNP yang dianalisis.
+            Pilih <strong>Alel Risiko</strong> jika Anda membawa varian risiko, <strong>Alel Referensi</strong> jika tidak, atau <strong>Tidak Diketahui</strong>.
+          </div>
+        </div>
+
+        <div class="sub-toggle" id="snpToggle">
+          <button class="sub-toggle-btn active" onclick="toggleSnpInput('manual')">
+            <i class="fa-solid fa-pen"></i> Input Manual
+          </button>
+          <button class="sub-toggle-btn" onclick="toggleSnpInput('file')">
+            <i class="fa-solid fa-file-csv"></i> Upload TSV
+          </button>
+          <button class="sub-toggle-btn" onclick="toggleSnpInput('23andme')" style="background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;">
+            <i class="fa-solid fa-dna"></i> 23andMe
+          </button>
+        </div>
+
+        <div id="snpManualSection">
+          <div style="overflow-x:auto;">
+            <table class="snp-table">
+              <thead>
+                <tr>
+                  <th>RS ID</th>
+                  <th>Gen</th>
+                  <th>Alel Risiko</th>
+                  <th>OR</th>
+                  <th>Genotip Anda</th>
+                </tr>
+              </thead>
+              <tbody id="snpTableBody">
+                <tr>
+                  <td><strong style="color:var(--blue);">rs6152</strong></td>
+                  <td>AR</td>
+                  <td><span style="background:#fdf2f2;color:var(--danger);padding:.2rem .5rem;border-radius:4px;font-size:.78rem;">A</span></td>
+                  <td>1.54</td>
+                  <td><select name="snp_rs6152" class="form-control form-control-sm">
+                    <option value="unknown">Tidak Diketahui</option>
+                    <option value="risk">Alel Risiko (A)</option>
+                    <option value="ref">Alel Referensi (G)</option>
+                  </select></td>
+                </tr>
+                <tr>
+                  <td><strong style="color:var(--blue);">rs1204014</strong></td>
+                  <td>AR</td>
+                  <td><span style="background:#fdf2f2;color:var(--danger);padding:.2rem .5rem;border-radius:4px;font-size:.78rem;">A</span></td>
+                  <td>1.42</td>
+                  <td><select name="snp_rs1204014" class="form-control form-control-sm">
+                    <option value="unknown">Tidak Diketahui</option>
+                    <option value="risk">Alel Risiko (A)</option>
+                    <option value="ref">Alel Referensi (G)</option>
+                  </select></td>
+                </tr>
+                <tr>
+                  <td><strong style="color:var(--blue);">rs12558842</strong></td>
+                  <td>EDA2R</td>
+                  <td><span style="background:#fdf2f2;color:var(--danger);padding:.2rem .5rem;border-radius:4px;font-size:.78rem;">C</span></td>
+                  <td>1.51</td>
+                  <td><select name="snp_rs12558842" class="form-control form-control-sm">
+                    <option value="unknown">Tidak Diketahui</option>
+                    <option value="risk">Alel Risiko (C)</option>
+                    <option value="ref">Alel Referensi (T)</option>
+                  </select></td>
+                </tr>
+                <tr>
+                  <td><strong style="color:var(--blue);">rs1160312</strong></td>
+                  <td>EDA2R</td>
+                  <td><span style="background:#fdf2f2;color:var(--danger);padding:.2rem .5rem;border-radius:4px;font-size:.78rem;">A</span></td>
+                  <td>1.38</td>
+                  <td><select name="snp_rs1160312" class="form-control form-control-sm">
+                    <option value="unknown">Tidak Diketahui</option>
+                    <option value="risk">Alel Risiko (A)</option>
+                    <option value="ref">Alel Referensi (G)</option>
+                  </select></td>
+                </tr>
+                <tr>
+                  <td><strong style="color:var(--blue);">rs9287638</strong></td>
+                  <td>WNT10A</td>
+                  <td><span style="background:#fdf2f2;color:var(--danger);padding:.2rem .5rem;border-radius:4px;font-size:.78rem;">G</span></td>
+                  <td>1.29</td>
+                  <td><select name="snp_rs9287638" class="form-control form-control-sm">
+                    <option value="unknown">Tidak Diketahui</option>
+                    <option value="risk">Alel Risiko (G)</option>
+                    <option value="ref">Alel Referensi (A)</option>
+                  </select></td>
+                </tr>
+                <tr>
+                  <td><strong style="color:var(--blue);">rs2180439</strong></td>
+                  <td>SRD5A2</td>
+                  <td><span style="background:#fdf2f2;color:var(--danger);padding:.2rem .5rem;border-radius:4px;font-size:.78rem;">T</span></td>
+                  <td>1.33</td>
+                  <td><select name="snp_rs2180439" class="form-control form-control-sm">
+                    <option value="unknown">Tidak Diketahui</option>
+                    <option value="risk">Alel Risiko (T)</option>
+                    <option value="ref">Alel Referensi (C)</option>
+                  </select></td>
+                </tr>
+                <tr>
+                  <td><strong style="color:var(--blue);">rs6047844</strong></td>
+                  <td>HDAC9</td>
+                  <td><span style="background:#fdf2f2;color:var(--danger);padding:.2rem .5rem;border-radius:4px;font-size:.78rem;">A</span></td>
+                  <td>1.27</td>
+                  <td><select name="snp_rs6047844" class="form-control form-control-sm">
+                    <option value="unknown">Tidak Diketahui</option>
+                    <option value="risk">Alel Risiko (A)</option>
+                    <option value="ref">Alel Referensi (G)</option>
+                  </select></td>
+                </tr>
+                <tr>
+                  <td><strong style="color:var(--blue);">rs4679291</strong></td>
+                  <td>PAX1</td>
+                  <td><span style="background:#fdf2f2;color:var(--danger);padding:.2rem .5rem;border-radius:4px;font-size:.78rem;">C</span></td>
+                  <td>1.22</td>
+                  <td><select name="snp_rs4679291" class="form-control form-control-sm">
+                    <option value="unknown">Tidak Diketahui</option>
+                    <option value="risk">Alel Risiko (C)</option>
+                    <option value="ref">Alel Referensi (T)</option>
+                  </select></td>
+                </tr>
+                <tr>
+                  <td><strong style="color:var(--blue);">rs7349332</strong></td>
+                  <td>WNT5A</td>
+                  <td><span style="background:#fdf2f2;color:var(--danger);padding:.2rem .5rem;border-radius:4px;font-size:.78rem;">T</span></td>
+                  <td>1.19</td>
+                  <td><select name="snp_rs7349332" class="form-control form-control-sm">
+                    <option value="unknown">Tidak Diketahui</option>
+                    <option value="risk">Alel Risiko (T)</option>
+                    <option value="ref">Alel Referensi (C)</option>
+                  </select></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div style="margin-top:1rem;">
+            <p style="font-size:.85rem;color:#555;margin-bottom:.5rem;"><strong>Gunakan Sample Data:</strong></p>
+            <div class="sample-btns">
+              <button class="btn-sample danger" onclick="loadSnpSample('high')">
+                <i class="fa-solid fa-triangle-exclamation"></i> Genotip Risiko Tinggi
+              </button>
+              <button class="btn-sample warn" onclick="loadSnpSample('medium')">
+                <i class="fa-solid fa-exclamation"></i> Genotip Risiko Sedang
+              </button>
+              <button class="btn-sample success" onclick="loadSnpSample('low')">
+                <i class="fa-solid fa-check"></i> Genotip Risiko Rendah
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div id="snpFileSection" style="display:none;">
+          <div class="upload-area" onclick="document.getElementById('snpFileInput').click()">
+            <i class="fa-solid fa-file-csv"></i>
+            <p>Upload file TSV dengan kolom: rs_id, genotype</p>
+          </div>
+          <input type="file" id="snpFileInput" name="snpFile" accept=".tsv,.txt,.csv" style="display:none;" onchange="handleSnpFile(this)" />
+        </div>
+
+        <!-- 23andMe UPLOAD PANEL -->
+        <div id="snp23andmeSection" style="display:none;">
+          <div class="info-box info" style="margin-bottom:1rem;">
+            <i class="fa-solid fa-circle-info"></i>
+            <div>
+              <strong>Cara mendapatkan file 23andMe raw data:</strong><br/>
+              <span style="font-size:.82rem;">Login 23andMe → Browse Raw Data → Download → pilih file <code>.txt</code>.
+              BaldGuard hanya membaca 9 rs ID yang relevan, data lainnya diabaikan.</span>
+            </div>
+          </div>
+          <div class="upload-area" id="upload23andmeArea" onclick="document.getElementById('input23andme').click()" style="border-color:#764ba2;">
+            <i class="fa-solid fa-dna" style="color:#764ba2;"></i>
+            <p style="color:#764ba2;font-weight:600;">Klik untuk upload file raw data 23andMe (.txt)</p>
+            <p style="font-size:.78rem;margin-top:.3rem;color:#888;">File biasanya bernama: genome_Nama_Tanggal.txt</p>
+          </div>
+          <input type="file" id="input23andme" accept=".txt,.csv" style="display:none;" onchange="handle23andMeFile(this)" />
+
+          <!-- Hasil parsing -->
+          <div id="result23andme" style="display:none;margin-top:1rem;">
+            <div class="info-box success" id="msg23andmeOk" style="display:none;">
+              <i class="fa-solid fa-circle-check"></i>
+              <div>
+                <strong>Berhasil! <span id="txt23andmeCallable"></span> dari 9 SNP terbaca.</strong><br/>
+                <span style="font-size:.82rem;">SNP telah diisi otomatis ke tabel — klik <em>Analisis dengan Data Genetik</em> untuk lanjut.</span>
+              </div>
+            </div>
+            <div class="info-box warn" id="msg23andmePartial" style="display:none;">
+              <i class="fa-solid fa-triangle-exclamation"></i>
+              <div>
+                <strong>Sebagian SNP ditemukan: <span id="txt23andmePartial"></span>/9</strong><br/>
+                <span style="font-size:.82rem;">SNP yang tidak ada di file akan dianggap "Tidak Diketahui".</span>
+              </div>
+            </div>
+            <!-- Tabel ringkasan hasil 23andMe -->
+            <div style="overflow-x:auto;margin-top:.8rem;">
+              <table class="snp-table" id="table23andme">
+                <thead>
+                  <tr>
+                    <th>RS ID</th><th>Gen</th><th>Genotip 23andMe</th>
+                    <th>Alel Risiko</th><th>Status</th>
+                  </tr>
+                </thead>
+                <tbody id="tbody23andme"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ANALYZE WITH GENETIC DATA BUTTON -->
+    <div style="text-align:center;margin-top:1.5rem;">
+      <button type="button" class="btn btn-primary btn-lg" onclick="runAnalysis(true)">
+        <i class="fa-solid fa-dna"></i> Analisis dengan Data Genetik
+      </button>
+      <p style="font-size:.82rem;color:#888;margin-top:.8rem;">
+        Atau <a href="#" onclick="switchTab('results');runAnalysis(false);return false;" style="color:var(--green);">lanjut analisis klinis saja</a>
+      </p>
+    </div>
+
+  </div>
+</div>
+
+<!-- ============================== TAB 3: HASIL ============================== -->
+<div id="tab-results" class="tab-panel">
+  <div class="tab-content">
+
+    <!-- LOADING -->
+    <div id="loadingSpinner">
+      <div class="spinner"></div>
+      <p style="color:#888;">Sedang menganalisis data Anda...</p>
+    </div>
+
+    <!-- PLACEHOLDER (before analysis) -->
+    <div id="resultsPlaceholder" class="results-placeholder">
+      <i class="fa-solid fa-chart-pie"></i>
+      <h3 style="color:#aaa;font-size:1.2rem;margin-bottom:.5rem;">Belum Ada Hasil</h3>
+      <p>Lengkapi data klinis pada Tab 1 dan klik <strong>Analisis Sekarang</strong> untuk mendapatkan estimasi risiko Anda.</p>
+      <a href="#" onclick="switchTab('clinical');return false;" class="btn btn-primary" style="margin-top:1.2rem;">
+        <i class="fa-solid fa-arrow-left"></i> Ke Form Analisis
+      </a>
+    </div>
+
+    <!-- RESULTS CONTAINER -->
+    <div id="resultsContainer" style="display:none;">
+
+      <!-- TYPE BADGE -->
+      <div style="text-align:center;margin-bottom:1rem;">
+        <span class="analysis-type-badge" id="analysisTypeBadge">
+          <i class="fa-solid fa-flask"></i> Analisis Klinis Saja
+        </span>
+      </div>
+
+      <!-- GAUGE -->
+      <div class="section-card">
+        <div class="section-card-header">
+          <span class="icon"><i class="fa-solid fa-gauge-high"></i></span>
+          <h2>Skor Risiko Keseluruhan</h2>
+        </div>
+        <div class="section-card-body">
+          <div class="gauge-container">
+            <div class="gauge-bar-track" id="riskGauge">
+              <div class="gauge-marker" id="gaugeMarker" style="left:0%;"></div>
+            </div>
+            <div class="gauge-labels">
+              <span>0 — Sangat Rendah</span>
+              <span>25</span>
+              <span>50</span>
+              <span>75</span>
+              <span>100 — Sangat Tinggi</span>
+            </div>
+            <div class="gauge-score" id="riskScore" style="color:var(--green);">—</div>
+            <span class="risk-category-badge" id="riskCategory" style="background:var(--light);color:var(--dark);">—</span>
+            <span id="riskColor"></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- COMPONENT SCORE CARDS -->
+      <div class="score-cards-grid">
+        <div class="score-card" id="geneticScoreCard">
+          <div class="sc-label"><i class="fa-solid fa-dna" style="color:var(--blue);"></i> Genetik</div>
+          <div class="sc-val" id="geneticScoreVal" style="color:var(--blue);">—</div>
+          <div class="sc-bar"><div class="sc-bar-fill" id="geneticScoreBar" style="width:0%;background:var(--blue);"></div></div>
+        </div>
+        <div class="score-card" id="clinicalScoreCard">
+          <div class="sc-label"><i class="fa-solid fa-stethoscope" style="color:var(--green);"></i> Klinis</div>
+          <div class="sc-val" id="clinicalScoreVal" style="color:var(--green-d);">—</div>
+          <div class="sc-bar"><div class="sc-bar-fill" id="clinicalScoreBar" style="width:0%;background:var(--green);"></div></div>
+        </div>
+        <div class="score-card" id="familyScoreCard">
+          <div class="sc-label"><i class="fa-solid fa-people-group" style="color:var(--warn);"></i> Keluarga</div>
+          <div class="sc-val" id="familyScoreVal" style="color:var(--warn);">—</div>
+          <div class="sc-bar"><div class="sc-bar-fill" id="familyScoreBar" style="width:0%;background:var(--warn);"></div></div>
+        </div>
+        <div class="score-card" id="lifestyleScoreCard">
+          <div class="sc-label"><i class="fa-solid fa-heart-pulse" style="color:var(--danger);"></i> Gaya Hidup</div>
+          <div class="sc-val" id="lifestyleScoreVal" style="color:var(--danger);">—</div>
+          <div class="sc-bar"><div class="sc-bar-fill" id="lifestyleScoreBar" style="width:0%;background:var(--danger);"></div></div>
+        </div>
+      </div>
+
+      <!-- CHARTS -->
+      <div class="charts-grid">
+        <div class="chart-card">
+          <h4><i class="fa-solid fa-spider" style="color:var(--green-d);margin-right:.4rem;"></i>Profil Risiko Radar</h4>
+          <canvas id="radarChart"></canvas>
+        </div>
+        <div class="chart-card">
+          <h4><i class="fa-solid fa-chart-bar" style="color:var(--blue);margin-right:.4rem;"></i>Komponen Skor</h4>
+          <canvas id="barChart"></canvas>
+        </div>
+      </div>
+      <div class="section-card" id="snpHeatmapCard" style="display:none;">
+        <div class="section-card-header">
+          <span class="icon"><i class="fa-solid fa-table-cells"></i></span>
+          <h2>Distribusi SNP Risiko</h2>
+        </div>
+        <div class="section-card-body">
+          <canvas id="snpHeatmap"></canvas>
+        </div>
+      </div>
+
+      <!-- RECOMMENDATIONS -->
+      <div class="section-card">
+        <div class="section-card-header">
+          <span class="icon"><i class="fa-solid fa-lightbulb"></i></span>
+          <h2>Rekomendasi</h2>
+        </div>
+        <div class="section-card-body">
+          <ul class="rec-list" id="recommendationsList">
+            <!-- populated by JS -->
+          </ul>
+        </div>
+      </div>
+
+      <!-- COLLAPSIBLE DETAILS -->
+      <div style="margin-top:1.5rem;">
+        <div class="collapse-card">
+          <div class="collapse-header" onclick="toggleCollapse(this)">
+            <span><i class="fa-solid fa-stethoscope" style="margin-right:.5rem;color:var(--green);"></i>Detail Skor Klinis</span>
+            <i class="fa-solid fa-chevron-down"></i>
+          </div>
+          <div class="collapse-body" id="detailClinical"></div>
+        </div>
+        <div class="collapse-card">
+          <div class="collapse-header" onclick="toggleCollapse(this)">
+            <span><i class="fa-solid fa-people-group" style="margin-right:.5rem;color:var(--warn);"></i>Riwayat Keluarga</span>
+            <i class="fa-solid fa-chevron-down"></i>
+          </div>
+          <div class="collapse-body" id="detailFamily"></div>
+        </div>
+        <div class="collapse-card">
+          <div class="collapse-header" onclick="toggleCollapse(this)">
+            <span><i class="fa-solid fa-heart-pulse" style="margin-right:.5rem;color:var(--danger);"></i>Gaya Hidup</span>
+            <i class="fa-solid fa-chevron-down"></i>
+          </div>
+          <div class="collapse-body" id="detailLifestyle"></div>
+        </div>
+        <div class="collapse-card" id="geneticDetailCard" style="display:none;">
+          <div class="collapse-header" onclick="toggleCollapse(this)">
+            <span><i class="fa-solid fa-dna" style="margin-right:.5rem;color:var(--blue);"></i>Data Genetik</span>
+            <i class="fa-solid fa-chevron-down"></i>
+          </div>
+          <div class="collapse-body" id="detailGenetic"></div>
+        </div>
+      </div>
+
+      <!-- ACTION BUTTONS -->
+      <div style="display:flex;gap:1rem;flex-wrap:wrap;margin-top:2rem;justify-content:center;">
+        <button class="btn btn-secondary" onclick="window.print()">
+          <i class="fa-solid fa-print"></i> Cetak Laporan
+        </button>
+        <button class="btn btn-secondary" onclick="downloadPDF()">
+          <i class="fa-solid fa-file-pdf"></i> Unduh PDF
+        </button>
+        <button class="btn btn-primary" onclick="resetAnalysis()">
+          <i class="fa-solid fa-rotate-left"></i> Analisis Ulang
+        </button>
+      </div>
+
+    </div><!-- /resultsContainer -->
+  </div>
+</div>
+
+<!-- DISCLAIMER MODAL -->
+<div class="modal-overlay hidden" id="disclaimerModal">
+  <div class="modal-box">
+    <h3><i class="fa-solid fa-triangle-exclamation" style="color:var(--warn);margin-right:.5rem;"></i>Perhatian Penting</h3>
+    <p>
+      Hasil analisis BaldGuard adalah <strong>estimasi risiko edukatif</strong> berdasarkan kombinasi data klinis dan/atau genetik menggunakan algoritma yang disederhanakan dari literatur ilmiah.
+    </p>
+    <p>
+      Hasil ini <strong>BUKAN diagnosis klinis</strong> dan tidak menggantikan evaluasi oleh dokter spesialis dermatologi atau trikologi yang terlatih.
+    </p>
+    <p>
+      Banyak faktor yang tidak tercakup dalam analisis ini. Gunakan hasil ini sebagai bahan diskusi dengan tenaga kesehatan.
+    </p>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="document.getElementById('disclaimerModal').classList.add('hidden')">Batal</button>
+      <button class="btn btn-primary" id="disclaimerConfirm" onclick="confirmAndShowResults()">
+        <i class="fa-solid fa-check"></i> Saya Mengerti
+      </button>
+    </div>
+  </div>
+</div>
+
+<script src="js/api.js"></script>
+<script src="js/charts.js"></script>
+<script src="js/main.js"></script>
+<script>
+  // ===== TAB SWITCHING =====
+  function switchTab(tabName) {
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    const panel = document.getElementById('tab-' + tabName);
+    if (panel) panel.classList.add('active');
+    const btn = document.querySelector('[data-tab="' + tabName + '"]');
+    if (btn) btn.classList.add('active');
+  }
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => switchTab(btn.dataset.tab));
+  });
+
+  // ===== WIZARD STEPS =====
+  let currentStep = 1;
+  const totalSteps = 5;
+  const stepNames = ['Demografi','Gejala Kerontokan','Hair Pull Test','Riwayat Keluarga','Gaya Hidup'];
+
+  function changeStep(dir) {
+    const newStep = currentStep + dir;
+    if (newStep < 1 || newStep > totalSteps) return;
+    document.getElementById('section-' + currentStep).classList.remove('active');
+    currentStep = newStep;
+    document.getElementById('section-' + currentStep).classList.add('active');
+    updateProgress();
+  }
+
+  function updateProgress() {
+    const pct = Math.round((currentStep / totalSteps) * 100);
+    document.getElementById('progressBar').style.width = pct + '%';
+    document.getElementById('progressPercent').textContent = pct + '%';
+    document.getElementById('progressText').textContent = `Langkah ${currentStep} dari ${totalSteps} — ${stepNames[currentStep-1]}`;
+    document.getElementById('stepLabel').textContent = `Langkah ${currentStep} dari ${totalSteps}`;
+
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    prevBtn.style.visibility = currentStep === 1 ? 'hidden' : 'visible';
+
+    if (currentStep === totalSteps) {
+      nextBtn.innerHTML = '<i class="fa-solid fa-microscope"></i> Analisis Sekarang';
+      nextBtn.onclick = () => runAnalysis(false);
+    } else {
+      nextBtn.innerHTML = 'Lanjut <i class="fa-solid fa-arrow-right"></i>';
+      nextBtn.onclick = () => changeStep(1);
+    }
+
+    for (let i = 1; i <= totalSteps; i++) {
+      const dot = document.getElementById('dot-' + i);
+      dot.classList.remove('active','done');
+      if (i < currentStep) dot.classList.add('done');
+      else if (i === currentStep) dot.classList.add('active');
+    }
+  }
+
+  // ===== GENDER TOGGLE =====
+  document.querySelectorAll('input[name="gender"]').forEach(r => {
+    r.addEventListener('change', function() {
+      const isMale = this.value === 'male';
+      document.querySelectorAll('.male-only').forEach(el => el.style.display = isMale ? 'block' : 'none');
+      document.querySelectorAll('.female-only').forEach(el => el.style.display = isMale ? 'none' : 'block');
+    });
+  });
+
+  // ===== FAMILY HISTORY TOGGLES =====
+  document.querySelectorAll('input[name="father_bald"]').forEach(r => {
+    r.addEventListener('change', function() {
+      document.getElementById('fatherAgeGroup').style.display = this.value === 'yes' ? 'block' : 'none';
+    });
+  });
+  document.querySelectorAll('input[name="maternal_gf_bald"]').forEach(r => {
+    r.addEventListener('change', function() {
+      document.getElementById('maternalGfAgeGroup').style.display = this.value === 'yes' ? 'block' : 'none';
+    });
+  });
+
+  // ===== RADIO/CHECK HIGHLIGHT =====
+  document.querySelectorAll('.radio-option').forEach(opt => {
+    opt.addEventListener('click', function() {
+      const name = this.querySelector('input')?.name;
+      if (name) document.querySelectorAll(`[name="${name}"]`).forEach(inp => inp.closest('.radio-option')?.classList.remove('selected'));
+      this.classList.add('selected');
+    });
+  });
+  document.querySelectorAll('.check-option').forEach(opt => {
+    opt.addEventListener('click', function() {
+      setTimeout(() => {
+        this.classList.toggle('selected', this.querySelector('input')?.checked);
+      }, 0);
+    });
+  });
+  document.querySelectorAll('.scale-option').forEach(opt => {
+    opt.addEventListener('click', function() {
+      const name = this.querySelector('input')?.name;
+      if (name) document.querySelectorAll(`input[name="${name}"]`).forEach(inp => inp.closest('.scale-option')?.classList.remove('selected'));
+      this.classList.add('selected');
+    });
+  });
+
+  // ===== LIFESTYLE RANGE UPDATES =====
+  function updateStress(v) {
+    document.getElementById('val-stress').textContent = v;
+    const emojis = ['😊','😊','😊','😐','😐','😐','😰','😰','😰','😰'];
+    document.getElementById('stressEmoji').textContent = emojis[v-1] || '😐';
+  }
+  function updateSleep(v) {
+    document.getElementById('val-sleep').textContent = v;
+    const note = document.getElementById('sleepNote');
+    if (v < 6) { note.style.color = 'var(--danger)'; note.textContent = ' jam (kurang)'; }
+    else if (v < 7) { note.style.color = 'var(--warn)'; note.textContent = ' jam (cukup)'; }
+    else { note.style.color = 'var(--green)'; note.textContent = ' jam (baik)'; }
+  }
+  function toggleSmokingInput(cb) {
+    document.getElementById('smokingDetails').style.display = cb.checked ? 'block' : 'none';
+  }
+
+  // ===== FASTA / SNP TOGGLES =====
+  function toggleFastaInput(mode) {
+    const fileSec = document.getElementById('fastaFileSection');
+    const pasteSec = document.getElementById('fastaPasteSection');
+    const btns = document.querySelectorAll('#fastaToggle .sub-toggle-btn');
+    if (mode === 'file') {
+      fileSec.style.display = 'block'; pasteSec.style.display = 'none';
+      btns[0].classList.add('active'); btns[1].classList.remove('active');
+    } else {
+      fileSec.style.display = 'none'; pasteSec.style.display = 'block';
+      btns[0].classList.remove('active'); btns[1].classList.add('active');
+    }
+  }
+  function toggleSnpInput(mode) {
+    const manualSec = document.getElementById('snpManualSection');
+    const fileSec = document.getElementById('snpFileSection');
+    const btns = document.querySelectorAll('#snpToggle .sub-toggle-btn');
+    if (mode === 'manual') {
+      manualSec.style.display = 'block'; fileSec.style.display = 'none';
+      btns[0].classList.add('active'); btns[1].classList.remove('active');
+    } else {
+      manualSec.style.display = 'none'; fileSec.style.display = 'block';
+      btns[0].classList.remove('active'); btns[1].classList.add('active');
+    }
+  }
+
+  // ===== SAMPLE DATA LOADERS =====
+  const fastaSamples = {
+    very_high: '>AR_VeryHighRisk_CAG_repeat_11\nATGCTGATCGATCGATCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCGGCGGCGGCGGCGGCGGCGGCATGCTGCTGCTGCTGCTGCTGCTGCTGCTGCTG',
+    high: '>AR_HighRisk_CAG_repeat_14\nATGCTGATCGATCGATCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCGGCGGCGGCGGCGGCGGCGGCATGCTGCTGCTGCTGCTGCTG',
+    low: '>AR_LowRisk_CAG_repeat_22\nATGCTGATCGATCGATCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCGGCGGCGGCGGCATGCTG',
+    protective: '>AR_Protective_CAG_repeat_28\nATGCTGATCGATCGATCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCGGCGG'
+  };
+  function loadFastaSample(type) {
+    toggleFastaInput('paste');
+    const ta = document.getElementById('fastaTextarea');
+    ta.value = fastaSamples[type] || '';
+    showFastaPreview(ta.value);
+  }
+  function showFastaPreview(seq) {
+    if (!seq.trim()) return;
+    const preview = document.getElementById('fastaPreview');
+    const text = document.getElementById('fastaPreviewText');
+    const stats = document.getElementById('fastaStats');
+    preview.style.display = 'block';
+    text.textContent = seq.substring(0, 200) + (seq.length > 200 ? '...' : '');
+    const seqOnly = seq.replace(/^>.*\n?/,'').replace(/\s/g,'').toUpperCase();
+    const cag = (seqOnly.match(/CAG/g)||[]).length;
+    const ggn = (seqOnly.match(/GGN|GGC|GGA|GGT|GGG/g)||[]).length;
+    stats.innerHTML = `<i class="fa-solid fa-info-circle" style="color:var(--green);"></i> Panjang sekuens: <strong>${seqOnly.length}</strong> bp &nbsp;|&nbsp; CAG repeats: <strong>${cag}</strong> &nbsp;|&nbsp; GGN repeats: <strong>${ggn}</strong>`;
+  }
+  document.getElementById('fastaTextarea').addEventListener('input', function(){ showFastaPreview(this.value); });
+  function handleFastaFile(input) {
+    const file = input.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = e => { showFastaPreview(e.target.result); };
+    reader.readAsText(file);
+  }
+  function handleSnpFile(input) {
+    console.log('SNP file selected:', input.files[0]?.name);
+  }
+
+  // ===== TOGGLE SNP INPUT (tambah mode 23andMe) =====
+  function toggleSnpInput(mode) {
+    document.getElementById('snpManualSection').style.display  = mode === 'manual'  ? 'block' : 'none';
+    document.getElementById('snpFileSection').style.display    = mode === 'file'    ? 'block' : 'none';
+    document.getElementById('snp23andmeSection').style.display = mode === '23andme' ? 'block' : 'none';
+    document.querySelectorAll('#snpToggle .sub-toggle-btn').forEach((btn, i) => {
+      btn.classList.toggle('active', ['manual','file','23andme'][i] === mode);
+    });
+  }
+
+  // ===== 23andMe HANDLER =====
+  async function handle23andMeFile(input) {
+    const file = input.files[0];
+    if (!file) return;
+
+    const area = document.getElementById('upload23andmeArea');
+    area.innerHTML = '<i class="fa-solid fa-spinner fa-spin" style="color:#764ba2;"></i><p style="color:#764ba2;">Membaca file & query backend...</p>';
+
+    try {
+      const result = await upload23andMe(file);
+
+      // Tampilkan pesan status
+      document.getElementById('result23andme').style.display = 'block';
+      const callable = result.stats.callable;
+      if (callable >= 6) {
+        document.getElementById('msg23andmeOk').style.display = 'flex';
+        document.getElementById('msg23andmePartial').style.display = 'none';
+        document.getElementById('txt23andmeCallable').textContent = callable;
+      } else {
+        document.getElementById('msg23andmeOk').style.display = 'none';
+        document.getElementById('msg23andmePartial').style.display = 'flex';
+        document.getElementById('txt23andmePartial').textContent = callable;
+      }
+
+      // Render tabel ringkasan
+      const statusLabel = { HOMOZYGOUS_RISK:'🔴 Homozygous Risk', HETEROZYGOUS:'🟡 Heterozygous', NORMAL:'🟢 Normal', NO_CALL:'⚪ No Call', NOT_FOUND:'— Tidak Ada' };
+      const tbody = document.getElementById('tbody23andme');
+      tbody.innerHTML = result.snp_summary.map(s => `
+        <tr>
+          <td><strong style="color:var(--blue);">${s.rs_id}</strong></td>
+          <td>${s.gene}</td>
+          <td><code style="font-size:.82rem;">${s.genotype}</code></td>
+          <td><span style="background:#fdf2f2;color:var(--danger);padding:.15rem .45rem;border-radius:4px;font-size:.78rem;">${s.risk_allele}</span></td>
+          <td>${statusLabel[s.status] || s.status}</td>
+        </tr>`).join('');
+
+      // Simpan genotypes untuk dipakai saat analisis
+      window._23andmeGenotypes = result.snp_genotypes;
+
+      area.innerHTML = `<i class="fa-solid fa-circle-check" style="color:#27ae60;font-size:2rem;"></i><p style="color:#27ae60;font-weight:600;">${file.name} — selesai diproses</p>`;
+    } catch (err) {
+      area.innerHTML = '<i class="fa-solid fa-circle-xmark" style="color:var(--danger);"></i><p style="color:var(--danger);">Gagal memproses file. Pastikan format 23andMe benar.</p>';
+      console.error('23andMe upload error:', err);
+    }
+  }
+
+  // ===== NCBI REFERENCE HANDLER =====
+  async function loadNCBIReference() {
+    const btn = document.getElementById('ncbiFetchBtn');
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Menghubungi NCBI...';
+
+    document.getElementById('ncbiResult').style.display = 'block';
+    document.getElementById('ncbiSuccess').style.display = 'none';
+    document.getElementById('ncbiError').style.display = 'none';
+
+    try {
+      const data = await fetchARReference();
+      if (data.success) {
+        document.getElementById('ncbiSuccess').style.display = 'flex';
+        document.getElementById('ncbiAccession').textContent  = data.accession;
+        document.getElementById('ncbiLength').textContent     = data.sequence_length.toLocaleString();
+        document.getElementById('ncbiCAG').textContent        = data.cag_count + ' repeats';
+        document.getElementById('ncbiDesc').textContent       = data.description?.substring(0, 80) + '...';
+        document.getElementById('ncbiSeqPreview').textContent = data.sequence_preview;
+        btn.innerHTML = '<i class="fa-solid fa-database" style="color:#3498db;"></i> Referensi NCBI ✓';
+      } else {
+        document.getElementById('ncbiError').style.display = 'flex';
+        document.getElementById('ncbiErrorMsg').textContent = data.error || 'Koneksi ke NCBI gagal.';
+        btn.innerHTML = '<i class="fa-solid fa-database" style="color:#3498db;"></i> Cek Referensi NCBI';
+        btn.disabled = false;
+      }
+    } catch (err) {
+      document.getElementById('ncbiError').style.display = 'flex';
+      document.getElementById('ncbiErrorMsg').textContent = err.message;
+      btn.innerHTML = '<i class="fa-solid fa-database" style="color:#3498db;"></i> Cek Referensi NCBI';
+      btn.disabled = false;
+    }
+  }
+
+  const snpSamples = {
+    high:   { rs6152:'risk', rs1204014:'risk', rs12558842:'risk', rs1160312:'risk', rs9287638:'risk', rs2180439:'risk', rs6047844:'risk', rs4679291:'risk', rs7349332:'risk' },
+    medium: { rs6152:'risk', rs1204014:'risk', rs12558842:'risk', rs1160312:'ref',  rs9287638:'ref',  rs2180439:'ref',  rs6047844:'unknown', rs4679291:'unknown', rs7349332:'ref' },
+    low:    { rs6152:'ref',  rs1204014:'ref',  rs12558842:'ref',  rs1160312:'ref',  rs9287638:'ref',  rs2180439:'ref',  rs6047844:'ref',  rs4679291:'ref',  rs7349332:'ref' }
+  };
+  function loadSnpSample(type) {
+    const sample = snpSamples[type];
+    if (!sample) return;
+    for (const [rs, val] of Object.entries(sample)) {
+      const sel = document.querySelector(`select[name="snp_${rs}"]`);
+      if (sel) sel.value = val;
+    }
+  }
+
+  // ===== ANALYSIS & RESULTS =====
+  function runAnalysis(withGenetic) {
+    document.getElementById('disclaimerModal').classList.remove('hidden');
+    window._pendingWithGenetic = withGenetic;
+  }
+  function confirmAndShowResults() {
+    document.getElementById('disclaimerModal').classList.add('hidden');
+    switchTab('results');
+    document.getElementById('resultsPlaceholder').style.display = 'none';
+    document.getElementById('loadingSpinner').style.display = 'block';
+    document.getElementById('resultsContainer').style.display = 'none';
+    setTimeout(() => {
+      document.getElementById('loadingSpinner').style.display = 'none';
+      document.getElementById('resultsContainer').style.display = 'block';
+      if (typeof window.BaldGuardMain !== 'undefined' && window.BaldGuardMain.processResults) {
+        window.BaldGuardMain.processResults(window._pendingWithGenetic);
+      } else {
+        showMockResults(window._pendingWithGenetic);
+      }
+    }, 1800);
+  }
+  function showMockResults(withGenetic) {
+    const score = withGenetic ? 62 : 48;
+    const color = score < 30 ? '#2ecc71' : score < 55 ? '#f39c12' : score < 75 ? '#e74c3c' : '#8e1919';
+    const cat   = score < 30 ? 'Rendah' : score < 55 ? 'Sedang' : score < 75 ? 'Tinggi' : 'Sangat Tinggi';
+
+    document.getElementById('riskScore').textContent = score;
+    document.getElementById('riskScore').style.color = color;
+    document.getElementById('riskCategory').textContent = cat;
+    document.getElementById('riskCategory').style.background = color + '22';
+    document.getElementById('riskCategory').style.color = color;
+    document.getElementById('gaugeMarker').style.left = score + '%';
+
+    if (withGenetic) {
+      document.getElementById('analysisTypeBadge').innerHTML = '<i class="fa-solid fa-dna"></i> Analisis Hybrid (Genetik + Klinis)';
+      document.getElementById('snpHeatmapCard').style.display = 'block';
+      document.getElementById('geneticDetailCard').style.display = 'block';
+      document.getElementById('geneticScoreVal').textContent = '58';
+      document.getElementById('geneticScoreBar').style.width = '58%';
+    }
+    document.getElementById('clinicalScoreVal').textContent = '44';
+    document.getElementById('clinicalScoreBar').style.width = '44%';
+    document.getElementById('familyScoreVal').textContent = '70';
+    document.getElementById('familyScoreBar').style.width = '70%';
+    document.getElementById('lifestyleScoreVal').textContent = '35';
+    document.getElementById('lifestyleScoreBar').style.width = '35%';
+
+    const recList = document.getElementById('recommendationsList');
+    const recs = [
+      { icon: 'fa-user-doctor', color: var_green, text: 'Konsultasikan hasil ini dengan dokter spesialis dermatologi atau trikologi.' },
+      { icon: 'fa-moon', color: var_warn, text: 'Jaga kualitas tidur minimal 7–8 jam per malam untuk meminimalisir stres oksidatif pada folikel.' },
+      { icon: 'fa-apple-whole', color: var_green, text: 'Perbanyak konsumsi protein, zinc, vitamin D, dan biotin melalui makanan atau suplemen.' },
+      { icon: 'fa-spa', color: var_blue, text: 'Kurangi stres dengan meditasi, yoga, atau aktivitas relaksasi rutin.' },
+      { icon: 'fa-scissors', color: var_warn, text: 'Hindari styling agresif seperti kuncir ketat, bleaching, atau perawatan panas berlebihan.' },
+    ];
+    const var_green = '#27ae60', var_warn = '#f39c12', var_blue = '#3498db';
+    recList.innerHTML = recs.map(r =>
+      `<li class="rec-item"><span class="rec-icon"><i class="fa-solid ${r.icon}" style="color:${r.color};"></i></span><span>${r.text}</span></li>`
+    ).join('');
+
+    document.getElementById('detailClinical').innerHTML = '<p>Norwood/Ludwig scale, pola kerontokan, dan durasi gejala berkontribusi pada skor klinis sebesar 44/100.</p>';
+    document.getElementById('detailFamily').innerHTML = '<p>Riwayat keluarga paternal dan maternal dianalisis. Kakek dari pihak ibu memberikan bobot tertinggi dalam skor keluarga.</p>';
+    document.getElementById('detailLifestyle').innerHTML = '<p>Tingkat stres, kualitas tidur, pola makan, dan kebiasaan lainnya dievaluasi untuk skor gaya hidup.</p>';
+    if (withGenetic) document.getElementById('detailGenetic').innerHTML = '<p>Analisis 9 SNP dan panjang CAG repeat pada gen AR telah dilakukan. Hasilnya menunjukkan beberapa varian risiko yang hadir.</p>';
+
+    if (typeof window.BaldGuardCharts !== 'undefined') {
+      window.BaldGuardCharts.init(withGenetic);
+    } else {
+      initDefaultCharts(withGenetic);
+    }
+  }
+  function initDefaultCharts(withGenetic) {
+    const radarCtx = document.getElementById('radarChart');
+    if (radarCtx && !radarCtx._chart) {
+      radarCtx._chart = new Chart(radarCtx, {
+        type: 'radar',
+        data: {
+          labels: ['Genetik','Klinis','Keluarga','Gaya Hidup','Usia','Stres'],
+          datasets: [{
+            label: 'Skor Risiko',
+            data: withGenetic ? [58,44,70,35,40,50] : [30,44,70,35,40,50],
+            fill: true,
+            backgroundColor: 'rgba(46,204,113,0.2)',
+            borderColor: '#27ae60',
+            pointBackgroundColor: '#27ae60',
+          }]
+        },
+        options: { responsive: true, scales: { r: { min:0, max:100, ticks:{ stepSize:25 } } }, plugins:{ legend:{ display:false } } }
+      });
+    }
+    const barCtx = document.getElementById('barChart');
+    if (barCtx && !barCtx._chart) {
+      barCtx._chart = new Chart(barCtx, {
+        type: 'bar',
+        data: {
+          labels: ['Genetik','Klinis','Keluarga','Gaya Hidup'],
+          datasets: [{
+            label: 'Skor (0–100)',
+            data: withGenetic ? [58,44,70,35] : [30,44,70,35],
+            backgroundColor: ['#3498db','#2ecc71','#f39c12','#e74c3c'],
+          }]
+        },
+        options: { responsive: true, scales: { y: { min:0, max:100 } }, plugins:{ legend:{ display:false } } }
+      });
+    }
+    if (withGenetic) {
+      const heatCtx = document.getElementById('snpHeatmap');
+      if (heatCtx && !heatCtx._chart) {
+        heatCtx._chart = new Chart(heatCtx, {
+          type: 'bar',
+          data: {
+            labels: ['rs6152','rs1204014','rs12558842','rs1160312','rs9287638','rs2180439','rs6047844','rs4679291','rs7349332'],
+            datasets: [{
+              label: 'Kontribusi PRS',
+              data: [1.54,1.42,1.51,1.38,1.29,1.33,1.27,1.22,1.19],
+              backgroundColor: '#e74c3c',
+            }]
+          },
+          options: { indexAxis:'y', responsive:true, plugins:{ legend:{ display:false } } }
+        });
+      }
+    }
+  }
+
+  function toggleCollapse(header) {
+    const body = header.nextElementSibling;
+    const icon = header.querySelector('.fa-chevron-down, .fa-chevron-up');
+    body.classList.toggle('open');
+    if (icon) { icon.classList.toggle('fa-chevron-down'); icon.classList.toggle('fa-chevron-up'); }
+  }
+  function resetAnalysis() {
+    switchTab('clinical');
+    currentStep = 1;
+    updateProgress();
+    document.getElementById('section-1').classList.add('active');
+    for (let i = 2; i <= 5; i++) document.getElementById('section-'+i).classList.remove('active');
+    document.getElementById('resultsContainer').style.display = 'none';
+    document.getElementById('resultsPlaceholder').style.display = 'block';
+  }
+  function downloadPDF() {
+    alert('Fitur unduh PDF akan tersedia setelah integrasi dengan backend FastAPI. Untuk saat ini, gunakan fitur cetak browser (Ctrl+P).');
+  }
+  updateProgress();
+</script>
+</body>
+</html>

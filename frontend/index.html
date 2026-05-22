@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BaldGuard — Sistem Peringatan Kebotakan Dini</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+    /* ===== RESET & BASE ===== */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --green:   #2ecc71;
+      --green-d: #27ae60;
+      --blue:    #3498db;
+      --warn:    #f39c12;
+      --danger:  #e74c3c;
+      --dark:    #2c3e50;
+      --dark2:   #34495e;
+      --light:   #ecf0f1;
+      --light2:  #f8f9fa;
+      --white:   #ffffff;
+      --radius:  10px;
+      --shadow:  0 4px 20px rgba(0,0,0,.12);
+    }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: var(--dark); background: var(--light2); line-height: 1.6; }
+
+    /* ===== NAVBAR ===== */
+    .navbar {
+      position: sticky; top: 0; z-index: 100;
+      background: var(--dark);
+      padding: 0 2rem;
+      display: flex; align-items: center; justify-content: space-between;
+      height: 64px;
+      box-shadow: 0 2px 12px rgba(0,0,0,.3);
+    }
+    .navbar-brand {
+      display: flex; align-items: center; gap: .6rem;
+      text-decoration: none; color: var(--white);
+      font-size: 1.35rem; font-weight: 700; letter-spacing: .5px;
+    }
+    .navbar-brand .brand-icon {
+      background: linear-gradient(135deg, var(--green), var(--green-d));
+      width: 36px; height: 36px; border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: .9rem;
+    }
+    .navbar-nav { display: flex; gap: .25rem; list-style: none; }
+    .navbar-nav a {
+      color: rgba(255,255,255,.8); text-decoration: none;
+      padding: .5rem .9rem; border-radius: 6px;
+      font-size: .92rem; transition: all .2s;
+    }
+    .navbar-nav a:hover, .navbar-nav a.active {
+      background: rgba(255,255,255,.1); color: var(--white);
+    }
+    .navbar-nav a.active { color: var(--green); }
+    .nav-cta {
+      background: var(--green) !important; color: var(--white) !important;
+      font-weight: 600;
+    }
+    .nav-cta:hover { background: var(--green-d) !important; }
+
+    /* ===== HERO ===== */
+    .hero {
+      background: linear-gradient(135deg, var(--dark) 0%, var(--dark2) 40%, var(--green-d) 100%);
+      color: var(--white);
+      padding: 6rem 2rem 5rem;
+      text-align: center;
+      position: relative; overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+      pointer-events: none;
+    }
+    .hero-content { position: relative; max-width: 800px; margin: 0 auto; }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: .4rem;
+      background: rgba(255,255,255,.15); border: 1px solid rgba(255,255,255,.3);
+      color: var(--white); padding: .35rem 1rem; border-radius: 50px;
+      font-size: .82rem; margin-bottom: 1.5rem; backdrop-filter: blur(4px);
+    }
+    .hero h1 {
+      font-size: clamp(3rem, 8vw, 5.5rem);
+      font-weight: 800; letter-spacing: -1px;
+      background: linear-gradient(90deg, #fff, var(--green));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: .4rem;
+    }
+    .hero h2 {
+      font-size: clamp(1.1rem, 3vw, 1.6rem);
+      font-weight: 400; opacity: .92; margin-bottom: 1rem;
+    }
+    .hero p {
+      font-size: 1rem; opacity: .78; margin-bottom: 2.2rem;
+      max-width: 540px; margin-left: auto; margin-right: auto;
+    }
+    .hero-buttons { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; margin-bottom: 2rem; }
+    .btn {
+      display: inline-flex; align-items: center; gap: .5rem;
+      padding: .75rem 1.8rem; border-radius: 8px; font-size: 1rem;
+      font-weight: 600; text-decoration: none; border: 2px solid transparent;
+      cursor: pointer; transition: all .2s;
+    }
+    .btn-primary { background: var(--green); color: var(--white); border-color: var(--green); }
+    .btn-primary:hover { background: var(--green-d); border-color: var(--green-d); transform: translateY(-1px); box-shadow: 0 6px 20px rgba(46,204,113,.4); }
+    .btn-outline { background: transparent; color: var(--white); border-color: rgba(255,255,255,.6); }
+    .btn-outline:hover { background: rgba(255,255,255,.1); border-color: var(--white); }
+    .disclaimer-badge {
+      display: inline-flex; align-items: center; gap: .4rem;
+      background: rgba(231,76,60,.2); border: 1px solid rgba(231,76,60,.5);
+      color: #ffcdd2; padding: .4rem 1.1rem; border-radius: 6px;
+      font-size: .82rem;
+    }
+
+    /* ===== STATS ===== */
+    .stats-section { background: var(--white); padding: 3rem 2rem; }
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.5rem; max-width: 900px; margin: 0 auto; }
+    .stat-card {
+      text-align: center; padding: 2rem 1.5rem;
+      border-radius: var(--radius); border: 1px solid var(--light);
+      background: var(--light2); transition: transform .2s;
+    }
+    .stat-card:hover { transform: translateY(-3px); box-shadow: var(--shadow); }
+    .stat-icon { font-size: 2.2rem; color: var(--green); margin-bottom: .8rem; }
+    .stat-number { font-size: 2rem; font-weight: 800; color: var(--dark); line-height: 1; }
+    .stat-label { font-size: .88rem; color: var(--dark2); margin-top: .3rem; }
+
+    /* ===== SECTION COMMONS ===== */
+    .section { padding: 4.5rem 2rem; }
+    .section-alt { background: var(--white); }
+    .section-title { text-align: center; margin-bottom: 3rem; }
+    .section-title h2 { font-size: 1.9rem; font-weight: 700; color: var(--dark); }
+    .section-title p { font-size: 1rem; color: #666; margin-top: .5rem; }
+    .section-title .title-line {
+      width: 50px; height: 4px; background: var(--green);
+      border-radius: 2px; margin: .8rem auto 0;
+    }
+    .container { max-width: 1100px; margin: 0 auto; }
+
+    /* ===== HOW IT WORKS ===== */
+    .steps-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 2rem; }
+    .step-card {
+      background: var(--white); border-radius: var(--radius);
+      padding: 2rem 1.5rem; text-align: center;
+      border: 1px solid var(--light); box-shadow: var(--shadow);
+      position: relative; transition: transform .2s;
+    }
+    .step-card:hover { transform: translateY(-4px); }
+    .step-number {
+      position: absolute; top: -16px; left: 50%; transform: translateX(-50%);
+      background: var(--green); color: var(--white);
+      width: 32px; height: 32px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; font-size: .85rem; box-shadow: 0 2px 8px rgba(46,204,113,.5);
+    }
+    .step-icon { font-size: 2.5rem; color: var(--green-d); margin: .5rem 0 1rem; }
+    .step-card h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: .5rem; }
+    .step-card p { font-size: .9rem; color: #666; }
+
+    /* ===== WHY IT MATTERS ===== */
+    .why-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: center; }
+    @media (max-width: 720px) { .why-grid { grid-template-columns: 1fr; } }
+    .why-text h2 { font-size: 1.7rem; font-weight: 700; margin-bottom: 1rem; }
+    .why-text p { color: #555; margin-bottom: 1rem; }
+    .gene-info-box {
+      background: linear-gradient(135deg, #e8f8f5, #d5f5e3);
+      border-left: 4px solid var(--green);
+      padding: 1.2rem 1.5rem; border-radius: 0 8px 8px 0; margin-top: 1.5rem;
+    }
+    .gene-info-box h4 { font-size: .95rem; font-weight: 700; color: var(--green-d); margin-bottom: .4rem; }
+    .gene-info-box p { font-size: .88rem; color: #2d6a4f; margin: 0; }
+    .why-visual {
+      background: var(--dark); border-radius: var(--radius);
+      padding: 2rem; color: var(--white);
+    }
+    .pathway-step {
+      display: flex; align-items: center; gap: 1rem;
+      padding: .8rem; margin-bottom: .5rem;
+      background: rgba(255,255,255,.05); border-radius: 8px;
+    }
+    .pathway-icon { font-size: 1.4rem; min-width: 40px; text-align: center; }
+    .pathway-arrow { text-align: center; color: var(--green); font-size: 1.2rem; margin: .2rem 0; }
+    .pathway-step h4 { font-size: .9rem; font-weight: 700; margin-bottom: .1rem; }
+    .pathway-step p { font-size: .78rem; opacity: .7; margin: 0; }
+
+    /* ===== SAMPLE PROFILES ===== */
+    .profiles-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 1.5rem; }
+    .profile-card {
+      background: var(--white); border-radius: var(--radius);
+      padding: 1.5rem; border-top: 4px solid;
+      box-shadow: var(--shadow); transition: transform .2s;
+    }
+    .profile-card:hover { transform: translateY(-3px); }
+    .profile-card.risk-low    { border-color: var(--green); }
+    .profile-card.risk-medium { border-color: var(--warn); }
+    .profile-card.risk-high   { border-color: var(--danger); }
+    .profile-card.risk-vhigh  { border-color: #8e1919; }
+    .profile-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem; }
+    .profile-avatar {
+      width: 46px; height: 46px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.4rem;
+    }
+    .risk-badge {
+      font-size: .75rem; font-weight: 700; padding: .25rem .7rem;
+      border-radius: 50px; letter-spacing: .5px;
+    }
+    .badge-low    { background: #d5f5e3; color: #1a7a47; }
+    .badge-medium { background: #fef9e7; color: #9a7d0a; }
+    .badge-high   { background: #fdf2f2; color: #922b21; }
+    .badge-vhigh  { background: #f9ebea; color: #641e16; }
+    .profile-name { font-weight: 700; margin-bottom: .25rem; }
+    .profile-detail { font-size: .82rem; color: #666; margin-bottom: .2rem; }
+    .profile-score { font-size: 1.8rem; font-weight: 800; margin-top: .8rem; }
+
+    /* ===== FOOTER ===== */
+    footer {
+      background: var(--dark); color: rgba(255,255,255,.7);
+      text-align: center; padding: 2rem;
+      font-size: .88rem;
+    }
+    footer strong { color: var(--green); }
+    footer .disclaimer { margin-top: .5rem; color: rgba(231,76,60,.8); font-size: .8rem; }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 600px) {
+      .navbar-nav { display: none; }
+      .hero { padding: 4rem 1rem 3.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <a href="index.html" class="navbar-brand">
+    <div class="brand-icon">
+      <i class="fa-solid fa-dna" style="color:#fff; font-size:.85rem;"></i>
+    </div>
+    BaldGuard
+  </a>
+  <ul class="navbar-nav">
+    <li><a href="index.html" class="active">Beranda</a></li>
+    <li><a href="analyze.html" class="nav-cta"><i class="fa-solid fa-microscope"></i> Analisis</a></li>
+    <li><a href="about.html">Tentang</a></li>
+    <li><a href="database.html">Database SNP</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-content">
+    <div class="hero-badge">
+      <i class="fa-solid fa-shield-halved"></i>
+      Computational Biology Project — BINUS University
+    </div>
+    <h1>BaldGuard</h1>
+    <h2>Sistem Peringatan Kebotakan Dini</h2>
+    <p>Berbasis Computational Biology — Analisis Genetik &amp; Klinis Terintegrasi untuk Penilaian Risiko Androgenetic Alopecia</p>
+    <div class="hero-buttons">
+      <a href="analyze.html" class="btn btn-primary">
+        <i class="fa-solid fa-play"></i> Mulai Analisis
+      </a>
+      <a href="about.html" class="btn btn-outline">
+        <i class="fa-solid fa-book-open"></i> Pelajari Lebih
+      </a>
+    </div>
+    <div class="disclaimer-badge">
+      <i class="fa-solid fa-flask"></i>
+      Untuk Tujuan Edukasi — Bukan Alat Diagnostik Klinis
+    </div>
+  </div>
+</section>
+
+<!-- STATS -->
+<section class="stats-section">
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-icon"><i class="fa-solid fa-users"></i></div>
+      <div class="stat-number">~50%</div>
+      <div class="stat-label">Pria di atas 50 tahun terkena AGA</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon"><i class="fa-solid fa-dna"></i></div>
+      <div class="stat-number">9 SNP</div>
+      <div class="stat-label">Teranalisis dari literatur ilmiah</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon"><i class="fa-solid fa-chart-bar"></i></div>
+      <div class="stat-number">5 Faktor</div>
+      <div class="stat-label">Risiko klinis diukur secara komprehensif</div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="section">
+  <div class="container">
+    <div class="section-title">
+      <h2>Cara Kerja BaldGuard</h2>
+      <p>Tiga langkah sederhana menuju pemahaman risiko genetik Anda</p>
+      <div class="title-line"></div>
+    </div>
+    <div class="steps-grid">
+      <div class="step-card">
+        <div class="step-number">1</div>
+        <div class="step-icon"><i class="fa-solid fa-clipboard-list"></i></div>
+        <h3>Input Data</h3>
+        <p>Isi kuesioner klinis lengkap atau unggah data DNA Anda dari layanan seperti 23andMe atau AncestryDNA</p>
+      </div>
+      <div class="step-card">
+        <div class="step-number">2</div>
+        <div class="step-icon"><i class="fa-solid fa-flask"></i></div>
+        <h3>Analisis AI</h3>
+        <p>Algoritma hybrid menghitung Polygenic Risk Score dari data genetik dan menggabungkannya dengan skor klinis</p>
+      </div>
+      <div class="step-card">
+        <div class="step-number">3</div>
+        <div class="step-icon"><i class="fa-solid fa-chart-line"></i></div>
+        <h3>Hasil &amp; Saran</h3>
+        <p>Dapatkan laporan risiko komprehensif beserta rekomendasi tindak lanjut dan gaya hidup yang disesuaikan</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WHY IT MATTERS -->
+<section class="section section-alt">
+  <div class="container">
+    <div class="why-grid">
+      <div class="why-text">
+        <h2>Mengapa AGA Perlu Dipahami Lebih Awal?</h2>
+        <p>
+          <strong>Androgenetic Alopecia (AGA)</strong> adalah bentuk kerontokan rambut paling umum,
+          disebabkan oleh interaksi antara hormon androgen (terutama DHT) dan faktor genetik.
+          Kondisi ini bersifat progresif — semakin awal dideteksi, semakin efektif intervensi yang bisa dilakukan.
+        </p>
+        <p>
+          Penelitian menunjukkan bahwa <strong>gen AR (Androgen Receptor)</strong> yang terletak pada
+          kromosom X memainkan peran kunci. Karena bersifat X-linked, riwayat kebotakan dari
+          <em>kakek dari pihak ibu</em> memiliki pengaruh lebih besar dibanding dari pihak ayah.
+        </p>
+        <div class="gene-info-box">
+          <h4><i class="fa-solid fa-circle-info" style="margin-right:.4rem;"></i>Gen AR &amp; Pewarisan X-linked</h4>
+          <p>
+            Pria mewarisi kromosom X dari ibu mereka. Gen AR pada kromosom X ini sangat
+            menentukan sensitivitas folikel rambut terhadap DHT. Jumlah pengulangan CAG
+            yang pendek berkorelasi dengan aktivitas androgen yang lebih tinggi.
+          </p>
+        </div>
+      </div>
+      <div class="why-visual">
+        <h3 style="color:var(--green);margin-bottom:1.2rem;font-size:1rem;text-transform:uppercase;letter-spacing:1px;">
+          <i class="fa-solid fa-route"></i> Jalur DHT → AGA
+        </h3>
+        <div class="pathway-step">
+          <div class="pathway-icon">🧬</div>
+          <div>
+            <h4>Gen AR (Xq11-12)</h4>
+            <p>Mengkode protein Androgen Receptor</p>
+          </div>
+        </div>
+        <div class="pathway-arrow"><i class="fa-solid fa-arrow-down"></i></div>
+        <div class="pathway-step">
+          <div class="pathway-icon">⚗️</div>
+          <div>
+            <h4>Enzim 5α-Reductase</h4>
+            <p>Mengubah Testosteron → DHT</p>
+          </div>
+        </div>
+        <div class="pathway-arrow"><i class="fa-solid fa-arrow-down"></i></div>
+        <div class="pathway-step">
+          <div class="pathway-icon">🔗</div>
+          <div>
+            <h4>DHT + Reseptor AR</h4>
+            <p>Ikatan dengan afinitas tinggi</p>
+          </div>
+        </div>
+        <div class="pathway-arrow"><i class="fa-solid fa-arrow-down"></i></div>
+        <div class="pathway-step">
+          <div class="pathway-icon">💀</div>
+          <div>
+            <h4>Miniaturisasi Folikel</h4>
+            <p>Folikel mengecil → rambut vellus</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SAMPLE PROFILES -->
+<section class="section">
+  <div class="container">
+    <div class="section-title">
+      <h2>Contoh Profil Risiko</h2>
+      <p>Berikut beberapa contoh profil berdasarkan kombinasi faktor genetik dan klinis</p>
+      <div class="title-line"></div>
+    </div>
+    <div class="profiles-grid">
+      <div class="profile-card risk-low">
+        <div class="profile-header">
+          <div class="profile-avatar" style="background:#d5f5e3;">👩</div>
+          <span class="risk-badge badge-low">RENDAH</span>
+        </div>
+        <div class="profile-name">Siti, 28 tahun</div>
+        <div class="profile-detail"><i class="fa-solid fa-venus" style="color:#e91e8c;"></i> Wanita, Asia</div>
+        <div class="profile-detail"><i class="fa-solid fa-circle-check" style="color:var(--green);"></i> Tidak ada riwayat keluarga</div>
+        <div class="profile-detail"><i class="fa-solid fa-circle-check" style="color:var(--green);"></i> CAG repeat panjang (22)</div>
+        <div class="profile-score" style="color:var(--green);">18 / 100</div>
+      </div>
+      <div class="profile-card risk-medium">
+        <div class="profile-header">
+          <div class="profile-avatar" style="background:#fef9e7;">👨</div>
+          <span class="risk-badge badge-medium">SEDANG</span>
+        </div>
+        <div class="profile-name">Budi, 35 tahun</div>
+        <div class="profile-detail"><i class="fa-solid fa-mars" style="color:#2196f3;"></i> Pria, Asia</div>
+        <div class="profile-detail"><i class="fa-solid fa-triangle-exclamation" style="color:var(--warn);"></i> Ayah mulai botak usia 40</div>
+        <div class="profile-detail"><i class="fa-solid fa-triangle-exclamation" style="color:var(--warn);"></i> Norwood III, stres tinggi</div>
+        <div class="profile-score" style="color:var(--warn);">52 / 100</div>
+      </div>
+      <div class="profile-card risk-high">
+        <div class="profile-header">
+          <div class="profile-avatar" style="background:#fdf2f2;">👴</div>
+          <span class="risk-badge badge-high">TINGGI</span>
+        </div>
+        <div class="profile-name">Ahmad, 45 tahun</div>
+        <div class="profile-detail"><i class="fa-solid fa-mars" style="color:#2196f3;"></i> Pria, Asia</div>
+        <div class="profile-detail"><i class="fa-solid fa-circle-xmark" style="color:var(--danger);"></i> Kakek ibu + ayah botak</div>
+        <div class="profile-detail"><i class="fa-solid fa-circle-xmark" style="color:var(--danger);"></i> Norwood V, CAG pendek (14)</div>
+        <div class="profile-score" style="color:var(--danger);">74 / 100</div>
+      </div>
+      <div class="profile-card risk-vhigh">
+        <div class="profile-header">
+          <div class="profile-avatar" style="background:#f9ebea;">🧔</div>
+          <span class="risk-badge badge-vhigh">SANGAT TINGGI</span>
+        </div>
+        <div class="profile-name">Doni, 50 tahun</div>
+        <div class="profile-detail"><i class="fa-solid fa-mars" style="color:#2196f3;"></i> Pria, Kaukasian</div>
+        <div class="profile-detail"><i class="fa-solid fa-circle-xmark" style="color:#8e1919;"></i> Keluarga 3 generasi botak</div>
+        <div class="profile-detail"><i class="fa-solid fa-circle-xmark" style="color:#8e1919;"></i> Norwood VII, 8 SNP risiko</div>
+        <div class="profile-score" style="color:#8e1919;">91 / 100</div>
+      </div>
+    </div>
+    <div style="text-align:center;margin-top:2.5rem;">
+      <a href="analyze.html" class="btn btn-primary" style="font-size:1.05rem;padding:.85rem 2.2rem;">
+        <i class="fa-solid fa-microscope"></i> Mulai Analisis Saya Sekarang
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <strong>BaldGuard</strong> &copy; 2024 |
+  Project UAS Computational Biology | BINUS University
+  <div class="disclaimer">
+    <i class="fa-solid fa-triangle-exclamation"></i>
+    BUKAN alat diagnostik klinis — Hanya untuk tujuan edukasi dan penelitian
+  </div>
+</footer>
+
+</body>
+</html>

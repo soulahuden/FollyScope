@@ -1,0 +1,7 @@
+services:
+  baldguard:
+    build: .
+    container_name: baldguard
+    ports:
+      - "8000:8000"
+    restart: unless-stopped

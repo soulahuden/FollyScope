@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Database SNP Referensi — BaldGuard</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+    .db-hero { background:linear-gradient(135deg,#1a5276 0%,#2c3e50 100%); color:#fff; padding:70px 20px 50px; text-align:center; }
+    .db-hero h1 { font-size:2.2rem; margin-bottom:.4rem; }
+    .db-hero p  { font-size:1rem; opacity:.85; }
+    .db-container { max-width:1100px; margin:0 auto; padding:40px 20px 60px; }
+    .db-controls { display:flex; gap:12px; align-items:center; flex-wrap:wrap; margin-bottom:24px; }
+    .db-controls .search-wrap { flex:1; min-width:220px; position:relative; }
+    .db-controls .search-wrap i { position:absolute; left:12px; top:50%; transform:translateY(-50%); color:#95a5a6; pointer-events:none; }
+    .db-controls input[type="text"] { width:100%; padding:10px 12px 10px 36px; border:2px solid #dde; border-radius:8px; font-size:.92rem; outline:none; transition:border-color .2s; }
+    .db-controls input[type="text"]:focus { border-color:#3498db; }
+    .db-controls select { padding:10px 14px; border:2px solid #dde; border-radius:8px; font-size:.92rem; background:#fff; cursor:pointer; }
+    .db-stats { display:flex; gap:16px; flex-wrap:wrap; margin-bottom:28px; }
+    .stat-pill { display:flex; align-items:center; gap:8px; background:#f8f9fa; border:1px solid #e0e0e0; border-radius:20px; padding:8px 18px; font-size:.88rem; color:#2c3e50; }
+    .stat-pill strong { color:#27ae60; }
+    .snp-table-wrap { overflow-x:auto; border-radius:12px; box-shadow:0 4px 18px rgba(0,0,0,.07); }
+    .snp-table { width:100%; border-collapse:collapse; font-size:.88rem; }
+    .snp-table thead th { background:#2c3e50; color:#fff; padding:12px 14px; text-align:left; white-space:nowrap; position:sticky; top:0; }
+    .snp-table thead th.sortable { cursor:pointer; user-select:none; }
+    .snp-table thead th.sortable:hover { background:#34495e; }
+    .snp-table thead th .sort-icon { margin-left:4px; opacity:.5; font-size:.75rem; }
+    .snp-table tbody tr { border-bottom:1px solid #eef0f3; cursor:pointer; transition:background .15s; }
+    .snp-table tbody tr:hover { background:#f0f8ff; }
+    .snp-table tbody tr.selected { background:#e8f5e9; }
+    .snp-table td { padding:11px 14px; vertical-align:top; }
+    .rs-link { color:#3498db; font-weight:700; text-decoration:none; }
+    .rs-link:hover { text-decoration:underline; }
+    .chr-badge { display:inline-block; padding:2px 9px; border-radius:12px; font-size:.77rem; font-weight:700; }
+    .chr-x { background:#fde8e8; color:#c0392b; }
+    .chr-auto { background:#e9f7ef; color:#1e8449; }
+    .allele-risk { display:inline-block; padding:1px 8px; background:#e74c3c; color:#fff; border-radius:4px; font-weight:700; font-size:.82rem; }
+    .allele-ref  { display:inline-block; padding:1px 8px; background:#2ecc71; color:#fff; border-radius:4px; font-weight:700; font-size:.82rem; }
+    .or-bar-wrap { display:flex; align-items:center; gap:8px; }
+    .or-bar { height:8px; border-radius:4px; background:#e74c3c; transition:width .3s; }
+    .or-val { font-weight:700; color:#c0392b; font-size:.88rem; min-width:36px; }
+    .weight-dot { display:inline-block; width:10px; height:10px; border-radius:50%; background:#9b59b6; }
+    /* Detail panel */
+    .detail-panel { margin-top:28px; background:#f8f9fa; border:2px solid #3498db; border-radius:14px; padding:24px; display:none; }
+    .detail-panel.visible { display:block; animation:fadeSlide .25s ease; }
+    @keyframes fadeSlide { from{opacity:0;transform:translateY(-8px)} to{opacity:1;transform:translateY(0)} }
+    .detail-header { display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:12px; }
+    .detail-rs { font-size:1.4rem; font-weight:800; color:#1a5276; }
+    .detail-close { background:none; border:none; cursor:pointer; font-size:1.2rem; color:#95a5a6; }
+    .detail-close:hover { color:#e74c3c; }
+    .detail-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:14px; margin-top:18px; }
+    .detail-kv { background:#fff; border-radius:8px; padding:12px 16px; border:1px solid #dde; }
+    .detail-kv .k { font-size:.76rem; text-transform:uppercase; letter-spacing:.5px; color:#95a5a6; margin-bottom:4px; }
+    .detail-kv .v { font-size:1rem; font-weight:700; color:#2c3e50; }
+    .detail-func { margin-top:16px; background:#fff; border-radius:8px; padding:14px 18px; border:1px solid #dde; }
+    .detail-func .k { font-size:.78rem; text-transform:uppercase; letter-spacing:.5px; color:#95a5a6; margin-bottom:6px; }
+    .detail-func p { font-size:.9rem; color:#444; line-height:1.65; margin:0; }
+    .ncbi-btn { display:inline-flex; align-items:center; gap:7px; margin-top:14px; padding:8px 18px; background:#3498db; color:#fff; border-radius:8px; text-decoration:none; font-size:.88rem; font-weight:600; transition:background .2s; }
+    .ncbi-btn:hover { background:#2980b9; }
+    .no-results { text-align:center; padding:40px; color:#95a5a6; font-size:1rem; }
+  </style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar">
+  <div class="nav-container">
+    <a class="nav-logo" href="index.html"><i class="fa-solid fa-dna"></i> BaldGuard</a>
+    <ul class="nav-links">
+      <li><a href="index.html">Beranda</a></li>
+      <li><a href="analyze.html">Analisis</a></li>
+      <li><a href="about.html">Tentang</a></li>
+      <li><a href="database.html" class="active">Database SNP</a></li>
+    </ul>
+    <button class="hamburger" id="hamburger" aria-label="Menu"><i class="fa-solid fa-bars"></i></button>
+  </div>
+</nav>
+
+<!-- Hero -->
+<section class="db-hero">
+  <h1><i class="fa-solid fa-database"></i> Database Referensi SNP</h1>
+  <p>9 varian genetik yang dianalisis BaldGuard, lengkap dengan odds ratio dan referensi literatur</p>
+</section>
+
+<!-- Database content -->
+<div class="db-container">
+
+  <!-- Controls -->
+  <div class="db-controls">
+    <div class="search-wrap">
+      <i class="fa-solid fa-magnifying-glass"></i>
+      <input type="text" id="searchInput" placeholder="Cari rs ID, gen, atau fungsi..." oninput="filterTable()" />
+    </div>
+    <select id="filterChromosome" onchange="filterTable()">
+      <option value="">Semua Kromosom</option>
+      <option value="X">Kromosom X</option>
+      <option value="2">Kromosom 2</option>
+      <option value="5">Kromosom 5</option>
+      <option value="7">Kromosom 7</option>
+      <option value="20">Kromosom 20</option>
+    </select>
+    <select id="filterGene" onchange="filterTable()">
+      <option value="">Semua Gen</option>
+      <option value="AR">AR</option>
+      <option value="EDA2R">EDA2R</option>
+      <option value="WNT10A">WNT10A</option>
+      <option value="HDAC9">HDAC9</option>
+      <option value="PAX1">PAX1/FOXA2</option>
+      <option value="EBF1">EBF1</option>
+      <option value="SRD5A2">SRD5A2</option>
+    </select>
+    <button class="btn btn-secondary" onclick="resetFilters()" style="padding:9px 16px;font-size:.88rem;">
+      <i class="fa-solid fa-rotate-left"></i> Reset
+    </button>
+  </div>
+
+  <!-- Stats -->
+  <div class="db-stats" id="dbStats">
+    <div class="stat-pill"><i class="fa-solid fa-circle-dot" style="color:#27ae60;"></i> Total SNP: <strong id="totalCount">9</strong></div>
+    <div class="stat-pill"><i class="fa-solid fa-x" style="color:#e74c3c;"></i> X-Linked: <strong>4</strong></div>
+    <div class="stat-pill"><i class="fa-solid fa-chromosome" style="color:#3498db;"></i> Autosomal: <strong>5</strong></div>
+    <div class="stat-pill"><i class="fa-solid fa-chart-bar" style="color:#9b59b6;"></i> OR Max: <strong>2.50×</strong></div>
+  </div>
+
+  <!-- Table -->
+  <div class="snp-table-wrap">
+    <table class="snp-table" id="snpTable">
+      <thead>
+        <tr>
+          <th class="sortable" onclick="sortTable('rs_id')">rs ID <span class="sort-icon fa-solid fa-sort"></span></th>
+          <th class="sortable" onclick="sortTable('gene')">Gen <span class="sort-icon fa-solid fa-sort"></span></th>
+          <th>Kromosom</th>
+          <th>Alel Risiko</th>
+          <th>Alel Ref</th>
+          <th class="sortable" onclick="sortTable('odds_ratio')">Odds Ratio <span class="sort-icon fa-solid fa-sort"></span></th>
+          <th class="sortable" onclick="sortTable('prs_weight')">Bobot PRS <span class="sort-icon fa-solid fa-sort"></span></th>
+          <th>Fungsi Biologis</th>
+        </tr>
+      </thead>
+      <tbody id="snpTableBody">
+        <!-- populated by JS -->
+      </tbody>
+    </table>
+  </div>
+  <div class="no-results" id="noResults" style="display:none;">
+    <i class="fa-solid fa-magnifying-glass" style="font-size:2rem;margin-bottom:.5rem;display:block;"></i>
+    Tidak ada SNP yang cocok dengan filter Anda.
+  </div>
+
+  <!-- Detail panel -->
+  <div class="detail-panel" id="detailPanel">
+    <div class="detail-header">
+      <span class="detail-rs" id="detailRsId">—</span>
+      <button class="detail-close" onclick="closeDetail()" title="Tutup"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="detail-grid" id="detailGrid"></div>
+    <div class="detail-func" id="detailFunc"></div>
+    <a id="detailNcbiLink" href="#" target="_blank" rel="noopener" class="ncbi-btn">
+      <i class="fa-solid fa-arrow-up-right-from-square"></i> Lihat di NCBI dbSNP
+    </a>
+  </div>
+</div>
+
+<!-- Footer -->
+<footer class="site-footer">
+  <div class="footer-container">
+    <p><i class="fa-solid fa-dna"></i> <strong>BaldGuard</strong> — Project UAS Computational Biology</p>
+    <p class="footer-disclaimer">
+      <i class="fa-solid fa-triangle-exclamation"></i>
+      Proyek edukasi, bukan alat diagnostik klinis. Konsultasikan kondisi Anda dengan dokter berlisensi.
+    </p>
+  </div>
+</footer>
+
+<script>
+// SNP data (mirrored from backend reference_data.py)
+const SNP_DATA = [
+  { rs_id:'rs6152',     gene:'AR',        chromosome:'X',  risk_allele:'G', ref_allele:'A', odds_ratio:2.50, prs_weight:0.90, description:'Androgen Receptor exon 1 variant', function_desc:'Meningkatkan sensitivitas reseptor androgen terhadap DHT. Individu dengan alel G menunjukkan aktivasi transkripsi AR yang lebih kuat, sehingga folikel rambut lebih responsif terhadap DHT dan lebih rentan terhadap miniaturisasi.' },
+  { rs_id:'rs1385699',  gene:'EDA2R',     chromosome:'X',  risk_allele:'C', ref_allele:'T', odds_ratio:2.20, prs_weight:0.85, description:'Ectodysplasin A2 receptor variant', function_desc:'Ectodysplasin A2 Receptor (EDA2R) mengatur perkembangan dan siklus folikel rambut melalui jalur EDA-EDAR signaling. Varian risiko C dikaitkan dengan gangguan regulasi folikuler yang meningkatkan kerentanan terhadap AGA.' },
+  { rs_id:'rs12558842', gene:'AR',        chromosome:'X',  risk_allele:'G', ref_allele:'A', odds_ratio:1.80, prs_weight:0.70, description:'AR regulatory region variant',    function_desc:'Terletak di daerah regulatori gen AR, varian ini mempengaruhi level ekspresi AR di jaringan folikel rambut. Alel G berkaitan dengan peningkatan ekspresi AR yang mengamplifikasi sinyal androgenik.' },
+  { rs_id:'rs2497938',  gene:'AR',        chromosome:'X',  risk_allele:'C', ref_allele:'T', odds_ratio:1.75, prs_weight:0.65, description:'AR intronic variant',              function_desc:'Varian intronik pada gen AR yang bertindak sebagai modulator transkripsi. Mempengaruhi splicing alternatif atau regulasi enhancer yang berdampak pada ekspresi dan fungsi reseptor androgen.' },
+  { rs_id:'rs7349332',  gene:'WNT10A',    chromosome:'2',  risk_allele:'T', ref_allele:'C', odds_ratio:1.45, prs_weight:0.50, description:'WNT signaling pathway variant',   function_desc:'WNT10A adalah ligan jalur Wnt/β-catenin yang esensial untuk morfogenesis dan siklus pertumbuhan folikel rambut. Alel risiko T mengganggu aktivasi Wnt, memperpendek fase anagen dan mempercepat miniaturisasi.' },
+  { rs_id:'rs9479482',  gene:'HDAC9',     chromosome:'7',  risk_allele:'C', ref_allele:'T', odds_ratio:1.35, prs_weight:0.45, description:'Histone deacetylase 9 variant',   function_desc:'HDAC9 memodifikasi kromatin melalui deaktilasi histon, mengatur ekspresi gen folikel pada level epigenetik. Varian C mengubah pola metilasi DNA di folikel rambut, memfasilitasi represi gen pertumbuhan rambut.' },
+  { rs_id:'rs1160312',  gene:'PAX1/FOXA2',chromosome:'20', risk_allele:'A', ref_allele:'G', odds_ratio:1.60, prs_weight:0.60, description:'PAX1/FOXA2 locus variant',        function_desc:'Lokus ini mengandung gen faktor transkripsi PAX1 dan FOXA2 yang mengatur diferensiasi dan regenerasi folikel rambut. Alel A dikaitkan dengan penurunan kapasitas regenerasi folikel setelah siklus telogen.' },
+  { rs_id:'rs929626',   gene:'EBF1',      chromosome:'5',  risk_allele:'C', ref_allele:'G', odds_ratio:1.30, prs_weight:0.35, description:'Early B-cell factor 1 variant',  function_desc:'EBF1 (Early B-cell Factor 1) terlibat dalam regulasi siklus folikel rambut dan diferensiasi sel papilla dermal. Varian C pada gen ini dikaitkan dengan gangguan siklus anagen-telogen.' },
+  { rs_id:'rs523349',   gene:'SRD5A2',    chromosome:'2',  risk_allele:'G', ref_allele:'C', odds_ratio:1.40, prs_weight:0.55, description:'5-alpha reductase type 2 variant', function_desc:'SRD5A2 mengkode enzim 5α-reduktase tipe 2 yang mengkonversi testosteron menjadi DHT di folikel rambut kulit kepala. Alel G meningkatkan aktivitas enzim, menghasilkan lebih banyak DHT lokal dan mempercepat miniaturisasi folikel.' },
+];
+
+let sortKey  = 'odds_ratio';
+let sortDesc = true;
+let selected = null;
+
+function chrClass(chr) {
+  return chr === 'X' ? 'chr-x' : 'chr-auto';
+}
+function chrLabel(chr) {
+  return chr === 'X' ? 'Chr X' : `Chr ${chr}`;
+}
+function orWidth(or) {
+  return Math.min(((or - 1) / 1.6) * 100, 100).toFixed(0);
+}
+
+function renderTable(data) {
+  const tbody = document.getElementById('snpTableBody');
+  const noRes = document.getElementById('noResults');
+  document.getElementById('totalCount').textContent = data.length;
+
+  if (!data.length) {
+    tbody.innerHTML = '';
+    noRes.style.display = 'block';
+    return;
+  }
+  noRes.style.display = 'none';
+
+  tbody.innerHTML = data.map((s, i) => `
+    <tr onclick="showDetail('${s.rs_id}')" data-rsid="${s.rs_id}">
+      <td><a class="rs-link" href="https://www.ncbi.nlm.nih.gov/snp/${s.rs_id}" target="_blank" rel="noopener" onclick="event.stopPropagation()">${s.rs_id}</a></td>
+      <td><strong>${s.gene}</strong></td>
+      <td><span class="chr-badge ${chrClass(s.chromosome)}">${chrLabel(s.chromosome)}</span></td>
+      <td><span class="allele-risk">${s.risk_allele}</span></td>
+      <td><span class="allele-ref">${s.ref_allele}</span></td>
+      <td>
+        <div class="or-bar-wrap">
+          <div class="or-bar" style="width:${orWidth(s.odds_ratio)}px;max-width:80px;"></div>
+          <span class="or-val">${s.odds_ratio}×</span>
+        </div>
+      </td>
+      <td>
+        <div style="display:flex;align-items:center;gap:6px;">
+          <div style="width:${Math.round(s.prs_weight*40)}px;height:8px;background:#9b59b6;border-radius:4px;"></div>
+          <span style="font-weight:700;color:#6c3483;font-size:.88rem;">${s.prs_weight}</span>
+        </div>
+      </td>
+      <td style="max-width:260px;line-height:1.45;color:#555;">${s.description}</td>
+    </tr>`).join('');
+}
+
+function getFilteredData() {
+  const q    = document.getElementById('searchInput').value.toLowerCase();
+  const chr  = document.getElementById('filterChromosome').value;
+  const gene = document.getElementById('filterGene').value;
+
+  return SNP_DATA
+    .filter(s => {
+      if (chr  && s.chromosome !== chr)                   return false;
+      if (gene && !s.gene.includes(gene))                 return false;
+      if (q    && !JSON.stringify(s).toLowerCase().includes(q)) return false;
+      return true;
+    })
+    .sort((a, b) => {
+      const av = a[sortKey], bv = b[sortKey];
+      const cmp = typeof av === 'string' ? av.localeCompare(bv) : av - bv;
+      return sortDesc ? -cmp : cmp;
+    });
+}
+
+function filterTable() {
+  renderTable(getFilteredData());
+  if (selected) {
+    const row = document.querySelector(`tr[data-rsid="${selected}"]`);
+    if (row) row.classList.add('selected');
+  }
+}
+
+function sortTable(key) {
+  if (sortKey === key) sortDesc = !sortDesc; else { sortKey = key; sortDesc = true; }
+  filterTable();
+}
+
+function resetFilters() {
+  document.getElementById('searchInput').value = '';
+  document.getElementById('filterChromosome').value = '';
+  document.getElementById('filterGene').value = '';
+  filterTable();
+}
+
+function showDetail(rsId) {
+  const s = SNP_DATA.find(x => x.rs_id === rsId);
+  if (!s) return;
+  selected = rsId;
+
+  // Highlight row
+  document.querySelectorAll('.snp-table tbody tr').forEach(r => r.classList.remove('selected'));
+  const row = document.querySelector(`tr[data-rsid="${rsId}"]`);
+  if (row) { row.classList.add('selected'); }
+
+  document.getElementById('detailRsId').textContent = s.rs_id;
+  document.getElementById('detailGrid').innerHTML = `
+    <div class="detail-kv"><div class="k">Gen</div><div class="v">${s.gene}</div></div>
+    <div class="detail-kv"><div class="k">Kromosom</div><div class="v">${s.chromosome === 'X' ? 'X (X-linked)' : s.chromosome + ' (Autosomal)'}</div></div>
+    <div class="detail-kv"><div class="k">Alel Risiko</div><div class="v"><span class="allele-risk">${s.risk_allele}</span></div></div>
+    <div class="detail-kv"><div class="k">Alel Referensi</div><div class="v"><span class="allele-ref">${s.ref_allele}</span></div></div>
+    <div class="detail-kv"><div class="k">Odds Ratio</div><div class="v" style="color:#c0392b;">${s.odds_ratio}× risiko</div></div>
+    <div class="detail-kv"><div class="k">Bobot PRS</div><div class="v" style="color:#6c3483;">${s.prs_weight}</div></div>`;
+
+  document.getElementById('detailFunc').innerHTML = `
+    <div class="k"><i class="fa-solid fa-microscope" style="margin-right:4px;color:#3498db;"></i> Fungsi Biologis</div>
+    <p>${s.function_desc}</p>`;
+
+  document.getElementById('detailNcbiLink').href = `https://www.ncbi.nlm.nih.gov/snp/${s.rs_id}`;
+
+  const panel = document.getElementById('detailPanel');
+  panel.classList.add('visible');
+  setTimeout(() => panel.scrollIntoView({ behavior:'smooth', block:'nearest' }), 50);
+}
+
+function closeDetail() {
+  document.getElementById('detailPanel').classList.remove('visible');
+  document.querySelectorAll('.snp-table tbody tr').forEach(r => r.classList.remove('selected'));
+  selected = null;
+}
+
+// Mobile hamburger
+document.getElementById('hamburger').addEventListener('click', function() {
+  document.querySelector('.nav-links').classList.toggle('open');
+});
+
+// Init
+renderTable(getFilteredData());
+</script>
+</body>
+</html>
