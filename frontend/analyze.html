@@ -7,6 +7,7 @@
   <link rel="stylesheet" href="css/style.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
 <body>
 
@@ -40,7 +41,7 @@
 <div class="tab-bar">
   <div class="container">
     <button class="tab-btn active" data-tab="clinical"><span class="tnum">1</span> Questionnaire</button>
-    <button class="tab-btn" data-tab="advanced"><span class="tnum">2</span> Advanced · DNA <span style="font-size:0.75rem;color:var(--ink-400);">(optional)</span></button>
+    <button class="tab-btn" data-tab="advanced"><span class="tnum">2</span> Advanced · DNA</button>
     <button class="tab-btn" data-tab="results"><span class="tnum">3</span> Your results</button>
   </div>
 </div>
@@ -473,8 +474,7 @@
     <div class="info info--info">
       <i class="fa-solid fa-circle-info"></i>
       <div>
-        <strong>Optional — for higher confidence.</strong> If you have results from a service like 23andMe or AncestryDNA, upload them to replace the inferred CAG estimate with measured data.
-        Skipping this is fine — the questionnaire alone produces a complete analysis.
+        <strong>For higher confidence.</strong> If you have results from a service like 23andMe or AncestryDNA, upload them to replace the inferred CAG estimate with measured data.
       </div>
     </div>
 
@@ -751,6 +751,97 @@
         </div>
       </div>
 
+      <!-- ===================== TREATMENT SCENARIO SIMULATOR ===================== -->
+      <div class="card" id="simulatorCard" style="margin-bottom:var(--s-6);">
+        <div class="card-head">
+          <div class="icon" style="background:#fef3c7;color:#92400e;"><i class="fa-solid fa-flask"></i></div>
+          <h3>What if you change your lifestyle?</h3>
+        </div>
+        <div class="card-body">
+          <p style="font-size:0.92rem;color:var(--ink-600);margin-bottom:var(--s-5);">
+            Modifiable factors below are recomputed live. The genetic and family-history
+            parts of your score stay the same — this only shows what's in your control.
+          </p>
+
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--s-5);margin-bottom:var(--s-5);" id="simGrid">
+
+            <div class="field" style="margin:0;">
+              <label>Stress level <span class="range-value" id="simStressVal">5</span></label>
+              <input type="range" id="simStress" min="1" max="10" value="5" class="range" oninput="updateSim()" />
+              <div class="range-marks"><span>Low</span><span>High</span></div>
+            </div>
+
+            <div class="field" style="margin:0;">
+              <label>Sleep <span class="range-value" id="simSleepVal">7</span> h</label>
+              <input type="range" id="simSleep" min="3" max="12" step="0.5" value="7" class="range" oninput="updateSim()" />
+              <div class="range-marks"><span>3 h</span><span>12 h</span></div>
+            </div>
+
+            <div class="field" style="margin:0;">
+              <label>Smoking</label>
+              <div class="choice-group">
+                <label class="choice"><input type="radio" name="simSmoking" value="false" checked onchange="updateSim()" /> Non-smoker</label>
+                <label class="choice"><input type="radio" name="simSmoking" value="true"  onchange="updateSim()" /> Smoker</label>
+              </div>
+            </div>
+
+            <div class="field" style="margin:0;">
+              <label>Diet quality</label>
+              <select id="simDiet" class="select" onchange="updateSim()">
+                <option value="great">Great</option>
+                <option value="balanced" selected>Balanced</option>
+                <option value="poor">Poor</option>
+              </select>
+            </div>
+
+            <div class="field" style="margin:0;grid-column:1/-1;">
+              <label>Exercise frequency</label>
+              <div class="choice-group">
+                <label class="choice"><input type="radio" name="simExercise" value="none"     onchange="updateSim()" /> None</label>
+                <label class="choice"><input type="radio" name="simExercise" value="light"    onchange="updateSim()" /> Light</label>
+                <label class="choice"><input type="radio" name="simExercise" value="moderate" checked onchange="updateSim()" /> Moderate</label>
+                <label class="choice"><input type="radio" name="simExercise" value="heavy"    onchange="updateSim()" /> Heavy</label>
+              </div>
+            </div>
+          </div>
+
+          <!-- Projected outcome -->
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:var(--s-4);padding:var(--s-5);background:var(--ink-50);border-radius:var(--r-md);">
+            <div style="text-align:center;">
+              <div style="font-family:var(--font-mono);font-size:0.72rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--ink-500);">Current</div>
+              <div id="simCurrentScore" style="font-family:var(--font-head);font-size:1.8rem;font-weight:700;color:var(--ink-900);margin-top:4px;">—</div>
+            </div>
+            <div style="text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center;">
+              <div id="simDelta" style="font-family:var(--font-head);font-size:1.05rem;font-weight:600;color:var(--ink-500);">→</div>
+              <div id="simDeltaLabel" style="font-size:0.78rem;color:var(--ink-500);margin-top:2px;">no change</div>
+            </div>
+            <div style="text-align:center;">
+              <div style="font-family:var(--font-mono);font-size:0.72rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--ink-500);">Projected</div>
+              <div id="simProjectedScore" style="font-family:var(--font-head);font-size:1.8rem;font-weight:700;color:var(--brand-700);margin-top:4px;">—</div>
+            </div>
+          </div>
+
+          <!-- Mini gauge with two markers -->
+          <div style="margin-top:var(--s-4);">
+            <div style="position:relative;height:10px;border-radius:var(--r-full);background:linear-gradient(90deg, var(--risk-minimal) 0%, var(--risk-low) 20%, var(--risk-mod) 45%, var(--risk-high) 75%, var(--risk-vhigh) 100%);">
+              <div id="simMarkerCurrent"   style="position:absolute;top:-6px;width:3px;height:22px;background:var(--ink-700);border-radius:2px;transform:translateX(-50%);transition:left .5s;"></div>
+              <div id="simMarkerProjected" style="position:absolute;top:-6px;width:3px;height:22px;background:var(--brand-700);border-radius:2px;transform:translateX(-50%);transition:left .5s;"></div>
+            </div>
+            <div style="display:flex;justify-content:space-between;font-family:var(--font-mono);font-size:0.72rem;color:var(--ink-400);margin-top:6px;">
+              <span>0 · Minimal</span><span>50</span><span>100 · Very high</span>
+            </div>
+          </div>
+
+          <div id="simLoading" style="display:none;text-align:center;padding:var(--s-3);font-size:0.85rem;color:var(--ink-500);">
+            <i class="fa-solid fa-spinner fa-spin"></i> Recalculating…
+          </div>
+
+          <p style="font-size:0.82rem;color:var(--ink-500);margin-top:var(--s-4);text-align:center;">
+            <i class="fa-solid fa-circle-info"></i> Lifestyle is only 10–15% of the total score, but it's the part you can change today.
+          </p>
+        </div>
+      </div>
+
       <!-- Collapsible details -->
       <h3 style="margin-bottom:var(--s-4);font-size:1.05rem;">Detailed breakdown</h3>
       <div class="collapse"><div class="collapse-head" onclick="toggleCollapse(this)"><span><i class="fa-solid fa-stethoscope" style="color:var(--brand-600);margin-right:8px;"></i> Clinical scoring</span><i class="fa-solid fa-chevron-down"></i></div><div class="collapse-body" id="detailClinical"></div></div>
@@ -761,7 +852,7 @@
       <!-- Actions -->
       <div style="display:flex;gap:var(--s-3);flex-wrap:wrap;justify-content:center;margin-top:var(--s-7);">
         <button class="btn btn--ghost" onclick="window.print()"><i class="fa-solid fa-print"></i> Print report</button>
-        <button class="btn btn--ghost" onclick="downloadPDF()"><i class="fa-solid fa-file-arrow-down"></i> Download report</button>
+        <button class="btn btn--ghost" onclick="downloadPDF()"><i class="fa-solid fa-file-pdf"></i> Download PDF</button>
         <button class="btn btn--primary" onclick="resetAnalysis()"><i class="fa-solid fa-rotate-left"></i> New analysis</button>
       </div>
 
@@ -1010,6 +1101,109 @@
     if (window.FolliscopeMain?.downloadReport) window.FolliscopeMain.downloadReport();
     else alert('Run an analysis first.');
   }
+
+  // ===== TREATMENT SCENARIO SIMULATOR =====
+  // Debounced /api/analyze re-call with modified section5 (lifestyle).
+  let _simTimer = null;
+  let _simInflight = null;
+
+  function updateSim() {
+    // Update slider value displays
+    document.getElementById('simStressVal').textContent = document.getElementById('simStress').value;
+    document.getElementById('simSleepVal').textContent  = document.getElementById('simSleep').value;
+    // Debounce — wait 500ms after last input change
+    clearTimeout(_simTimer);
+    _simTimer = setTimeout(runSimulation, 500);
+  }
+
+  async function runSimulation() {
+    if (!window.FolliscopeMain?.collectFormData) return;
+    if (!window._folliscopeResult) return;
+
+    const baseRequest = window.FolliscopeMain.collectFormData();
+    // Override section5 with the simulator inputs
+    baseRequest.section5 = {
+      ...baseRequest.section5,
+      stress_level:       parseInt(document.getElementById('simStress').value, 10),
+      sleep_hours:        parseFloat(document.getElementById('simSleep').value),
+      smoking:            document.querySelector('input[name="simSmoking"]:checked')?.value === 'true',
+      cigarettes_per_day: document.querySelector('input[name="simSmoking"]:checked')?.value === 'true'
+                            ? (baseRequest.section5.cigarettes_per_day || 10)
+                            : 0,
+      diet_quality:       document.getElementById('simDiet').value,
+      exercise_frequency: document.querySelector('input[name="simExercise"]:checked')?.value || 'moderate',
+    };
+    // Keep genetic data the same if it was used
+    if (window._folliscopeOriginalGenetic) {
+      baseRequest.genetic_data = window._folliscopeOriginalGenetic;
+    }
+
+    const loading = document.getElementById('simLoading');
+    if (loading) loading.style.display = 'block';
+
+    try {
+      const result = await analyzeRisk(baseRequest);
+      applySimulationResult(result);
+    } catch (err) {
+      console.warn('Simulation failed:', err.message);
+    } finally {
+      if (loading) loading.style.display = 'none';
+    }
+  }
+
+  function applySimulationResult(projected) {
+    const current = window._folliscopeResult;
+    if (!current) return;
+
+    const currScore = current.scores.hybrid_score;
+    const projScore = projected.scores.hybrid_score;
+    const delta = projScore - currScore;
+
+    document.getElementById('simCurrentScore').textContent   = currScore.toFixed(1);
+    document.getElementById('simProjectedScore').textContent = projScore.toFixed(1);
+
+    const deltaEl = document.getElementById('simDelta');
+    const labelEl = document.getElementById('simDeltaLabel');
+    if (Math.abs(delta) < 0.05) {
+      deltaEl.textContent = '→';   deltaEl.style.color = 'var(--ink-500)';
+      labelEl.textContent = 'no change';
+    } else if (delta < 0) {
+      deltaEl.textContent = `↓ ${Math.abs(delta).toFixed(1)}`;
+      deltaEl.style.color = 'var(--brand-700)';
+      labelEl.textContent = 'lower is better';
+    } else {
+      deltaEl.textContent = `↑ ${delta.toFixed(1)}`;
+      deltaEl.style.color = 'var(--danger)';
+      labelEl.textContent = 'higher risk';
+    }
+
+    document.getElementById('simMarkerCurrent').style.left   = Math.min(currScore, 100) + '%';
+    document.getElementById('simMarkerProjected').style.left = Math.min(projScore, 100) + '%';
+  }
+
+  // Pre-fill simulator with the user's submitted lifestyle values
+  // (called by main.js after a successful analysis)
+  window.prefillSimulator = function (formData) {
+    if (!formData || !formData.section5) return;
+    const s5 = formData.section5;
+    document.getElementById('simStress').value = s5.stress_level ?? 5;
+    document.getElementById('simStressVal').textContent = document.getElementById('simStress').value;
+    document.getElementById('simSleep').value  = s5.sleep_hours ?? 7;
+    document.getElementById('simSleepVal').textContent  = document.getElementById('simSleep').value;
+    const smokeRadio = document.querySelector(`input[name="simSmoking"][value="${s5.smoking}"]`);
+    if (smokeRadio) smokeRadio.checked = true;
+    if (s5.diet_quality) document.getElementById('simDiet').value = s5.diet_quality;
+    const exRadio = document.querySelector(`input[name="simExercise"][value="${s5.exercise_frequency || 'moderate'}"]`);
+    if (exRadio) exRadio.checked = true;
+    // Initial values: projected = current (no change yet)
+    const cur = window._folliscopeResult?.scores?.hybrid_score;
+    if (cur != null) {
+      document.getElementById('simCurrentScore').textContent   = cur.toFixed(1);
+      document.getElementById('simProjectedScore').textContent = cur.toFixed(1);
+      document.getElementById('simMarkerCurrent').style.left   = Math.min(cur, 100) + '%';
+      document.getElementById('simMarkerProjected').style.left = Math.min(cur, 100) + '%';
+    }
+  };
 
   document.getElementById('hamburger')?.addEventListener('click', () => document.getElementById('navLinks').classList.toggle('open'));
   updateProgress();

@@ -312,6 +312,50 @@ curl http://localhost:8000/api/health
 
 ---
 
+## Deploy ke Internet
+
+Folliscope siap deploy ke beberapa PaaS gratis. Dockerfile sudah memakai `$PORT` env var,
+jadi image yang sama jalan di mana saja.
+
+### 🚀 Render.com (paling mudah, free tier)
+
+1. Push repo ke GitHub
+2. Buka [dashboard.render.com](https://dashboard.render.com) → **New** → **Blueprint**
+3. Pilih repo ini — Render akan baca `render.yaml` otomatis
+4. Tunggu ~5 menit build → URL public siap pakai
+
+Health check di `/api/health` otomatis di-monitor. Auto-deploy nyala saat push ke `main`.
+
+### 🚂 Railway.app
+
+1. `npm i -g @railway/cli`
+2. `railway login && railway init && railway up`
+3. Atau via dashboard: connect repo, Railway auto-detect Dockerfile + `railway.json`
+
+### ✈️ Fly.io (terdekat ke Indonesia — region `sin` Singapura)
+
+```bash
+# Sekali set up:
+curl -L https://fly.io/install.sh | sh
+fly auth signup
+fly launch --copy-config --no-deploy
+fly deploy
+
+# Update berikutnya:
+fly deploy
+```
+
+`fly.toml` sudah dikonfigurasi dengan `auto_stop_machines` jadi tetap di free tier.
+
+### 🐳 Docker self-host (VPS / Cloud Run / dll)
+
+```bash
+docker build -t folliscope .
+docker run -p 8000:8000 -e PORT=8000 folliscope
+```
+
+---
+
 ## Cara Menggunakan
 
 ### Antarmuka Web

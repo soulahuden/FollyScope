@@ -363,53 +363,304 @@
     } catch (_) { /* ignore stale data */ }
   }
 
-  // ── Plain-text report download (English) ──────────────────────────────
+  // ── Structured PDF report (jsPDF, client-side) ───────────────────────
 
   function downloadReport() {
     const r = window._folliscopeResult;
     if (!r) { alert('Run an analysis first.'); return; }
 
-    const cmp = r.ncbi_comparison || {};
-    const conf = r.confidence || {};
+    if (!window.jspdf || !window.jspdf.jsPDF) {
+      console.warn('jsPDF not loaded; falling back to plain text.');
+      return downloadReportText(r);
+    }
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({ unit: 'pt', format: 'a4' });
+
+    const PAGE_W = doc.internal.pageSize.getWidth();
+    const PAGE_H = doc.internal.pageSize.getHeight();
+    const M = 48;                                // margin
+    let y = M;
+
+    const INK_900 = [15, 23, 42];
+    const INK_600 = [71, 85, 105];
+    const INK_400 = [148, 163, 184];
+    const BRAND   = [5, 150, 105];
+    const cmp     = r.ncbi_comparison || {};
+    const conf    = r.confidence || {};
+
+    // ─── Risk color matching the UI palette ───────────────────────────
+    const RISK_COLOR = {
+      MINIMAL:       [16, 185, 129],
+      RENDAH:        [34, 197, 94],
+      SEDANG:        [245, 158, 11],
+      TINGGI:        [249, 115, 22],
+      SANGAT_TINGGI: [220, 38, 38],
+    };
+    const riskRGB = RISK_COLOR[r.risk_category] || [148, 163, 184];
+
+    // ─── Header band ──────────────────────────────────────────────────
+    doc.setFillColor(...INK_900);
+    doc.rect(0, 0, PAGE_W, 96, 'F');
+    doc.setFillColor(...BRAND);
+    doc.rect(M, 30, 36, 36, 'F');
+    doc.setTextColor(255, 255, 255);
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(11);
+    doc.text('Fs', M + 10, 53);
+
+    doc.setFontSize(20);
+    doc.text('Folliscope', M + 52, 50);
+    doc.setFontSize(9);
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(167, 243, 208);
+    doc.text('Early-warning hair-loss risk assessment', M + 52, 66);
+
+    doc.setTextColor(148, 163, 184);
+    doc.setFontSize(8);
+    const dateStr = new Date().toLocaleDateString('en-US',
+      { year: 'numeric', month: 'long', day: 'numeric' });
+    doc.text(dateStr, PAGE_W - M, 50, { align: 'right' });
+    doc.text(r.analysis_type.replace(/_/g, ' '), PAGE_W - M, 64, { align: 'right' });
+
+    y = 130;
+
+    // ─── Headline score + risk category ───────────────────────────────
+    doc.setTextColor(...INK_400);
+    doc.setFontSize(9);
+    doc.text('OVERALL RISK SCORE', M, y);
+    y += 6;
+
+    doc.setTextColor(...riskRGB);
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(48);
+    doc.text(r.scores.hybrid_score.toFixed(1), M, y + 36);
+
+    doc.setFontSize(11);
+    doc.setTextColor(...INK_600);
+    doc.text(' / 100', M + doc.getTextWidth(r.scores.hybrid_score.toFixed(1)) + 4, y + 36);
+
+    // Risk pill
+    const pillX = M + 200;
+    const pillY = y + 12;
+    doc.setFillColor(riskRGB[0], riskRGB[1], riskRGB[2]);
+    doc.roundedRect(pillX, pillY, 120, 28, 14, 14, 'F');
+    doc.setTextColor(255, 255, 255);
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(11);
+    doc.text((r.risk_category_label || r.risk_category) + ' RISK',
+             pillX + 60, pillY + 18, { align: 'center' });
+
+    // Gauge bar
+    y += 60;
+    const gaugeX = M;
+    const gaugeW = PAGE_W - 2 * M;
+    const gaugeY = y;
+    // gradient simulated with 5 segments
+    const segments = [
+      [16, 185, 129], [34, 197, 94], [245, 158, 11], [249, 115, 22], [220, 38, 38]
+    ];
+    segments.forEach((rgb, i) => {
+      doc.setFillColor(...rgb);
+      doc.rect(gaugeX + (gaugeW / 5) * i, gaugeY, gaugeW / 5, 10, 'F');
+    });
+    // marker
+    const markX = gaugeX + (gaugeW * Math.min(r.scores.hybrid_score, 100) / 100);
+    doc.setFillColor(...INK_900);
+    doc.rect(markX - 1.5, gaugeY - 4, 3, 18, 'F');
+
+    doc.setTextColor(...INK_400);
+    doc.setFontSize(7);
+    doc.text('0 · Minimal', gaugeX, gaugeY + 22);
+    doc.text('50', gaugeX + gaugeW/2, gaugeY + 22, { align: 'center' });
+    doc.text('100 · Very high', gaugeX + gaugeW, gaugeY + 22, { align: 'right' });
+
+    y += 40;
+
+    // Description
+    doc.setTextColor(...INK_600);
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(10);
+    const descLines = doc.splitTextToSize(r.risk_description || '', gaugeW);
+    doc.text(descLines, M, y);
+    y += descLines.length * 13 + 16;
+
+    // ─── Confidence ───────────────────────────────────────────────────
+    doc.setDrawColor(...INK_400);
+    doc.setLineWidth(0.5);
+    doc.line(M, y, PAGE_W - M, y);
+    y += 14;
+
+    doc.setFontSize(9);
+    doc.setTextColor(...INK_400);
+    doc.text('CONFIDENCE IN THIS RESULT', M, y);
+    doc.setTextColor(...INK_900);
+    doc.setFont('helvetica', 'bold');
+    doc.text(`${conf.percent || 0}%`, PAGE_W - M, y, { align: 'right' });
+    y += 8;
+
+    doc.setDrawColor(...INK_400);
+    doc.setFillColor(226, 232, 240);
+    doc.rect(M, y, gaugeW, 4, 'F');
+    doc.setFillColor(...BRAND);
+    doc.rect(M, y, gaugeW * (conf.percent || 0) / 100, 4, 'F');
+    y += 14;
+
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(9);
+    doc.setTextColor(...INK_600);
+    const confLines = doc.splitTextToSize(conf.description || '', gaugeW);
+    doc.text(confLines, M, y);
+    y += confLines.length * 12 + 14;
+
+    // ─── NCBI Comparison ──────────────────────────────────────────────
+    doc.setDrawColor(...INK_400);
+    doc.line(M, y, PAGE_W - M, y);
+    y += 14;
+
+    doc.setFontSize(11);
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(...INK_900);
+    doc.text('NCBI reference vs. your profile', M, y);
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(8);
+    doc.setTextColor(...INK_400);
+    doc.text(cmp.ncbi_accession || 'NM_000044.6', PAGE_W - M, y, { align: 'right' });
+    y += 18;
+
+    // Comparison table
+    const ncbiCag = cmp.ncbi_reference_cag || 22;
+    const userCagText = cmp.user_value_type === 'measured'
+      ? `${cmp.user_cag_midpoint} CAG (measured)`
+      : `${cmp.user_cag_midpoint} CAG (estimated · range ${cmp.user_cag_min}–${cmp.user_cag_max})`;
+
+    doc.setFontSize(9);
+    doc.setTextColor(...INK_600);
+    doc.text('NCBI reference', M, y);
+    doc.setTextColor(...INK_900);
+    doc.setFont('helvetica', 'bold');
+    doc.text(`${ncbiCag} CAG repeats`, M + 200, y);
+    y += 14;
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(...INK_600);
+    doc.text('Your AR profile', M, y);
+    doc.setTextColor(...INK_900);
+    doc.setFont('helvetica', 'bold');
+    doc.text(userCagText, M + 200, y);
+    y += 18;
+
+    // Interpretation paragraph
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(...INK_600);
+    doc.setFontSize(9);
+    const interpLines = doc.splitTextToSize(cmp.interpretation || '', gaugeW);
+    doc.text(interpLines, M, y);
+    y += interpLines.length * 12 + 8;
+
+    // Reasoning
+    if (cmp.inference_reasoning && cmp.inference_reasoning.length) {
+      doc.setFontSize(8);
+      doc.setTextColor(...INK_400);
+      doc.text('WHY THIS ESTIMATE', M, y);
+      y += 10;
+      doc.setFontSize(9);
+      doc.setTextColor(...INK_600);
+      cmp.inference_reasoning.forEach(reason => {
+        const lines = doc.splitTextToSize('• ' + reason, gaugeW - 12);
+        doc.text(lines, M + 6, y);
+        y += lines.length * 12 + 2;
+      });
+      y += 6;
+    }
+
+    // ─── Component scores ─────────────────────────────────────────────
+    if (y > PAGE_H - 220) { doc.addPage(); y = M; }
+
+    doc.setDrawColor(...INK_400);
+    doc.line(M, y, PAGE_W - M, y);
+    y += 14;
+    doc.setFontSize(11);
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(...INK_900);
+    doc.text('Component scores', M, y);
+    y += 16;
+
+    const components = [
+      ['Clinical',       r.scores.clinical_score],
+      ['Family history', r.scores.family_score],
+      ['Lifestyle',      r.scores.lifestyle_score],
+    ];
+    if (r.scores.genetic_score > 0) components.unshift(['Genetic', r.scores.genetic_score]);
+
+    components.forEach(([label, score]) => {
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(9);
+      doc.setTextColor(...INK_600);
+      doc.text(label, M, y);
+      doc.setTextColor(...INK_900);
+      doc.setFont('helvetica', 'bold');
+      doc.text(score.toFixed(1) + ' / 100', M + 200, y);
+      // bar
+      doc.setFillColor(226, 232, 240);
+      doc.rect(M + 280, y - 6, gaugeW - 280, 4, 'F');
+      doc.setFillColor(...BRAND);
+      doc.rect(M + 280, y - 6, (gaugeW - 280) * Math.min(score, 100) / 100, 4, 'F');
+      y += 16;
+    });
+
+    // ─── Recommendations ──────────────────────────────────────────────
+    if (y > PAGE_H - 180) { doc.addPage(); y = M; }
+    y += 8;
+    doc.setDrawColor(...INK_400);
+    doc.line(M, y, PAGE_W - M, y);
+    y += 14;
+    doc.setFontSize(11);
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(...INK_900);
+    doc.text('Recommendations', M, y);
+    y += 16;
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(9);
+    doc.setTextColor(...INK_600);
+    (r.recommendations || []).forEach((rec, i) => {
+      if (y > PAGE_H - 80) { doc.addPage(); y = M; }
+      const lines = doc.splitTextToSize(`${i + 1}.  ${rec}`, gaugeW - 4);
+      doc.text(lines, M, y);
+      y += lines.length * 12 + 4;
+    });
+
+    // ─── Footer disclaimer (every page) ───────────────────────────────
+    const pageCount = doc.getNumberOfPages();
+    for (let p = 1; p <= pageCount; p++) {
+      doc.setPage(p);
+      doc.setDrawColor(...INK_400);
+      doc.setLineWidth(0.3);
+      doc.line(M, PAGE_H - 50, PAGE_W - M, PAGE_H - 50);
+      doc.setFontSize(7);
+      doc.setTextColor(...INK_400);
+      const disclaimer = r.disclaimer || 'Educational risk assessment only — not a medical diagnosis.';
+      const dLines = doc.splitTextToSize(disclaimer, PAGE_W - 2 * M);
+      doc.text(dLines, M, PAGE_H - 38);
+      doc.text(`Folliscope · page ${p} / ${pageCount}`, PAGE_W - M, PAGE_H - 20, { align: 'right' });
+    }
+
+    doc.save(`folliscope_report_${Date.now()}.pdf`);
+  }
+
+  // Fallback plain-text writer (if jsPDF fails to load)
+  function downloadReportText(r) {
     const lines = [
       'FOLLISCOPE — EARLY-WARNING HAIR-LOSS RISK ASSESSMENT',
-      '====================================================',
-      `Date              : ${new Date().toLocaleDateString('en-US', { dateStyle: 'full' })}`,
-      `Analysis type     : ${r.analysis_type}`,
-      `Confidence level  : ${conf.label || '—'} (${conf.percent || 0}%)`,
+      `Score: ${r.scores.hybrid_score.toFixed(1)} / 100`,
+      `Category: ${r.risk_category_label || r.risk_category}`,
+      `Confidence: ${r.confidence?.percent || 0}%`,
       '',
-      `OVERALL RISK SCORE: ${r.scores.hybrid_score.toFixed(1)} / 100`,
-      `RISK CATEGORY     : ${r.risk_category_label || r.risk_category}`,
-      `DESCRIPTION       : ${r.risk_description}`,
+      r.risk_description || '',
       '',
-      'COMPONENT SCORES:',
-      `  • Clinical         : ${r.scores.clinical_score.toFixed(1)} / 100`,
-      `  • Family history   : ${r.scores.family_score.toFixed(1)} / 100`,
-      `  • Lifestyle        : ${r.scores.lifestyle_score.toFixed(1)} / 100`,
+      'Recommendations:',
+      ...(r.recommendations || []).map((rec, i) => `  ${i + 1}. ${rec}`),
+      '',
+      r.disclaimer || '',
     ];
-    if (r.scores.genetic_score > 0) {
-      lines.push(`  • Genetic          : ${r.scores.genetic_score.toFixed(1)} / 100`);
-    }
-    lines.push('',
-      'NCBI REFERENCE COMPARISON:',
-      `  • NCBI reference (${cmp.ncbi_accession || 'NM_000044.6'}): ${cmp.ncbi_reference_cag || 22} CAG repeats`,
-      `  • Your AR profile        : ${cmp.user_cag_midpoint || '—'} CAG (` +
-        (cmp.user_value_type === 'measured' ? 'measured' : `estimated, range ${cmp.user_cag_min}–${cmp.user_cag_max}`) + `)`,
-      `  • Interpretation         : ${cmp.interpretation || ''}`,
-    );
-    if (r.genetic_details) {
-      const gd = r.genetic_details;
-      lines.push('', 'GENETIC DATA:',
-        `  • CAG repeats: ${gd.cag_repeats} (${gd.cag_risk_label || gd.cag_risk_level})`,
-        `  • GGN repeats: ${gd.ggn_repeats} (${gd.ggn_risk_level})`);
-    }
-    lines.push('', 'RECOMMENDATIONS:');
-    (r.recommendations || []).forEach((rec, i) => lines.push(`  ${i + 1}. ${rec}`));
-    lines.push('', '---',
-      `DISCLAIMER: ${r.disclaimer}`,
-      '',
-      'Folliscope — Educational computational-biology project');
-
     const blob = new Blob([lines.join('\n')], { type: 'text/plain;charset=utf-8' });
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
@@ -435,9 +686,15 @@
 
       const result = await analyzeRisk(requestData);
       window._folliscopeResult = result;
+      window._folliscopeOriginalGenetic = geneticData || null;
 
       applyResults(result);
       saveProgress();
+
+      // Prefill the treatment simulator with the user's actual lifestyle values
+      if (typeof window.prefillSimulator === 'function') {
+        window.prefillSimulator(requestData);
+      }
 
       if (spinner)   spinner.style.display   = 'none';
       if (container) container.style.display = 'block';

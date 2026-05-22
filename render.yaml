@@ -1,0 +1,15 @@
+# Render.com blueprint for Folliscope
+# Deploy: connect this repo on dashboard.render.com → New → Blueprint
+# Render injects $PORT automatically; the Dockerfile honors it.
+services:
+  - type: web
+    name: folliscope
+    runtime: docker
+    plan: free
+    region: singapore  # closest to Indonesia; change if you prefer
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /api/health
+    envVars:
+      - key: PYTHONUNBUFFERED
+        value: "1"
+    autoDeploy: true
