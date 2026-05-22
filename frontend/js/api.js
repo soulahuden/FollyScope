@@ -1,4 +1,4 @@
-// api.js — Backend communication layer for BaldGuard
+// api.js — Backend communication layer for Folliscope
 // Handles all HTTP requests to the FastAPI backend at /api/
 
 const API_BASE = '/api';

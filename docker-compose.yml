@@ -1,7 +1,7 @@
 services:
-  baldguard:
+  folliscope:
     build: .
-    container_name: baldguard
+    container_name: folliscope
     ports:
       - "8000:8000"
     restart: unless-stopped

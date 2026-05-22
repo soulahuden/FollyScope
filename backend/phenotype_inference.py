@@ -1,5 +1,5 @@
 """
-Phenotype-to-genotype inference for BaldGuard.
+Phenotype-to-genotype inference for Folliscope.
 
 Estimates a probable AR CAG-repeat range and overall genetic-risk
 profile from the clinical questionnaire ALONE — used when the user has

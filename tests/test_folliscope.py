@@ -1,5 +1,5 @@
 """
-Unit tests for BaldGuard — 45+ test cases covering:
+Unit tests for Folliscope — 45+ test cases covering:
   - CAG repeat counting and risk classification
   - GGN repeat counting and risk classification
   - SNP detection and scoring
@@ -9,7 +9,7 @@ Unit tests for BaldGuard — 45+ test cases covering:
   - Hybrid risk calculation and categorisation
   - FASTA / TSV parsing
 
-Run: pytest tests/test_baldguard.py -v
+Run: pytest tests/test_folliscope.py -v
 """
 
 import sys

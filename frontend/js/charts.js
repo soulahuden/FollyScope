@@ -1,5 +1,5 @@
-// charts.js — Chart.js visualizations for BaldGuard
-// Exposed via window.BaldGuardCharts so analyze.html can call .init(withGenetic)
+// charts.js — Chart.js visualizations for Folliscope
+// Exposed via window.FolliscopeCharts so analyze.html can call .init(withGenetic)
 
 (function () {
   'use strict';
@@ -171,7 +171,7 @@
 
   // Called from analyze.html's confirmAndShowResults flow
   function init(withGenetic) {
-    const result = window._baldguardResult;
+    const result = window._folliscopeResult;
     if (!result) {
       // No real result yet — charts were already drawn by analyze.html's inline fallback
       return;
@@ -187,5 +187,5 @@
   }
 
   // Expose globally
-  window.BaldGuardCharts = { init, renderGauge, renderRadar, renderBar, renderSNP };
+  window.FolliscopeCharts = { init, renderGauge, renderRadar, renderBar, renderSNP };
 })();

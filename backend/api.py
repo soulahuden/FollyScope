@@ -1,5 +1,5 @@
 """
-FastAPI REST API for BaldGuard.
+FastAPI REST API for Folliscope.
 
 Public-facing endpoints accept English values (male/female, balanced, etc.)
 and the main /analyze endpoint always integrates the NCBI AR reference
@@ -34,7 +34,7 @@ from .phenotype_inference import (
 from .reference_data import RECOMMENDATIONS, SNP_DATABASE
 from .risk_score import calculate_risk_score
 
-router = APIRouter(prefix="/api", tags=["BaldGuard API"])
+router = APIRouter(prefix="/api", tags=["Folliscope API"])
 
 
 # ── Value translation (English in / Indonesian internal) ──────────────────────
@@ -243,7 +243,7 @@ def _build_section_data(req: AnalyzeRequest):
 
 @router.get("/health")
 async def health_check():
-    return {"status": "ok", "service": "BaldGuard API", "timestamp": datetime.now().isoformat()}
+    return {"status": "ok", "service": "Folliscope API", "timestamp": datetime.now().isoformat()}
 
 
 @router.get("/snp-database")

@@ -1,4 +1,4 @@
-"""Reference data for BaldGuard — SNP database, CAG thresholds, and recommendations."""
+"""Reference data for Folliscope — SNP database, CAG thresholds, and recommendations."""
 
 from dataclasses import dataclass, field
 from typing import Dict, List, Tuple

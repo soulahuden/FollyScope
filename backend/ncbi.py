@@ -1,5 +1,5 @@
 """
-NCBI Entrez integration for BaldGuard.
+NCBI Entrez integration for Folliscope.
 Fetches AR gene reference sequence (NM_000044.6) from NCBI RefSeq
 using Biopython Entrez — memenuhi syarat penggunaan database NCBI.
 
@@ -14,8 +14,8 @@ from typing import Dict, Optional
 from Bio import Entrez, SeqIO
 
 # NCBI mewajibkan email untuk setiap query Entrez
-Entrez.email = "baldguard.education@example.com"
-Entrez.tool  = "BaldGuard-EducationalProject"
+Entrez.email = "folliscope.education@example.com"
+Entrez.tool  = "Folliscope-EducationalProject"
 
 # Cache in-memory: simpan hasil agar tidak query NCBI berulang kali
 _cache: Dict[str, tuple] = {}

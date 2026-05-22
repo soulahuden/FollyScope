@@ -1,12 +1,12 @@
-# BaldGuard — Tentang Proyek Ini
+# Folliscope — Tentang Proyek Ini
 
 > Proyek edukasi mata kuliah Computational Biology — **bukan alat diagnostik klinis.**
 
 ---
 
-## Apa Itu BaldGuard?
+## Apa Itu Folliscope?
 
-BaldGuard adalah *proof-of-concept* sistem peringatan dini berbasis web untuk memperkirakan risiko **Androgenetic Alopecia (AGA)** — kebotakan pola genetik yang mempengaruhi ~50% pria di atas usia 50 tahun dan 25–40% wanita sepanjang hidupnya.
+Folliscope adalah *proof-of-concept* sistem peringatan dini berbasis web untuk memperkirakan risiko **Androgenetic Alopecia (AGA)** — kebotakan pola genetik yang mempengaruhi ~50% pria di atas usia 50 tahun dan 25–40% wanita sepanjang hidupnya.
 
 Sistem ini menggabungkan dua jalur analisis:
 - **Jalur Genetik** — analisis sekuens DNA (CAG/GGN repeat) dan panel 9 SNP
@@ -170,7 +170,7 @@ Nilai-nilai berikut **bukan dari query database langsung**, melainkan diekstrak 
 
 ### Integrasi Database NCBI (Real-time)
 
-BaldGuard terhubung ke **NCBI RefSeq** secara langsung via Biopython Entrez:
+Folliscope terhubung ke **NCBI RefSeq** secara langsung via Biopython Entrez:
 
 ```
 Accession : NM_000044.6
@@ -202,11 +202,11 @@ File di folder `sample_data/` adalah data **buatan** untuk keperluan demo, bukan
 
 ---
 
-## Seberapa Akurat BaldGuard?
+## Seberapa Akurat Folliscope?
 
 ### Analogi yang Tepat
 
-> BaldGuard bekerja seperti **kompas**, bukan **GPS**.
+> Folliscope bekerja seperti **kompas**, bukan **GPS**.
 > Kompas menunjukkan **arah yang benar** — faktor mana yang meningkatkan atau menurunkan risiko. Tapi kompas tidak bisa mengatakan *"kamu akan botak di usia 35 tahun"* dengan presisi angka.
 
 ### Apa yang Akurat
@@ -239,13 +239,13 @@ Sebagai konteks, PRS yang digunakan secara klinis dibangun dengan:
 4. Validasi di cohort independen (AUC, sensitivity, specificity)
 5. Kalibrasi berdasarkan populasi spesifik
 
-BaldGuard melewati langkah 1–4 dan langsung menggunakan nilai dari literatur dengan bobot yang dirancang secara manual — yang merupakan penyederhanaan yang **wajar untuk proyek edukasi**, namun perlu diakui secara terbuka.
+Folliscope melewati langkah 1–4 dan langsung menggunakan nilai dari literatur dengan bobot yang dirancang secara manual — yang merupakan penyederhanaan yang **wajar untuk proyek edukasi**, namun perlu diakui secara terbuka.
 
 ---
 
 ## Kesimpulan Akademik
 
-BaldGuard adalah implementasi *proof-of-concept* yang:
+Folliscope adalah implementasi *proof-of-concept* yang:
 
 - ✅ Mengimplementasikan faktor-faktor risiko AGA yang terbukti secara ilmiah
 - ✅ Menggunakan nilai referensi dari literatur peer-reviewed

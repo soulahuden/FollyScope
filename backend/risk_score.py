@@ -1,5 +1,5 @@
 """
-Hybrid Polygenic Risk Score (PRS) calculator for BaldGuard.
+Hybrid Polygenic Risk Score (PRS) calculator for Folliscope.
 Combines genetic + clinical + family + lifestyle components.
 """
 

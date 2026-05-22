@@ -1,8 +1,8 @@
-// main.js — BaldGuard front-end integration
+// main.js — Folliscope front-end integration
 // Collects questionnaire data, calls /api/analyze, and renders the
 // risk profile, NCBI comparison, confidence indicator, and phenotype
 // inference returned by the backend.
-// Exposed via window.BaldGuardMain.processResults(withGenetic).
+// Exposed via window.FolliscopeMain.processResults(withGenetic).
 
 (function () {
   'use strict';
@@ -343,12 +343,12 @@
   // ── localStorage form persistence ─────────────────────────────────────
 
   function saveProgress() {
-    try { localStorage.setItem('baldguard_form_v2', JSON.stringify(collectFormData())); } catch (_) {}
+    try { localStorage.setItem('folliscope_form_v2', JSON.stringify(collectFormData())); } catch (_) {}
   }
 
   function loadProgress() {
     try {
-      const raw = localStorage.getItem('baldguard_form_v2');
+      const raw = localStorage.getItem('folliscope_form_v2');
       if (!raw) return;
       const data = JSON.parse(raw);
       const s1 = data.section1; if (!s1) return;
@@ -366,13 +366,13 @@
   // ── Plain-text report download (English) ──────────────────────────────
 
   function downloadReport() {
-    const r = window._baldguardResult;
+    const r = window._folliscopeResult;
     if (!r) { alert('Run an analysis first.'); return; }
 
     const cmp = r.ncbi_comparison || {};
     const conf = r.confidence || {};
     const lines = [
-      'BALDGUARD — EARLY-WARNING HAIR-LOSS RISK ASSESSMENT',
+      'FOLLISCOPE — EARLY-WARNING HAIR-LOSS RISK ASSESSMENT',
       '====================================================',
       `Date              : ${new Date().toLocaleDateString('en-US', { dateStyle: 'full' })}`,
       `Analysis type     : ${r.analysis_type}`,
@@ -408,12 +408,12 @@
     lines.push('', '---',
       `DISCLAIMER: ${r.disclaimer}`,
       '',
-      'BaldGuard — Educational computational-biology project');
+      'Folliscope — Educational computational-biology project');
 
     const blob = new Blob([lines.join('\n')], { type: 'text/plain;charset=utf-8' });
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
-    a.download = `baldguard_report_${Date.now()}.txt`;
+    a.download = `folliscope_report_${Date.now()}.txt`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -434,7 +434,7 @@
       if (geneticData) requestData.genetic_data = geneticData;
 
       const result = await analyzeRisk(requestData);
-      window._baldguardResult = result;
+      window._folliscopeResult = result;
 
       applyResults(result);
       saveProgress();
@@ -442,11 +442,11 @@
       if (spinner)   spinner.style.display   = 'none';
       if (container) container.style.display = 'block';
 
-      if (typeof window.BaldGuardCharts !== 'undefined') {
-        window.BaldGuardCharts.init(result.analysis_type !== 'clinical_only');
+      if (typeof window.FolliscopeCharts !== 'undefined') {
+        window.FolliscopeCharts.init(result.analysis_type !== 'clinical_only');
       }
     } catch (err) {
-      console.warn('BaldGuard API error:', err.message);
+      console.warn('Folliscope API error:', err.message);
       if (spinner)   spinner.style.display   = 'none';
       if (container) container.style.display = 'block';
       if (typeof window.showMockResults === 'function') {
@@ -456,5 +456,5 @@
   }
 
   document.addEventListener('DOMContentLoaded', loadProgress);
-  window.BaldGuardMain = { processResults, collectFormData, downloadReport };
+  window.FolliscopeMain = { processResults, collectFormData, downloadReport };
 })();

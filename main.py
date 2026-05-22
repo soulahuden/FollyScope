@@ -1,5 +1,5 @@
 """
-BaldGuard — Sistem Peringatan Kebotakan Dini berbasis Computational Biology
+Folliscope — Sistem Peringatan Kebotakan Dini berbasis Computational Biology
 Entry point: uvicorn main:app --reload
 """
 
@@ -12,7 +12,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from backend.api import router
 
 app = FastAPI(
-    title="BaldGuard API",
+    title="Folliscope API",
     description="Sistem Peringatan Kebotakan Dini berbasis Computational Biology",
     version="1.0.0",
 )

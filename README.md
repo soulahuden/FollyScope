@@ -1,4 +1,4 @@
-# 🧬 BaldGuard — Sistem Peringatan Kebotakan Dini
+# 🧬 Folliscope — Sistem Peringatan Kebotakan Dini
 
 > **Berbasis Computational Biology** | Analisis Genetik & Klinis Terintegrasi
 
@@ -8,7 +8,7 @@
 [![Docker](https://img.shields.io/badge/Docker-ready-2496ED.svg)](https://docker.com)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-> ⚠️ **DISCLAIMER:** BaldGuard adalah proyek edukasi untuk mata kuliah Computational Biology dan **BUKAN** alat diagnostik klinis. Hasilnya tidak menggantikan konsultasi dengan dokter atau dermatolog berlisensi.
+> ⚠️ **DISCLAIMER:** Folliscope adalah proyek edukasi untuk mata kuliah Computational Biology dan **BUKAN** alat diagnostik klinis. Hasilnya tidak menggantikan konsultasi dengan dokter atau dermatolog berlisensi.
 
 ---
 
@@ -25,7 +25,7 @@
 9. [Contoh Penggunaan API](#contoh-penggunaan-api)
 10. [Struktur Proyek](#struktur-proyek)
 11. [Menjalankan Tests](#menjalankan-tests)
-12. [Cara Memperluas BaldGuard](#cara-memperluas-baldguard)
+12. [Cara Memperluas Folliscope](#cara-memperluas-folliscope)
 13. [Limitasi dan Disclaimer](#limitasi-dan-disclaimer)
 14. [Referensi Literatur](#referensi-literatur)
 
@@ -204,7 +204,7 @@ Tidak perlu install Python atau dependencies apapun, cukup punya **Docker Deskto
 ```bash
 # Clone proyek
 git clone <repo-url>
-cd baldguard
+cd folliscope
 
 # Build dan jalankan (sekali perintah)
 docker compose up --build
@@ -239,7 +239,7 @@ docker compose down
 ```bash
 # 1. Clone atau download proyek
 git clone <repo-url>
-cd baldguard
+cd folliscope
 
 # 2. Buat virtual environment
 python -m venv venv
@@ -254,7 +254,7 @@ pip install -r requirements.txt
 ```bash
 # 1. Clone proyek
 git clone <repo-url>
-cd baldguard
+cd folliscope
 
 # 2. Buat virtual environment
 python3 -m venv venv
@@ -307,7 +307,7 @@ python main.py
 
 ```bash
 curl http://localhost:8000/api/health
-# → {"status":"ok","service":"BaldGuard API","timestamp":"..."}
+# → {"status":"ok","service":"Folliscope API","timestamp":"..."}
 ```
 
 ---
@@ -449,7 +449,7 @@ curl http://localhost:8000/api/health
 ```
 
 ```json
-{"status": "ok", "service": "BaldGuard API", "timestamp": "2024-01-01T12:00:00"}
+{"status": "ok", "service": "Folliscope API", "timestamp": "2024-01-01T12:00:00"}
 ```
 
 ### Dapatkan Database SNP
@@ -524,7 +524,7 @@ curl -X POST http://localhost:8000/api/analyze/fasta-upload \
 ## Struktur Proyek
 
 ```
-baldguard/
+folliscope/
 ├── README.md                    ← Dokumentasi ini
 ├── about.md                     ← Penjelasan lengkap metode & data ilmiah
 ├── CLAUDE.md                    ← Panduan untuk Claude Code AI
@@ -567,7 +567,7 @@ baldguard/
 │
 └── tests/
     ├── __init__.py
-    └── test_baldguard.py        ← 66 unit tests (pytest)
+    └── test_folliscope.py        ← 66 unit tests (pytest)
 ```
 
 ---
@@ -585,11 +585,11 @@ pytest tests/ -v
 pytest tests/ -v --tb=short
 
 # Jalankan test class tertentu
-pytest tests/test_baldguard.py::TestCAGRepeats -v
-pytest tests/test_baldguard.py::TestHybridRiskCalculation -v
+pytest tests/test_folliscope.py::TestCAGRepeats -v
+pytest tests/test_folliscope.py::TestHybridRiskCalculation -v
 
 # Jalankan test tunggal
-pytest tests/test_baldguard.py::TestCAGRepeats::test_cag_17_count -v
+pytest tests/test_folliscope.py::TestCAGRepeats::test_cag_17_count -v
 ```
 
 **Target:** 66 test cases di 9 kelas pengujian:
@@ -607,7 +607,7 @@ pytest tests/test_baldguard.py::TestCAGRepeats::test_cag_17_count -v
 
 ---
 
-## Cara Memperluas BaldGuard
+## Cara Memperluas Folliscope
 
 ### Menambah SNP Baru
 
@@ -666,7 +666,7 @@ Edit dictionary `RECOMMENDATIONS` di `backend/reference_data.py` untuk menambah 
 
 ### Limitasi Ilmiah
 
-1. **Panel SNP terbatas:** BaldGuard menggunakan 9 SNP representatif. Studi GWAS terbaru (Heilmann-Heimbach 2017) mengidentifikasi >200 lokus yang berhubungan dengan AGA.
+1. **Panel SNP terbatas:** Folliscope menggunakan 9 SNP representatif. Studi GWAS terbaru (Heilmann-Heimbach 2017) mengidentifikasi >200 lokus yang berhubungan dengan AGA.
 
 2. **Populasi referensi:** Threshold CAG/GGN didasarkan terutama pada studi populasi Kaukasian. Nilai cutoff mungkin sedikit berbeda untuk populasi Asia, Afrika, atau campuran.
 
@@ -680,10 +680,10 @@ Edit dictionary `RECOMMENDATIONS` di `backend/reference_data.py` untuk menambah 
 
 ### Disclaimer Etik
 
-- ❌ BaldGuard **BUKAN** alat diagnostik medis
-- ❌ Hasil BaldGuard **TIDAK** menggantikan pemeriksaan dermatologis
-- ❌ **JANGAN** membuat keputusan medis berdasarkan output BaldGuard semata
-- ✅ Gunakan BaldGuard sebagai **alat edukasi** tentang genetika AGA
+- ❌ Folliscope **BUKAN** alat diagnostik medis
+- ❌ Hasil Folliscope **TIDAK** menggantikan pemeriksaan dermatologis
+- ❌ **JANGAN** membuat keputusan medis berdasarkan output Folliscope semata
+- ✅ Gunakan Folliscope sebagai **alat edukasi** tentang genetika AGA
 - ✅ Selalu konsultasikan kondisi rambut dengan **dokter atau dermatolog berlisensi**
 
 ---
@@ -716,4 +716,4 @@ MIT License — untuk penggunaan edukasi dan non-komersial.
 
 ---
 
-*BaldGuard dibuat sebagai proyek UAS mata kuliah Computational Biology. Dibuat dengan ❤️ menggunakan Python, FastAPI, dan Biopython.*
+*Folliscope dibuat sebagai proyek UAS mata kuliah Computational Biology. Dibuat dengan ❤️ menggunakan Python, FastAPI, dan Biopython.*

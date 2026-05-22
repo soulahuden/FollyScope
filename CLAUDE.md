@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## About
 
-**BaldGuard** is an educational computational biology project — an early-warning androgenetic alopecia (AGA/baldness) risk system. It combines genetic analysis (CAG/GGN repeat counting, SNP panel) with a clinical questionnaire to produce a hybrid polygenic risk score (PRS). It is **not** a clinical diagnostic tool.
+**Folliscope** is an educational computational biology project — an early-warning androgenetic alopecia (AGA/baldness) risk system. It combines genetic analysis (CAG/GGN repeat counting, SNP panel) with a clinical questionnaire to produce a hybrid polygenic risk score (PRS). It is **not** a clinical diagnostic tool.
 
 The system supports three input modes:
 - **Genetic-only:** CAG/GGN repeats + SNP panel from FASTA/TSV/23andMe raw data
@@ -45,17 +45,17 @@ Frontend is served at `http://localhost:8000`.
 pytest tests/ -v
 
 # Test categories
-pytest tests/test_baldguard.py::TestCAGRepeats -v          # CAG repeat counting
-pytest tests/test_baldguard.py::TestGGNRepeats -v          # GGN repeat counting
-pytest tests/test_baldguard.py::TestSNPDetection -v        # SNP scoring
-pytest tests/test_baldguard.py::TestClinicalScore -v       # Clinical questionnaire
-pytest tests/test_baldguard.py::TestFamilyScore -v         # Family history weighting
-pytest tests/test_baldguard.py::TestLifestyleScore -v      # Lifestyle factors
-pytest tests/test_baldguard.py::TestHybridRiskCalculation -v  # PRS formula
-pytest tests/test_baldguard.py::TestParsing -v             # FASTA/TSV parsing
+pytest tests/test_folliscope.py::TestCAGRepeats -v          # CAG repeat counting
+pytest tests/test_folliscope.py::TestGGNRepeats -v          # GGN repeat counting
+pytest tests/test_folliscope.py::TestSNPDetection -v        # SNP scoring
+pytest tests/test_folliscope.py::TestClinicalScore -v       # Clinical questionnaire
+pytest tests/test_folliscope.py::TestFamilyScore -v         # Family history weighting
+pytest tests/test_folliscope.py::TestLifestyleScore -v      # Lifestyle factors
+pytest tests/test_folliscope.py::TestHybridRiskCalculation -v  # PRS formula
+pytest tests/test_folliscope.py::TestParsing -v             # FASTA/TSV parsing
 
 # Single test
-pytest tests/test_baldguard.py::TestCAGRepeats::test_cag_17_count -v
+pytest tests/test_folliscope.py::TestCAGRepeats::test_cag_17_count -v
 ```
 
 ## Architecture
@@ -174,7 +174,7 @@ This enables users without DNA data to still receive an interpretable, science-g
 - Sub-component weights within ClinicalScore (e.g., Norwood = 35%, hair pull = 15%) — manual design
 - Risk category cut-offs (0–19, 20–39, 40–59, etc.) — not validated against real patient outcomes
 
-**Key limitation:** BaldGuard acts like a **compass** (shows direction) not a **GPS** (precise prediction). The direction and type of risk factors are scientifically sound. The exact numerical score is **indidicative, not clinical prediction**.
+**Key limitation:** Folliscope acts like a **compass** (shows direction) not a **GPS** (precise prediction). The direction and type of risk factors are scientifically sound. The exact numerical score is **indidicative, not clinical prediction**.
 
 ### Important Notes
 
@@ -199,7 +199,7 @@ This enables users without DNA data to still receive an interpretable, science-g
 
 | Method | Path | Description |
 |--------|------|-------------|
-| GET | `/api/health` | Health check: `{"status":"ok","service":"BaldGuard API","timestamp":"..."}` |
+| GET | `/api/health` | Health check: `{"status":"ok","service":"Folliscope API","timestamp":"..."}` |
 | GET | `/api/snp-database` | Returns all 9 SNPs with OR, weights, and descriptions |
 | POST | `/api/analyze` | Main endpoint: accepts genetic_data + 5 clinical sections; returns hybrid/clinical score |
 | POST | `/api/analyze/fasta-upload` | Upload FASTA; returns detected CAG/GGN counts |

@@ -1,5 +1,5 @@
 """
-Genetic analyzer for BaldGuard.
+Genetic analyzer for Folliscope.
 Counts CAG/GGN repeats and detects SNPs in AR gene sequences.
 Ref: Choong 1996, Hillmer 2005 (Am J Hum Genet)
 """

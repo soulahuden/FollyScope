@@ -1,5 +1,5 @@
 """
-Clinical questionnaire scorer for BaldGuard.
+Clinical questionnaire scorer for Folliscope.
 Implements scoring based on Norwood-Hamilton (1975), Ludwig (1977), and ALOPHA Index.
 """
 

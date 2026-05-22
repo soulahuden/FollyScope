@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Risk Assessment — BaldGuard</title>
+  <title>Risk Assessment — Folliscope</title>
   <link rel="stylesheet" href="css/style.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
@@ -15,7 +15,7 @@
   <div class="container">
     <a href="index.html" class="brand">
       <div class="brand-mark"><i class="fa-solid fa-dna"></i></div>
-      BaldGuard
+      Folliscope
     </a>
     <ul class="nav-links" id="navLinks">
       <li><a href="index.html">Home</a></li>
@@ -773,7 +773,7 @@
 <div class="modal-overlay hidden" id="disclaimerModal">
   <div class="modal">
     <h3><i class="fa-solid fa-triangle-exclamation" style="color:var(--warning);margin-right:8px;"></i>Important</h3>
-    <p>BaldGuard provides an <strong>educational risk estimate</strong> from a simplified model — it is <strong>not a clinical diagnosis</strong>.</p>
+    <p>Folliscope provides an <strong>educational risk estimate</strong> from a simplified model — it is <strong>not a clinical diagnosis</strong>.</p>
     <p>Many AGA-relevant factors are outside this analysis. Use it as a starting point for discussion with a licensed dermatologist or trichologist.</p>
     <div class="modal-foot">
       <button class="btn btn--ghost" onclick="document.getElementById('disclaimerModal').classList.add('hidden')">Cancel</button>
@@ -989,8 +989,8 @@
     setTimeout(() => {
       document.getElementById('loadingSpinner').style.display = 'none';
       document.getElementById('resultsContainer').style.display = 'block';
-      if (window.BaldGuardMain?.processResults) {
-        window.BaldGuardMain.processResults(window._pendingWithGenetic);
+      if (window.FolliscopeMain?.processResults) {
+        window.FolliscopeMain.processResults(window._pendingWithGenetic);
       }
     }, 1000);
   }
@@ -1007,7 +1007,7 @@
     document.getElementById('resultsPlaceholder').style.display = 'block';
   }
   function downloadPDF() {
-    if (window.BaldGuardMain?.downloadReport) window.BaldGuardMain.downloadReport();
+    if (window.FolliscopeMain?.downloadReport) window.FolliscopeMain.downloadReport();
     else alert('Run an analysis first.');
   }
 

@@ -15,7 +15,7 @@ Genotype bersifat diploid (dua karakter), misalnya:
     "--" = no call (tidak terbaca)
 
 Parser ini hanya mengekstrak 9 SNP yang relevan dengan AGA dari panel
-BaldGuard, lalu mengkonversinya ke format yang kompatibel dengan
+Folliscope, lalu mengkonversinya ke format yang kompatibel dengan
 analyze_snps() yang sudah ada.
 """
 
@@ -57,7 +57,7 @@ class Parse23andMeResult:
 
 def parse_23andme(text: str) -> Parse23andMeResult:
     """
-    Parse file raw data 23andMe dan ekstrak 9 SNP AGA panel BaldGuard.
+    Parse file raw data 23andMe dan ekstrak 9 SNP AGA panel Folliscope.
 
     Penanganan heterozygous:
     - Jika salah satu alel adalah risk allele → dilaporkan sebagai risk
