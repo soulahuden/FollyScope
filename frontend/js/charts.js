@@ -1,4 +1,4 @@
-// charts.js — Chart.js visualisasi untuk BaldGuard
+// charts.js — Chart.js visualizations for BaldGuard
 // Exposed via window.BaldGuardCharts so analyze.html can call .init(withGenetic)
 
 (function () {
@@ -34,8 +34,8 @@
 
     const hasGenetic = scores.genetic_score > 0;
     const labels = hasGenetic
-      ? ['Genetik', 'Klinis', 'Keluarga', 'Gaya Hidup']
-      : ['Klinis', 'Keluarga', 'Gaya Hidup'];
+      ? ['Genetic', 'Clinical', 'Family', 'Lifestyle']
+      : ['Clinical', 'Family', 'Lifestyle'];
     const data = hasGenetic
       ? [scores.genetic_score, scores.clinical_score, scores.family_score, scores.lifestyle_score]
       : [scores.clinical_score, scores.family_score, scores.lifestyle_score];
@@ -45,13 +45,13 @@
       data: {
         labels,
         datasets: [{
-          label: 'Skor Risiko',
+          label: 'Risk score',
           data,
           fill: true,
-          backgroundColor: 'rgba(231,76,60,0.15)',
-          borderColor: '#e74c3c',
+          backgroundColor: 'rgba(5,150,105,0.14)',
+          borderColor: '#059669',
           borderWidth: 2,
-          pointBackgroundColor: '#e74c3c',
+          pointBackgroundColor: '#059669',
           pointRadius: 5,
           pointHoverRadius: 7,
         }]
@@ -93,7 +93,7 @@
       data: {
         labels,
         datasets: [{
-          label: 'Kontribusi Skor',
+          label: 'Score contribution',
           data,
           backgroundColor: colors,
           borderRadius: 8,
@@ -104,11 +104,11 @@
         responsive: true,
         indexAxis: 'y',
         scales: {
-          x: { beginAtZero: true, max: 55, title: { display: true, text: 'Poin kontribusi' } }
+          x: { beginAtZero: true, max: 55, title: { display: true, text: 'Contribution points' } }
         },
         plugins: {
           legend: { display: false },
-          tooltip: { callbacks: { label: ctx => `Kontribusi: ${ctx.raw.toFixed(1)} poin` } }
+          tooltip: { callbacks: { label: ctx => `Contribution: ${ctx.raw.toFixed(1)} pts` } }
         }
       }
     });
@@ -156,9 +156,9 @@
               label: ctx => {
                 const s = known[ctx.dataIndex];
                 return [
-                  `Status: ${s.status === 'RISK' ? '⚠ Alel Risiko' : '✓ Normal'}`,
+                  `Status: ${s.status === 'RISK' ? '⚠ Risk allele' : '✓ Normal'}`,
                   `OR: ${s.odds_ratio}×`,
-                  `Alel: ${s.user_allele || '?'}`,
+                  `Allele: ${s.user_allele || '?'}`,
                 ];
               }
             }
@@ -178,7 +178,7 @@
     }
 
     const scores = result.scores;
-    renderGauge(scores.hybrid_score, result.risk_color || '#e74c3c');
+    renderGauge(scores.hybrid_score, result.risk_color || '#f59e0b');
     renderRadar(scores);
     renderBar(result.component_contributions);
     if (withGenetic && result.genetic_details && result.genetic_details.snp_results) {

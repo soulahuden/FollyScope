@@ -21,7 +21,7 @@ async function fetchJSON(url, options = {}) {
     });
 
     if (!response.ok) {
-        const error = await response.json().catch(() => ({ detail: 'Kesalahan tidak diketahui' }));
+        const error = await response.json().catch(() => ({ detail: 'Unknown error' }));
         throw new Error(error.detail || `HTTP ${response.status}`);
     }
 
@@ -98,7 +98,7 @@ async function uploadFasta(file) {
 
     if (!response.ok) {
         const error = await response.json().catch(() => ({}));
-        throw new Error(error.detail || 'Upload FASTA gagal');
+        throw new Error(error.detail || 'FASTA upload failed');
     }
 
     return response.json();
@@ -128,7 +128,7 @@ async function parseFastaText(fastaText) {
 async function loadSampleFasta(profile) {
     const response = await fetch(`/sample_data/${profile}_sample.fasta`);
     if (!response.ok) {
-        throw new Error(`Gagal memuat sample FASTA untuk profil "${profile}"`);
+        throw new Error(`Could not load sample FASTA for profile "${profile}"`);
     }
     return response.text();
 }
@@ -142,7 +142,7 @@ async function loadSampleFasta(profile) {
 async function loadSampleGenotype(profile) {
     const response = await fetch(`/sample_data/${profile}_genotype.tsv`);
     if (!response.ok) {
-        throw new Error(`Gagal memuat sample genotype untuk profil "${profile}"`);
+        throw new Error(`Could not load sample genotype for profile "${profile}"`);
     }
     return response.text();
 }
@@ -194,7 +194,7 @@ async function isBackendAvailable(timeoutMs = 3000) {
 // ── NCBI & 23andMe endpoints ──────────────────────────────────────────────────
 
 /**
- * Ambil informasi sekuens referensi AR dari NCBI RefSeq (NM_000044.6).
+ * Fetch the NCBI RefSeq AR reference sequence (NM_000044.6).
  * @returns {Promise<NCBIReferenceResult>}
  */
 async function fetchARReference() {
@@ -202,8 +202,8 @@ async function fetchARReference() {
 }
 
 /**
- * Upload file raw data 23andMe dan ekstrak SNP AGA panel.
- * @param {File} file  - file .txt raw data 23andMe
+ * Upload a 23andMe raw-data file and extract the AGA SNP panel.
+ * @param {File} file - 23andMe raw-data .txt file
  * @returns {Promise<Parse23andMeResult>}
  */
 async function upload23andMe(file) {
@@ -217,7 +217,7 @@ async function upload23andMe(file) {
 
     if (!response.ok) {
         const error = await response.json().catch(() => ({}));
-        throw new Error(error.detail || 'Upload 23andMe gagal');
+        throw new Error(error.detail || '23andMe upload failed');
     }
 
     return response.json();
