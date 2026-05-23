@@ -1,14 +1,28 @@
-# 🧬 Folliscope — Sistem Peringatan Kebotakan Dini
+# 🧬 Folliscope — Early-Warning Hair-Loss Risk Assessment
 
-> **Berbasis Computational Biology** | Analisis Genetik & Klinis Terintegrasi
+> **Berbasis Computational Biology** | Integrated genetic & clinical analysis with live NCBI reference
 
 [![Python](https://img.shields.io/badge/Python-3.11+-blue.svg)](https://python.org)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.111-green.svg)](https://fastapi.tiangolo.com)
 [![Biopython](https://img.shields.io/badge/Biopython-1.83-orange.svg)](https://biopython.org)
 [![Docker](https://img.shields.io/badge/Docker-ready-2496ED.svg)](https://docker.com)
+[![Tests](https://img.shields.io/badge/tests-66%20passing-brightgreen.svg)](tests/test_folliscope.py)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-> ⚠️ **DISCLAIMER:** Folliscope adalah proyek edukasi untuk mata kuliah Computational Biology dan **BUKAN** alat diagnostik klinis. Hasilnya tidak menggantikan konsultasi dengan dokter atau dermatolog berlisensi.
+> ⚠️ **DISCLAIMER:** Folliscope adalah proyek edukasi untuk mata kuliah Computational Biology dan **BUKAN** alat diagnostik klinis. Hasilnya tidak menggantikan konsultasi dengan dokter atau dermatolog berlisensi. Lihat [METHODS.md](METHODS.md) untuk pembahasan lengkap tentang batasan ilmiah.
+
+---
+
+## Fitur Utama
+
+- 🧬 **Phenotype-to-genotype inference** — estimasi rentang CAG repeat dari kuesioner klinis, untuk user yang tidak punya data DNA
+- 📡 **Live NCBI integration** — fetch sekuens referensi AR (NM_000044.6) dari NCBI RefSeq setiap analisis, bandingkan dengan profil user
+- 🔬 **Hybrid PRS scoring** — gabungkan data genetik (FASTA / SNP / 23andMe) + kuesioner klinis 5 bagian
+- 🎯 **Transparent confidence** — laporkan tingkat keyakinan analisis: 70% (kuesioner saja) → 85% (+ SNP) → 95% (+ DNA)
+- 🧪 **Treatment scenario simulator** — slider interaktif untuk lihat dampak perubahan gaya hidup terhadap skor risiko
+- 📄 **Structured PDF report** — laporan terstruktur dengan gauge, NCBI comparison, dan rekomendasi
+- 🚀 **Deploy-ready** — siap deploy ke Render / Railway / Fly.io dengan satu klik
+- ✅ **66 unit tests** — semua komponen scoring tervalidasi
 
 ---
 
@@ -20,16 +34,17 @@
 4. [Database SNP dan Referensi](#database-snp-dan-referensi)
 5. [Instalasi](#instalasi)
 6. [Cara Menjalankan](#cara-menjalankan)
-7. [Cara Menggunakan](#cara-menggunakan)
-8. [Penjelasan Kuesioner Medis](#penjelasan-kuesioner-medis)
-9. [Contoh Penggunaan API](#contoh-penggunaan-api)
-10. [Struktur Proyek](#struktur-proyek)
-11. [Menjalankan Tests](#menjalankan-tests)
-12. [Cara Memperluas Folliscope](#cara-memperluas-folliscope)
-13. [Limitasi dan Disclaimer](#limitasi-dan-disclaimer)
-14. [Referensi Literatur](#referensi-literatur)
+7. [Deploy ke Internet](#deploy-ke-internet)
+8. [Cara Menggunakan](#cara-menggunakan)
+9. [Penjelasan Kuesioner Medis](#penjelasan-kuesioner-medis)
+10. [Contoh Penggunaan API](#contoh-penggunaan-api)
+11. [Struktur Proyek](#struktur-proyek)
+12. [Menjalankan Tests](#menjalankan-tests)
+13. [Cara Memperluas Folliscope](#cara-memperluas-folliscope)
+14. [Limitasi dan Disclaimer](#limitasi-dan-disclaimer)
+15. [Referensi Literatur](#referensi-literatur)
 
-> 💡 Lihat juga [about.md](about.md) untuk penjelasan lengkap metode ilmiah yang digunakan.
+> 💡 Lihat juga [METHODS.md](METHODS.md) untuk pembahasan ilmiah lengkap: apa yang divalidasi vs. apa yang merupakan design choice.
 
 ---
 
@@ -512,7 +527,7 @@ curl -X POST http://localhost:8000/api/analyze \
       "fasta_sequence": ">test\nCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGGGCGGCGGCGGCGGCGGCGGCGGCGGCGGCGGCGGCGGCGGCGGCGGCGGCGGCGGC",
       "snp_genotypes": {"rs6152": "G", "rs1385699": "C", "rs12558842": "G"}
     },
-    "section1": {"age": 28, "gender": "pria", "ethnicity": "Asia"},
+    "section1": {"age": 28, "gender": "male", "ethnicity": "Asia"},
     "section2": {
       "hair_loss_per_day": 200, "loss_duration_months": 12,
       "loss_pattern": "m-shape", "thinning_areas": ["hairline", "crown"],
@@ -525,34 +540,43 @@ curl -X POST http://localhost:8000/api/analyze \
     },
     "section5": {
       "stress_level": 8, "sleep_hours": 5.5,
-      "smoking": false, "diet_quality": "seimbang",
-      "exercise_frequency": "ringan"
+      "smoking": false, "diet_quality": "balanced",
+      "exercise_frequency": "light"
     }
   }'
 ```
 
-**Contoh Respons:**
+**Contoh Respons (disingkat):**
 
 ```json
 {
   "success": true,
   "analysis_type": "hybrid",
   "scores": {
-    "hybrid_score": 72.4,
-    "genetic_score": 78.0,
-    "clinical_score": 65.3,
-    "family_score": 68.0,
-    "lifestyle_score": 48.2
+    "hybrid_score": 72.4, "genetic_score": 78.0,
+    "clinical_score": 65.3, "family_score": 68.0, "lifestyle_score": 48.2
   },
   "risk_category": "TINGGI",
-  "risk_color": "#e67e22",
+  "risk_category_label": "High",
+  "confidence": {
+    "level": "questionnaire_plus_dna", "label": "Questionnaire + DNA sequence",
+    "percent": 95, "description": "Direct measurement of your AR CAG repeats..."
+  },
+  "ncbi_reference": {
+    "available": true, "source": "NCBI RefSeq",
+    "accession": "NM_000044.6", "sequence_length": 10667,
+    "cag_count": 22, "fetched_at": "2026-05-23T13:35:31"
+  },
+  "ncbi_comparison": {
+    "ncbi_reference_cag": 22, "user_cag_midpoint": 18,
+    "interpretation": "Your AR profile is moderately shorter than the NCBI reference..."
+  },
   "recommendations": [
-    "🚨 PERINGATAN: Risiko AGA tinggi — intervensi dini sangat dianjurkan.",
-    "Segera konsultasi DERMATOLOG dalam 1-3 bulan.",
-    "Pertimbangkan minoxidil topikal 5% (tersedia tanpa resep).",
+    "Warning: AGA risk is high — early intervention is strongly recommended.",
+    "See a dermatologist within the next 1–3 months.",
     "..."
   ],
-  "disclaimer": "Hasil ini adalah estimasi risiko..."
+  "disclaimer": "This is an educational risk assessment, not a medical diagnosis..."
 }
 ```
 
@@ -570,41 +594,46 @@ curl -X POST http://localhost:8000/api/analyze/fasta-upload \
 ```
 folliscope/
 ├── README.md                    ← Dokumentasi ini
-├── about.md                     ← Penjelasan lengkap metode & data ilmiah
+├── METHODS.md                   ← Defensibilitas ilmiah & limitasi
 ├── CLAUDE.md                    ← Panduan untuk Claude Code AI
 ├── requirements.txt             ← Python dependencies
 ├── main.py                      ← Entry point FastAPI
-├── Dockerfile                   ← Docker image (multi-stage build)
+│
+├── Dockerfile                   ← Docker image (multi-stage, honors $PORT)
 ├── docker-compose.yml           ← Jalankan dengan `docker compose up`
+├── render.yaml                  ← Deploy ke Render.com (Blueprint)
+├── railway.json                 ← Deploy ke Railway.app
+├── fly.toml                     ← Deploy ke Fly.io (region: Singapore)
 ├── .dockerignore                ← Exclude cache & venv dari Docker build
 │
 ├── backend/
 │   ├── __init__.py
-│   ├── reference_data.py        ← SNP database, threshold, rekomendasi
+│   ├── reference_data.py        ← SNP database, threshold, recommendations
 │   ├── analyzer.py              ← CAG/GGN counter + SNP detector
-│   ├── clinical_analyzer.py     ← Kuesioner scorer
+│   ├── clinical_analyzer.py     ← Kuesioner scorer (5 sections)
+│   ├── phenotype_inference.py   ← Phenotype → CAG estimate + confidence
 │   ├── risk_score.py            ← Hybrid PRS calculator
-│   ├── ncbi.py                  ← NCBI Entrez — fetch AR reference (NM_000044.6)
+│   ├── ncbi.py                  ← NCBI Entrez — live fetch AR reference (NM_000044.6)
 │   ├── parser_23andme.py        ← Parser file raw data 23andMe
 │   └── api.py                   ← REST endpoints (FastAPI Router)
 │
 ├── frontend/
 │   ├── index.html               ← Landing page
-│   ├── analyze.html             ← Halaman analisis (wizard form)
+│   ├── analyze.html             ← Wizard form + results + treatment simulator
 │   ├── about.html               ← Penjelasan ilmiah
 │   ├── database.html            ← Database SNP interaktif
 │   ├── css/
-│   │   └── style.css            ← Stylesheet lengkap
+│   │   └── style.css            ← Design system v2 (Inter + Space Grotesk + JetBrains Mono)
 │   └── js/
 │       ├── api.js               ← HTTP client untuk backend
 │       ├── charts.js            ← Chart.js visualizations
-│       └── main.js              ← UI controller & form logic
+│       └── main.js              ← UI controller, form logic, PDF generator
 │
 ├── sample_data/
-│   ├── high_risk_sample.fasta   ← CAG=17, GGN=23 (sangat tinggi)
-│   ├── medium_risk_sample.fasta ← CAG=23, GGN=22 (sedang)
-│   ├── low_risk_sample.fasta    ← CAG=29, GGN=20 (rendah)
-│   ├── protective_sample.fasta  ← CAG=33, GGN=18 (protektif)
+│   ├── high_risk_sample.fasta   ← CAG=17, GGN=23 (very high)
+│   ├── medium_risk_sample.fasta ← CAG=23, GGN=22 (moderate)
+│   ├── low_risk_sample.fasta    ← CAG=29, GGN=20 (low)
+│   ├── protective_sample.fasta  ← CAG=33, GGN=18 (protective)
 │   ├── high_risk_genotype.tsv   ← Semua 9 SNP = alel risiko
 │   ├── medium_risk_genotype.tsv ← 5 SNP risiko, 4 normal
 │   └── low_risk_genotype.tsv    ← 2 SNP risiko, 7 normal

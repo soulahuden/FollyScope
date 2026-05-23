@@ -1,29 +1,10 @@
 {
   "permissions": {
     "allow": [
-      "Bash(Get-ChildItem -Path C:\\\\Users\\\\Brian\\\\Downloads\\\\Baldguard -Force)",
-      "Bash(Select-Object Name, PSIsContainer)",
-      "Bash(python main.py)",
-      "Bash(curl -s http://localhost:8000/api/health)",
-      "Bash(powershell -Command \"Add-Type -AssemblyName System.Web; [System.Web.HttpUtility]::UrlDecode\\([Console]::In.ReadToEnd\\(\\)\\) | ConvertFrom-Json | ConvertTo-Json\")",
-      "Bash(pip install *)",
-      "Bash(git add *)",
-      "Bash(git commit *)",
-      "Bash(pytest tests/test_baldguard.py -v --tb=short)",
-      "Bash(pytest tests/test_baldguard.py -q)",
-      "Bash(pkill -f \"python main.py\")",
-      "Bash(curl -s -o /dev/null -w \"HTTP %{http_code} in %{time_total}s\\\\n\" http://localhost:8000/)",
-      "Bash(git mv *)",
-      "Bash(grep -v \":0$\")",
+      "Bash(git reset *)",
       "Bash(pytest tests/test_folliscope.py -q)",
-      "Bash(echo \"Health: $\\(curl -s http://localhost:8000/api/health\\)\")",
-      "Bash(curl -s http://localhost:8000/)",
-      "Bash(echo \"Index title: $\\(curl -s http://localhost:8000/)",
-      "PowerShell(Get-Process *)",
-      "Bash(echo \"Index brand: $\\(curl -s http://localhost:8000/)",
-      "Bash(python -c \"import sys,json;d=json.load\\(sys.stdin\\);print\\(f'Projected \\(low-stress, non-smoker\\): score={d[\\\\\"scores\\\\\"][\\\\\"hybrid_score\\\\\"]:.1f}, lifestyle={d[\\\\\"scores\\\\\"][\\\\\"lifestyle_score\\\\\"]:.1f}'\\)\")",
-      "Bash(git rm *)",
-      "Bash(python *)"
+      "Bash(git add *)",
+      "Bash(git commit -m 'README: add Fitur Utama section, fix broken refs, sync project structure *)"
     ]
   }
 }
