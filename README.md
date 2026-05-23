@@ -390,23 +390,13 @@ docker run -p 8000:8000 -e PORT=8000 folliscope
 
 ### Menggunakan Sample Data
 
-File contoh tersedia di folder `sample_data/`:
+File contoh tersedia di `sample_data/` (juga bisa di-load via tombol di halaman analisis):
 
 ```bash
-# Profil sangat tinggi: CAG=17, GGN=23, semua SNP risiko
-sample_data/high_risk_sample.fasta
-sample_data/high_risk_genotype.tsv
-
-# Profil sedang: CAG=23, GGN=22, 5 SNP risiko
-sample_data/medium_risk_sample.fasta
-sample_data/medium_risk_genotype.tsv
-
-# Profil rendah: CAG=29, GGN=20, 2 SNP risiko
-sample_data/low_risk_sample.fasta
-sample_data/low_risk_genotype.tsv
-
-# Profil protektif: CAG=33, GGN=18
-sample_data/protective_sample.fasta
+sample_data/high_risk_sample.fasta       # CAG=17, GGN=23 (very high)
+sample_data/medium_risk_sample.fasta     # CAG=23, GGN=22 (moderate)
+sample_data/low_risk_sample.fasta        # CAG=29, GGN=20 (low)
+sample_data/protective_sample.fasta      # CAG=33, GGN=18 (protective)
 ```
 
 ### Format File FASTA
@@ -633,10 +623,7 @@ folliscope/
 │   ├── high_risk_sample.fasta   ← CAG=17, GGN=23 (very high)
 │   ├── medium_risk_sample.fasta ← CAG=23, GGN=22 (moderate)
 │   ├── low_risk_sample.fasta    ← CAG=29, GGN=20 (low)
-│   ├── protective_sample.fasta  ← CAG=33, GGN=18 (protective)
-│   ├── high_risk_genotype.tsv   ← Semua 9 SNP = alel risiko
-│   ├── medium_risk_genotype.tsv ← 5 SNP risiko, 4 normal
-│   └── low_risk_genotype.tsv    ← 2 SNP risiko, 7 normal
+│   └── protective_sample.fasta  ← CAG=33, GGN=18 (protective)
 │
 └── tests/
     ├── __init__.py
@@ -737,23 +724,9 @@ Edit dictionary `RECOMMENDATIONS` di `backend/reference_data.py` untuk menambah 
 
 ## Limitasi dan Disclaimer
 
-### Limitasi Ilmiah
-
-1. **Panel SNP terbatas:** Folliscope menggunakan 9 SNP representatif. Studi GWAS terbaru (Heilmann-Heimbach 2017) mengidentifikasi >200 lokus yang berhubungan dengan AGA.
-
-2. **Populasi referensi:** Threshold CAG/GGN didasarkan terutama pada studi populasi Kaukasian. Nilai cutoff mungkin sedikit berbeda untuk populasi Asia, Afrika, atau campuran.
-
-3. **Simplifikasi model:** Formula PRS disederhanakan untuk tujuan edukasi. PRS klinis nyata menggunakan jutaan varian dengan bobot berbasis regresi logistik dari biobank besar.
-
-4. **Tidak mempertimbangkan:** Interaksi gen-lingkungan (epistasis), ekspresi diferensial berdasarkan usia, atau efek haplotype.
-
-5. **Self-report bias:** Data kuesioner klinis bergantung pada laporan subjektif pengguna.
-
-6. **Belum divalidasi secara klinis:** Sistem ini belum diuji pada kohort pasien AGA yang terdiagnosis secara klinis.
-
-### Penggunaan yang tepat
-
 Folliscope adalah alat edukasi tentang genetika AGA. Bukan alat diagnostik dan bukan pengganti pemeriksaan dermatologis. Untuk evaluasi medis, konsultasi dengan dokter atau dermatolog berlisensi.
+
+Pembahasan ilmiah lengkap tentang asumsi model, populasi referensi, dan apa yang perlu dilakukan untuk validasi klinis ada di [METHODS.md](METHODS.md).
 
 ---
 

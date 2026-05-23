@@ -529,7 +529,6 @@
 
         <div class="segmented" id="snpToggle">
           <button class="active" onclick="toggleSnpInput('manual')"><i class="fa-solid fa-pen"></i> Manual</button>
-          <button onclick="toggleSnpInput('file')"><i class="fa-solid fa-file-csv"></i> TSV file</button>
           <button onclick="toggleSnpInput('23andme')"><i class="fa-solid fa-dna"></i> 23andMe</button>
         </div>
 
@@ -553,15 +552,6 @@
               <button class="btn btn--sm btn--ghost" onclick="loadSnpSample('low')">Low risk genotype</button>
             </div>
           </div>
-        </div>
-
-        <!-- TSV upload -->
-        <div id="snpFileSection" style="display:none;">
-          <div class="dropzone" onclick="document.getElementById('snpFileInput').click()">
-            <i class="fa-solid fa-file-csv icon"></i>
-            <p>Upload a TSV with columns: <code>rs_id</code>, <code>genotype</code></p>
-          </div>
-          <input type="file" id="snpFileInput" accept=".tsv,.txt,.csv" style="display:none;" onchange="handleSnpFile(this)" />
         </div>
 
         <!-- 23andMe upload -->
@@ -1008,9 +998,8 @@
   }
   function toggleSnpInput(mode) {
     document.getElementById('snpManualSection').style.display  = mode === 'manual' ? 'block' : 'none';
-    document.getElementById('snpFileSection').style.display    = mode === 'file' ? 'block' : 'none';
     document.getElementById('snp23andmeSection').style.display = mode === '23andme' ? 'block' : 'none';
-    document.querySelectorAll('#snpToggle button').forEach((b, i) => b.classList.toggle('active', ['manual', 'file', '23andme'][i] === mode));
+    document.querySelectorAll('#snpToggle button').forEach((b, i) => b.classList.toggle('active', ['manual', '23andme'][i] === mode));
   }
 
   // ===== SAMPLE LOADERS =====
@@ -1039,8 +1028,6 @@
     reader.onload = e => { document.getElementById('fastaTextarea').value = e.target.result; toggleFastaInput('paste'); showFastaPreview(e.target.result); };
     reader.readAsText(file);
   }
-  function handleSnpFile(input) { console.log('SNP file:', input.files[0]?.name); }
-
   // SNP sample loaders
   const snpSamples = {
     high:   { rs6152:'G', rs1385699:'C', rs12558842:'G', rs2497938:'C', rs7349332:'T', rs9479482:'C', rs1160312:'A', rs929626:'C', rs523349:'G' },

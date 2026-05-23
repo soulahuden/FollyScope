@@ -212,6 +212,5 @@ This enables users without DNA data to still receive an interpretable, science-g
 - `medium_risk_sample.fasta`, CAG=23, GGN=22
 - `low_risk_sample.fasta`, CAG=29, GGN=20
 - `protective_sample.fasta`, CAG=33, GGN=18
-- `*_genotype.tsv`, TSV files with alleles for each SNP
 
 Used by `sample_data/` button in the web UI for quick testing.

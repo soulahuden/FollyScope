@@ -443,32 +443,7 @@ def _risk_description_en(category: str) -> str:
     }.get(category, "Risk profile assessed.")
 
 
-# ── Optional advanced endpoints ────────────────────────────────────────────────
-
-@router.post("/analyze/fasta-upload")
-async def analyze_fasta_upload(file: UploadFile = File(...)):
-    if not file.filename.endswith((".fasta", ".fa", ".txt")):
-        raise HTTPException(status_code=400, detail="File must be .fasta, .fa, or .txt")
-    content    = await file.read()
-    fasta_text = content.decode("utf-8")
-
-    from .analyzer import count_cag_repeats, count_ggn_repeats, parse_fasta
-    sequence = parse_fasta(fasta_text)
-    if not sequence:
-        raise HTTPException(status_code=400, detail="No readable sequence found in the FASTA file")
-    cag = count_cag_repeats(sequence)
-    ggn = count_ggn_repeats(sequence)
-    return {
-        "success":         True,
-        "sequence_length": len(sequence),
-        "cag_repeats":     cag.count,
-        "cag_risk_level":  cag.risk_level,
-        "cag_risk_label":  _CAG_RISK_LABELS.get(cag.risk_level, ""),
-        "ggn_repeats":     ggn.count,
-        "ggn_risk_level":  ggn.risk_level,
-        "sequence_preview": sequence[:100] + "..." if len(sequence) > 100 else sequence,
-    }
-
+# ── Advanced upload endpoints ─────────────────────────────────────────────────
 
 @router.get("/ncbi/ar-reference")
 async def get_ar_reference():
