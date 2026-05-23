@@ -5,11 +5,10 @@ Ref: Choong 1996, Hillmer 2005 (Am J Hum Genet)
 """
 
 import re
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import Optional, Dict, List, Tuple
-from io import StringIO
 
-from .reference_data import SNP_DATABASE, CAG_THRESHOLDS, GGN_THRESHOLDS, SNPRecord
+from .reference_data import SNP_DATABASE, CAG_THRESHOLDS, GGN_THRESHOLDS
 
 
 @dataclass
@@ -140,20 +139,18 @@ def count_ggn_repeats(sequence: str) -> RepeatResult:
 
 def _get_cag_risk(count: int) -> Tuple[str, float, str]:
     """Map CAG repeat count to risk level and score."""
-    from .reference_data import CAG_THRESHOLDS
     for low, high, level, score, interp in CAG_THRESHOLDS:
         if low <= count <= high:
             return level, float(score), interp
-    return "TIDAK_DIKETAHUI", 50.0, "Jumlah repeat tidak dalam rentang referensi"
+    return "TIDAK_DIKETAHUI", 50.0, "Repeat count outside reference range"
 
 
 def _get_ggn_risk(count: int) -> Tuple[str, float, str]:
     """Map GGN repeat count to risk level and score."""
-    from .reference_data import GGN_THRESHOLDS
     for low, high, level, score, interp in GGN_THRESHOLDS:
         if low <= count <= high:
             return level, float(score), interp
-    return "TIDAK_DIKETAHUI", 40.0, "Jumlah repeat tidak dalam rentang referensi"
+    return "TIDAK_DIKETAHUI", 40.0, "Repeat count outside reference range"
 
 
 def analyze_snps(snp_genotypes: Dict[str, str]) -> List[SNPResult]:
@@ -279,10 +276,10 @@ def run_genetic_analysis(
         sequence = ""
 
     cag_result = count_cag_repeats(sequence) if has_sequence else RepeatResult(
-        "CAG", 0, [], None, "TIDAK_DIKETAHUI", 50.0, "Data sekuens tidak tersedia"
+        "CAG", 0, [], None, "TIDAK_DIKETAHUI", 50.0, "No sequence data provided"
     )
     ggn_result = count_ggn_repeats(sequence) if has_sequence else RepeatResult(
-        "GGN", 0, [], None, "TIDAK_DIKETAHUI", 40.0, "Data sekuens tidak tersedia"
+        "GGN", 0, [], None, "TIDAK_DIKETAHUI", 40.0, "No sequence data provided"
     )
 
     snp_results = analyze_snps(snp_genotypes or {})

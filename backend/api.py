@@ -14,7 +14,7 @@ from fastapi import APIRouter, File, HTTPException, UploadFile
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel, Field
 
-from .analyzer import parse_tsv_genotypes, run_genetic_analysis
+from .analyzer import run_genetic_analysis
 from .clinical_analyzer import (
     Section1Data,
     Section2Data,
@@ -31,7 +31,7 @@ from .phenotype_inference import (
     compute_confidence,
     infer_phenotype_profile,
 )
-from .reference_data import RECOMMENDATIONS, SNP_DATABASE
+from .reference_data import SNP_DATABASE
 from .risk_score import calculate_risk_score
 
 router = APIRouter(prefix="/api", tags=["Folliscope API"])
@@ -328,8 +328,7 @@ async def analyze(request: AnalyzeRequest):
             "timestamp":      datetime.now().isoformat(),
             "analysis_type":  risk_result.analysis_type,
             "scores": {
-                "overall_score":   risk_result.hybrid_score,
-                "hybrid_score":    risk_result.hybrid_score,  # backward compat
+                "hybrid_score":    risk_result.hybrid_score,
                 "genetic_score":   risk_result.genetic_score,
                 "clinical_score":  risk_result.clinical_score,
                 "family_score":    risk_result.family_score,
@@ -350,12 +349,15 @@ async def analyze(request: AnalyzeRequest):
             },
             "ncbi_comparison":  ncbi_comparison,
             "ncbi_reference":   {
-                "available":       ncbi_avail,
-                "accession":       ncbi.accession,
-                "description":     ncbi.description if ncbi_avail else "",
-                "sequence_length": ncbi.sequence_length if ncbi_avail else 0,
-                "cag_count":       ncbi_cag,
+                "available":        ncbi_avail,
+                "source":           ncbi.source,
+                "accession":        ncbi.accession,
+                "url":              ncbi.url,
+                "description":      ncbi.description if ncbi_avail else "",
+                "sequence_length":  ncbi.sequence_length if ncbi_avail else 0,
+                "cag_count":        ncbi_cag,
                 "sequence_preview": ncbi.sequence_preview if ncbi_avail else "",
+                "fetched_at":       datetime.now().isoformat() if ncbi_avail else None,
             },
             "phenotype_inference": {
                 "estimated_cag_min":      inference.estimated_cag_min,

@@ -674,6 +674,14 @@
           </span>
         </div>
 
+        <!-- Live fetch indicator -->
+        <div id="ncbiLiveFetch" style="margin-bottom:var(--s-4);">
+          <span class="live-fetch live-fetch--stale" id="ncbiLivePill">
+            <span class="dot"></span>
+            <span id="ncbiLiveText">Awaiting NCBI fetch…</span>
+          </span>
+        </div>
+
         <p style="font-size:0.94rem;color:var(--ink-600);margin-bottom:var(--s-3);">
           The NCBI reference shows what a typical human AR gene looks like.
           Your <strong id="userValueLabel">estimated</strong> CAG repeat profile is plotted below for direct comparison.
@@ -696,6 +704,24 @@
         <div class="reasoning">
           <div class="ttl">Why this estimate</div>
           <ul id="reasoningList"></ul>
+        </div>
+
+        <!-- Collapsible: actual NCBI reference sequence (proof of live fetch) -->
+        <div class="collapse" id="ncbiSeqCollapse" style="margin-top:var(--s-5);display:none;">
+          <div class="collapse-head" onclick="toggleCollapse(this)">
+            <span><i class="fa-solid fa-code" style="color:var(--brand-600);margin-right:8px;"></i> Reference sequence preview · <span class="text-mono" id="ncbiSeqLen">—</span> bp from NCBI</span>
+            <i class="fa-solid fa-chevron-down"></i>
+          </div>
+          <div class="collapse-body">
+            <p style="font-size:0.82rem;color:var(--ink-500);margin-bottom:var(--s-2);">
+              First 150 nucleotides of the AR mRNA, freshly retrieved from NCBI RefSeq just now.
+              CAG codons (the ones we count) are highlighted.
+            </p>
+            <div class="seq-preview" id="ncbiSeqPreview">—</div>
+            <p style="font-size:0.78rem;color:var(--ink-500);margin-top:var(--s-2);text-align:right;">
+              Source: <a href="https://www.ncbi.nlm.nih.gov/nuccore/NM_000044.6" target="_blank" rel="noopener" style="font-family:var(--font-mono);">NM_000044.6</a> · <a href="/api/ncbi/ar-reference" target="_blank" rel="noopener">raw JSON</a>
+            </p>
+          </div>
         </div>
       </div>
 
@@ -859,6 +885,24 @@
     </div>
   </div>
 </div>
+
+<!-- ===== DATA SOURCES STRIP (always visible — establishes provenance) ===== -->
+<section class="data-sources">
+  <div class="container">
+    <span class="label"><i class="fa-solid fa-database"></i> Built on authoritative data</span>
+    <div class="src-list">
+      <a class="src" href="https://www.ncbi.nlm.nih.gov/nuccore/NM_000044.6" target="_blank" rel="noopener">
+        <span class="ic">N</span> NCBI RefSeq · <strong>NM_000044.6</strong> (AR gene)
+      </a>
+      <a class="src" href="https://www.ncbi.nlm.nih.gov/snp/" target="_blank" rel="noopener">
+        <span class="ic ic--snp">S</span> NCBI dbSNP · 9-variant panel
+      </a>
+      <a class="src" href="about.html#references">
+        <span class="ic ic--lit">L</span> 9 peer-reviewed citations
+      </a>
+    </div>
+  </div>
+</section>
 
 <!-- DISCLAIMER MODAL -->
 <div class="modal-overlay hidden" id="disclaimerModal">

@@ -177,6 +177,7 @@
 
     // ── NCBI comparison card ──────────────────────────────────────────
     renderNcbiComparison(result.ncbi_comparison);
+    renderNcbiProvenance(result.ncbi_reference);
 
     // ── Score cards (component breakdown) ─────────────────────────────
     function setCard(valId, barId, score, notApplicable) {
@@ -219,6 +220,37 @@
   }
 
   // ── NCBI comparison rendering ─────────────────────────────────────────
+
+  function renderNcbiProvenance(ref) {
+    if (!ref) return;
+    const pill   = document.getElementById('ncbiLivePill');
+    const text   = document.getElementById('ncbiLiveText');
+    const collapse = document.getElementById('ncbiSeqCollapse');
+    const seqLen = document.getElementById('ncbiSeqLen');
+    const seqPre = document.getElementById('ncbiSeqPreview');
+    if (!pill || !text) return;
+
+    if (ref.available && ref.sequence_length > 0) {
+      pill.classList.remove('live-fetch--stale');
+      const when = ref.fetched_at ? new Date(ref.fetched_at).toLocaleTimeString() : '';
+      text.textContent =
+        `Live fetch · ${ref.accession} · ${ref.sequence_length.toLocaleString()} bp` +
+        (when ? ` · retrieved ${when}` : '');
+
+      if (ref.sequence_preview && collapse && seqLen && seqPre) {
+        collapse.style.display = 'block';
+        seqLen.textContent     = ref.sequence_length.toLocaleString();
+        // Highlight CAG triplets in the preview
+        const highlighted = (ref.sequence_preview || '')
+          .replace(/CAG/g, '<span style="background:var(--brand-700);color:#fff;padding:0 1px;border-radius:2px;">CAG</span>');
+        seqPre.innerHTML = highlighted;
+      }
+    } else {
+      pill.classList.add('live-fetch--stale');
+      text.textContent = `NCBI offline · using cached ${ref.accession || 'NM_000044.6'} baseline`;
+      if (collapse) collapse.style.display = 'none';
+    }
+  }
 
   function renderNcbiComparison(cmp) {
     if (!cmp) return;

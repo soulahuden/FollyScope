@@ -1,9 +1,11 @@
 """
 NCBI Entrez integration for Folliscope.
-Fetches AR gene reference sequence (NM_000044.6) from NCBI RefSeq
-using Biopython Entrez — memenuhi syarat penggunaan database NCBI.
 
-Referensi: https://www.ncbi.nlm.nih.gov/nuccore/NM_000044.6
+Fetches the human Androgen Receptor (AR) reference mRNA — NM_000044.6 —
+from NCBI RefSeq via Biopython Entrez. Used as the baseline against
+which users' AR profiles are compared.
+
+Reference: https://www.ncbi.nlm.nih.gov/nuccore/NM_000044.6
 """
 
 import re
@@ -13,13 +15,13 @@ from typing import Dict, Optional
 
 from Bio import Entrez, SeqIO
 
-# NCBI mewajibkan email untuk setiap query Entrez
+# NCBI requires an email + tool name on every Entrez request.
 Entrez.email = "folliscope.education@example.com"
 Entrez.tool  = "Folliscope-EducationalProject"
 
-# Cache in-memory: simpan hasil agar tidak query NCBI berulang kali
+# In-memory cache so we don't hit NCBI on every /api/analyze call.
 _cache: Dict[str, tuple] = {}
-CACHE_TTL = 3600  # 1 jam
+CACHE_TTL = 3600  # 1 hour
 
 
 @dataclass
@@ -28,9 +30,10 @@ class NCBIReferenceResult:
     description:      str
     sequence_length:  int
     cag_count:        int
-    cag_position:     Optional[tuple]   # (start, end) atau None
-    sequence_preview: str               # 150 karakter pertama
+    cag_position:     Optional[tuple]   # (start, end) or None
+    sequence_preview: str               # first 150 characters
     source:           str = "NCBI RefSeq"
+    url:              str = "https://www.ncbi.nlm.nih.gov/nuccore/NM_000044.6"
     success:          bool = True
     error:            Optional[str] = None
 
@@ -44,15 +47,14 @@ def _cache_valid(key: str) -> bool:
 
 def fetch_ar_reference() -> NCBIReferenceResult:
     """
-    Ambil sekuens mRNA Androgen Receptor dari NCBI RefSeq.
-    Accession: NM_000044.6 (Homo sapiens androgen receptor, transcript variant 1)
+    Fetch the AR reference mRNA sequence (NM_000044.6) from NCBI RefSeq.
 
-    Digunakan sebagai:
-    - Referensi jumlah CAG repeat pada individu normal
-    - Konteks bioinformatika saat pengguna upload FASTA mereka sendiri
-    - Bukti integrasi database NCBI dalam proyek ini
+    Serves three purposes:
+      - Baseline CAG count for comparison against the user's profile
+      - Bioinformatics context when users upload their own FASTA
+      - Live evidence that the project integrates an authoritative database
 
-    Hasil di-cache selama 1 jam untuk menghindari rate-limit NCBI (3 req/detik).
+    Cached for 1 hour to respect NCBI's 3-req/sec rate limit.
     """
     key = "AR_NM_000044_6"
 
@@ -102,5 +104,5 @@ def fetch_ar_reference() -> NCBIReferenceResult:
             cag_position     = None,
             sequence_preview = "",
             success          = False,
-            error            = f"Gagal menghubungi NCBI: {str(exc)}",
+            error            = f"Could not contact NCBI: {str(exc)}",
         )

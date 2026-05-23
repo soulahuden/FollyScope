@@ -77,19 +77,19 @@ def calculate_risk_score(
         hybrid_score = calculate_hybrid_score(genetic, clinical)
         genetic_score = genetic.genetic_score
         contributions = {
-            "Genetik": round(0.45 * genetic_score, 1),
-            "Klinis": round(0.30 * clinical.clinical_score, 1),
-            "Keluarga": round(0.15 * clinical.family_score, 1),
-            "Gaya Hidup": round(0.10 * clinical.lifestyle_score, 1),
+            "Genetic":   round(0.45 * genetic_score, 1),
+            "Clinical":  round(0.30 * clinical.clinical_score, 1),
+            "Family":    round(0.15 * clinical.family_score, 1),
+            "Lifestyle": round(0.10 * clinical.lifestyle_score, 1),
         }
     else:
         analysis_type = "clinical_only"
         hybrid_score = calculate_clinical_only_score(clinical)
         genetic_score = 0.0
         contributions = {
-            "Klinis": round(0.55 * clinical.clinical_score, 1),
-            "Keluarga": round(0.30 * clinical.family_score, 1),
-            "Gaya Hidup": round(0.15 * clinical.lifestyle_score, 1),
+            "Clinical":  round(0.55 * clinical.clinical_score, 1),
+            "Family":    round(0.30 * clinical.family_score, 1),
+            "Lifestyle": round(0.15 * clinical.lifestyle_score, 1),
         }
 
     category, color, desc = get_risk_category(hybrid_score)
