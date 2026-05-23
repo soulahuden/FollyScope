@@ -6,10 +6,12 @@ services:
     name: folliscope
     runtime: docker
     plan: free
-    region: singapore  # closest to Indonesia; change if you prefer
+    region: singapore           # closest to Indonesia; change if you prefer
     dockerfilePath: ./Dockerfile
     healthCheckPath: /api/health
     envVars:
       - key: PYTHONUNBUFFERED
         value: "1"
+      - key: FOLLISCOPE_ENTREZ_EMAIL
+        sync: false             # set in dashboard; identifies you to NCBI
     autoDeploy: true

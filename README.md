@@ -260,8 +260,8 @@ cd folliscope
 python -m venv venv
 venv\Scripts\activate
 
-# 3. Install dependencies
-pip install -r requirements.txt
+# 3. Install dependencies (runtime + dev tools untuk pytest)
+pip install -r requirements.txt -r requirements-dev.txt
 ```
 
 ### macOS / Linux
@@ -275,8 +275,8 @@ cd folliscope
 python3 -m venv venv
 source venv/bin/activate
 
-# 3. Install dependencies
-pip install -r requirements.txt
+# 3. Install dependencies (runtime + dev tools untuk pytest)
+pip install -r requirements.txt -r requirements-dev.txt
 ```
 
 ---

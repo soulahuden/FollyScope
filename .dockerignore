@@ -1,28 +1,43 @@
-# Python cache
+# Python build artifacts
 __pycache__/
 *.py[cod]
 *.pyo
+*.egg-info/
 .pytest_cache/
+.mypy_cache/
 
-# Virtual environment
+# Virtual environments
 venv/
 .venv/
 env/
 
-# IDE / OS
+# Local dev / IDE / OS junk
 .vscode/
 .idea/
 *.DS_Store
+Thumbs.db
+.claude/
 
-# Git
+# Git metadata (no need inside the image)
 .git/
+.gitattributes
 .gitignore
 
-# Docker files themselves (no need to copy into image)
+# Tests and dev requirements (not needed at runtime)
+tests/
+requirements-dev.txt
+
+# Docker artifacts shouldn't recurse into the build context
 Dockerfile
 docker-compose.yml
 .dockerignore
 
-# Docs / extras
+# Docs
 README.md
 CLAUDE.md
+METHODS.md
+
+# PaaS configs (not needed inside the image)
+render.yaml
+railway.json
+fly.toml

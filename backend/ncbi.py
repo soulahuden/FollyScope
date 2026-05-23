@@ -8,6 +8,7 @@ which users' AR profiles are compared.
 Reference: https://www.ncbi.nlm.nih.gov/nuccore/NM_000044.6
 """
 
+import os
 import re
 import time
 from dataclasses import dataclass
@@ -15,8 +16,12 @@ from typing import Dict, Optional
 
 from Bio import Entrez, SeqIO
 
-# NCBI requires an email + tool name on every Entrez request.
-Entrez.email = "folliscope.education@example.com"
+# NCBI requires an email + tool name on every Entrez request. The email
+# can be overridden via env var so deployments can attribute their
+# rate-limit quota properly.
+Entrez.email = os.environ.get(
+    "FOLLISCOPE_ENTREZ_EMAIL", "folliscope.education@example.com"
+)
 Entrez.tool  = "Folliscope-EducationalProject"
 
 # In-memory cache so we don't hit NCBI on every /api/analyze call.

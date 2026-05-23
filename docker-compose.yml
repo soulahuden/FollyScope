@@ -1,7 +1,32 @@
+# Folliscope local-development compose file.
+#   docker compose up --build     # first run / after code changes
+#   docker compose up             # subsequent runs
+#   docker compose down           # stop and remove
+#
+# The image is identical to what gets deployed; only the port mapping
+# and dev-friendly tweaks live here.
+
 services:
   folliscope:
-    build: .
-    container_name: folliscope
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: folliscope:local
     ports:
-      - "8000:8000"
+      - "${HOST_PORT:-8000}:8000"
+    environment:
+      PORT: "8000"
+      # Pass your own email to NCBI if you want the Entrez rate-limit
+      # quota attributed to you instead of the default placeholder.
+      FOLLISCOPE_ENTREZ_EMAIL: "${FOLLISCOPE_ENTREZ_EMAIL:-folliscope.education@example.com}"
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "--silent", "http://127.0.0.1:8000/api/health"]
+      interval: 30s
+      timeout: 5s
+      start_period: 15s
+      retries: 3
+    labels:
+      org.opencontainers.image.title: "Folliscope"
+      org.opencontainers.image.description: "Early-warning hair-loss risk assessment"
+      org.opencontainers.image.source: "https://github.com/soulahuden/Baldguard"

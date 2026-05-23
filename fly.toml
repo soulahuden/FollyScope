@@ -9,6 +9,8 @@ primary_region = "sin"   # Singapore, closest to Indonesia
 
 [env]
   PYTHONUNBUFFERED = "1"
+  # Override via `fly secrets set FOLLISCOPE_ENTREZ_EMAIL=you@example.com`
+  # to attribute your NCBI Entrez quota properly.
 
 [http_service]
   internal_port = 8000
