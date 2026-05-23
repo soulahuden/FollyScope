@@ -1,7 +1,21 @@
+# Secrets / credentials — never commit
+.env
+.env.*
+*.pem
+*.key
+
+# Python build artifacts
 __pycache__/
 *.py[cod]
+*.egg-info/
 .pytest_cache/
+.mypy_cache/
+
+# Virtual environments
 venv/
 .venv/
-*.env
-.claude/
+env/
+
+# OS junk
+.DS_Store
+Thumbs.db
