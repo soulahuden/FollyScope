@@ -146,7 +146,7 @@ def score_pattern_area(s2: Section2Data) -> float:
 def score_hair_pull(s3: Section3Data) -> float:
     """Score hair pull test 0-100. >6 out of 60 = active shedding."""
     if s3.hair_pull_count is None:
-        return 0.0  # Not tested — neutral
+        return 0.0  # Not tested, neutral
     count = s3.hair_pull_count
     if count <= 3:
         return 0.0
@@ -230,7 +230,7 @@ def calculate_family_score(s4: Section4Data) -> FamilyScoreBreakdown:
     AR is X-linked: maternal grandfather is most important.
     Weights: maternal_gf 35%, father 25%, paternal_gf 15%, brothers 10%, mother 8%, generations 7%
     """
-    # Maternal grandfather — X-linked: son inherits X from mother, mother from her father
+    # Maternal grandfather, X-linked: son inherits X from mother, mother from her father
     mat_gf = 100.0 if s4.maternal_grandfather_bald else 0.0
     # Early onset modifier
     if s4.maternal_grandfather_bald and s4.maternal_grandfather_bald_age:

@@ -1,4 +1,4 @@
-"""Reference data for Folliscope — SNP database, CAG thresholds, and recommendations."""
+"""Reference data for Folliscope, SNP database, CAG thresholds, and recommendations."""
 
 from dataclasses import dataclass, field
 from typing import Dict, List, Tuple
@@ -76,7 +76,7 @@ RECOMMENDATIONS = {
         "Re-evaluasi setiap 12 bulan.",
     ],
     "TINGGI": [
-        "🚨 PERINGATAN: Risiko AGA tinggi — intervensi dini sangat dianjurkan.",
+        "🚨 PERINGATAN: Risiko AGA tinggi, intervensi dini sangat dianjurkan.",
         "Segera konsultasi DERMATOLOG dalam 1-3 bulan.",
         "Pertimbangkan minoxidil topikal 5% (tersedia tanpa resep).",
         "Diskusikan finasteride 1mg/hari dengan dokter spesialis.",
@@ -86,7 +86,7 @@ RECOMMENDATIONS = {
         "Re-evaluasi setiap 6 bulan dengan dermatolog.",
     ],
     "SANGAT_TINGGI": [
-        "🔴 WASPADA: Risiko genetik sangat tinggi — tindakan segera diperlukan.",
+        "🔴 WASPADA: Risiko genetik sangat tinggi, tindakan segera diperlukan.",
         "Konsultasi DERMATOLOG SEGERA (dalam 1 bulan).",
         "Pertimbangkan terapi kombinasi: minoxidil + finasteride atau dutasteride.",
         "Diskusikan terapi lanjutan: PRP (Platelet Rich Plasma), LLLT (Laser Therapy).",

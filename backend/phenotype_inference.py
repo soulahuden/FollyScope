@@ -2,7 +2,7 @@
 Phenotype-to-genotype inference for Folliscope.
 
 Estimates a probable AR CAG-repeat range and overall genetic-risk
-profile from the clinical questionnaire ALONE — used when the user has
+profile from the clinical questionnaire ALONE, used when the user has
 no DNA data. Compared side-by-side against the NCBI AR reference
 (NM_000044.6, ~22 CAG) so general users still get an interpretable,
 education-friendly genetic narrative.
@@ -70,7 +70,7 @@ def infer_phenotype_profile(
     """
     Estimate a probable AR CAG-repeat range from clinical signals.
 
-    Method (transparent, rule-based — defensible for an educational tool):
+    Method (transparent, rule-based, defensible for an educational tool):
       - Start from the NCBI baseline of 22 CAG.
       - Subtract repeats as symptom severity + family pressure + early-onset
         signal accumulate (shorter CAG = higher AR sensitivity).
@@ -141,7 +141,7 @@ def _build_reasoning(severity: float, family: float, early: float, age: int) -> 
         reasons.append("Early-onset symptoms (under age 35 with visible loss) typically associate with shorter CAG tracts.")
 
     if not reasons:
-        reasons.append("Limited symptoms and family signal — the estimate stays close to the population baseline.")
+        reasons.append("Limited symptoms and family signal, the estimate stays close to the population baseline.")
 
     return reasons
 
@@ -252,7 +252,7 @@ def build_ncbi_comparison(
         "ncbi_available":     ncbi_available,
         "ncbi_accession":     ncbi_accession,
         "ncbi_reference_cag": ncbi_ref_cag,
-        "ncbi_description":   "Human androgen receptor mRNA — RefSeq reference",
+        "ncbi_description":   "Human androgen receptor mRNA, RefSeq reference",
         "user_value_type":    "measured" if measured else "estimated",
         "user_cag_min":       user_value_min,
         "user_cag_max":       user_value_max,

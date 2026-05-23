@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SNP Reference Database — Folliscope</title>
+  <title>SNP Reference Database | Folliscope</title>
   <meta name="description" content="The nine peer-reviewed SNPs analyzed by Folliscope, with odds ratios, weights, and biological function." />
   <link rel="stylesheet" href="css/style.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
@@ -75,7 +75,7 @@
   <div class="container">
     <span class="eyebrow">Reference data</span>
     <h1>SNP reference database</h1>
-    <p>Nine peer-reviewed genetic variants analyzed by Folliscope — odds ratios, PRS weights, and biological mechanism for each.</p>
+    <p>Nine peer-reviewed genetic variants analyzed by Folliscope, odds ratios, PRS weights, and biological mechanism for each.</p>
   </div>
 </section>
 
@@ -143,7 +143,7 @@
     <!-- Detail panel -->
     <div class="detail-panel" id="detailPanel">
       <div class="detail-head">
-        <span class="detail-rs" id="detailRsId">—</span>
+        <span class="detail-rs" id="detailRsId">, </span>
         <button class="detail-close" onclick="closeDetail()" title="Close"><i class="fa-solid fa-xmark"></i></button>
       </div>
       <div class="detail-grid" id="detailGrid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:var(--s-3);"></div>
@@ -156,7 +156,7 @@
   </div>
 </section>
 
-<!-- ===== DATA SOURCES STRIP (always visible — establishes provenance) ===== -->
+<!-- ===== DATA SOURCES STRIP (always visible, establishes provenance) ===== -->
 <section class="data-sources">
   <div class="container">
     <span class="label"><i class="fa-solid fa-database"></i> Built on authoritative data</span>
@@ -203,20 +203,20 @@
   </div>
   <div class="container footer-bottom">
     <div>&copy; 2026 Folliscope · Computational Biology Project</div>
-    <div class="disclaimer"><i class="fa-solid fa-triangle-exclamation"></i> Educational risk assessment only — not a medical diagnosis.</div>
+    <div class="disclaimer"><i class="fa-solid fa-triangle-exclamation"></i> Educational risk assessment only, not a medical diagnosis.</div>
   </div>
 </footer>
 
 <script>
 const SNP_DATA = [
   { rs_id:'rs6152',     gene:'AR',         chromosome:'X',  risk_allele:'G', ref_allele:'A', odds_ratio:2.50, prs_weight:0.90, description:'Androgen Receptor exon 1 variant', function_desc:'Increases androgen-receptor sensitivity to DHT. Carriers of the G allele show stronger AR-driven transcription, making hair follicles more responsive to DHT and more susceptible to miniaturization.' },
-  { rs_id:'rs1385699',  gene:'EDA2R',      chromosome:'X',  risk_allele:'C', ref_allele:'T', odds_ratio:2.20, prs_weight:0.85, description:'Ectodysplasin A2 receptor variant', function_desc:'EDA2R regulates hair-follicle development and cycling via EDA–EDAR signaling. The C risk allele is linked to disrupted follicular regulation that increases AGA susceptibility.' },
+  { rs_id:'rs1385699',  gene:'EDA2R',      chromosome:'X',  risk_allele:'C', ref_allele:'T', odds_ratio:2.20, prs_weight:0.85, description:'Ectodysplasin A2 receptor variant', function_desc:'EDA2R regulates hair-follicle development and cycling via EDA-EDAR signaling. The C risk allele is linked to disrupted follicular regulation that increases AGA susceptibility.' },
   { rs_id:'rs12558842', gene:'AR',         chromosome:'X',  risk_allele:'G', ref_allele:'A', odds_ratio:1.80, prs_weight:0.70, description:'AR regulatory region variant',    function_desc:'Located in the AR regulatory region, this variant affects AR expression in hair-follicle tissue. The G allele is associated with increased AR expression that amplifies androgen signaling.' },
   { rs_id:'rs2497938',  gene:'AR',         chromosome:'X',  risk_allele:'C', ref_allele:'T', odds_ratio:1.75, prs_weight:0.65, description:'AR intronic variant',              function_desc:'An intronic AR variant acting as a transcriptional modulator. It influences alternative splicing or enhancer activity that affects AR expression and function.' },
   { rs_id:'rs7349332',  gene:'WNT10A',     chromosome:'2',  risk_allele:'T', ref_allele:'C', odds_ratio:1.45, prs_weight:0.50, description:'WNT signaling pathway variant',    function_desc:'WNT10A is a Wnt/β-catenin pathway ligand essential for hair-follicle morphogenesis and the growth cycle. The T risk allele disrupts Wnt activation, shortening anagen and accelerating miniaturization.' },
   { rs_id:'rs9479482',  gene:'HDAC9',      chromosome:'7',  risk_allele:'C', ref_allele:'T', odds_ratio:1.35, prs_weight:0.45, description:'Histone deacetylase 9 variant',   function_desc:'HDAC9 modifies chromatin by deacetylating histones, regulating follicle gene expression at the epigenetic level. The C variant alters DNA methylation patterns in hair follicles, facilitating repression of hair-growth genes.' },
   { rs_id:'rs1160312',  gene:'PAX1/FOXA2', chromosome:'20', risk_allele:'A', ref_allele:'G', odds_ratio:1.60, prs_weight:0.60, description:'PAX1/FOXA2 locus variant',         function_desc:'This locus contains the PAX1 and FOXA2 transcription factors, which regulate follicle differentiation and regeneration. The A allele is linked to reduced follicular regeneration after the telogen cycle.' },
-  { rs_id:'rs929626',   gene:'EBF1',       chromosome:'5',  risk_allele:'C', ref_allele:'G', odds_ratio:1.30, prs_weight:0.35, description:'Early B-cell factor 1 variant',   function_desc:'EBF1 (Early B-cell Factor 1) participates in hair-follicle cycle regulation and dermal-papilla differentiation. The C variant is associated with disrupted anagen–telogen cycling.' },
+  { rs_id:'rs929626',   gene:'EBF1',       chromosome:'5',  risk_allele:'C', ref_allele:'G', odds_ratio:1.30, prs_weight:0.35, description:'Early B-cell factor 1 variant',   function_desc:'EBF1 (Early B-cell Factor 1) participates in hair-follicle cycle regulation and dermal-papilla differentiation. The C variant is associated with disrupted anagen-telogen cycling.' },
   { rs_id:'rs523349',   gene:'SRD5A2',     chromosome:'2',  risk_allele:'G', ref_allele:'C', odds_ratio:1.40, prs_weight:0.55, description:'5-alpha reductase type 2 variant', function_desc:'SRD5A2 encodes the type-2 5α-reductase enzyme that converts testosterone to DHT in scalp follicles. The G allele increases enzyme activity, producing more local DHT and accelerating follicular miniaturization.' },
 ];
 

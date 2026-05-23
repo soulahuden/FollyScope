@@ -1,4 +1,4 @@
-# 🧬 Folliscope — Early-Warning Hair-Loss Risk Assessment
+# 🧬 Folliscope: Early-Warning Hair-Loss Risk Assessment
 
 > **Berbasis Computational Biology** | Integrated genetic & clinical analysis with live NCBI reference
 
@@ -15,14 +15,14 @@
 
 ## Fitur Utama
 
-- 🧬 **Phenotype-to-genotype inference** — estimasi rentang CAG repeat dari kuesioner klinis, untuk user yang tidak punya data DNA
-- 📡 **Live NCBI integration** — fetch sekuens referensi AR (NM_000044.6) dari NCBI RefSeq setiap analisis, bandingkan dengan profil user
-- 🔬 **Hybrid PRS scoring** — gabungkan data genetik (FASTA / SNP / 23andMe) + kuesioner klinis 5 bagian
-- 🎯 **Transparent confidence** — laporkan tingkat keyakinan analisis: 70% (kuesioner saja) → 85% (+ SNP) → 95% (+ DNA)
-- 🧪 **Treatment scenario simulator** — slider interaktif untuk lihat dampak perubahan gaya hidup terhadap skor risiko
-- 📄 **Structured PDF report** — laporan terstruktur dengan gauge, NCBI comparison, dan rekomendasi
-- 🚀 **Deploy-ready** — siap deploy ke Render / Railway / Fly.io dengan satu klik
-- ✅ **66 unit tests** — semua komponen scoring tervalidasi
+- 🧬 **Phenotype-to-genotype inference**, estimasi rentang CAG repeat dari kuesioner klinis, untuk user yang tidak punya data DNA
+- 📡 **Live NCBI integration**, fetch sekuens referensi AR (NM_000044.6) dari NCBI RefSeq setiap analisis, bandingkan dengan profil user
+- 🔬 **Hybrid PRS scoring**, gabungkan data genetik (FASTA / SNP / 23andMe) + kuesioner klinis 5 bagian
+- 🎯 **Transparent confidence**, laporkan tingkat keyakinan analisis: 70% (kuesioner saja) → 85% (+ SNP) → 95% (+ DNA)
+- 🧪 **Treatment scenario simulator**, slider interaktif untuk lihat dampak perubahan gaya hidup terhadap skor risiko
+- 📄 **Structured PDF report**, laporan terstruktur dengan gauge, NCBI comparison, dan rekomendasi
+- 🚀 **Deploy-ready**, siap deploy ke Render / Railway / Fly.io dengan satu klik
+- ✅ **66 unit tests**, semua komponen scoring tervalidasi
 
 ---
 
@@ -58,9 +58,9 @@
 1. Enzim **5α-reduktase tipe 2** (dikode gen *SRD5A2*) mengkonversi testosteron → DHT di folikel rambut kulit kepala
 2. DHT berikatan dengan **Androgen Receptor (AR)** di sel papilla dermal
 3. Kompleks DHT-AR mengaktifkan program transkripsi yang memperpendek fase anagen (pertumbuhan)
-4. Folikel mengalami **miniaturisasi progresif** — rambut semakin tipis, pendek, hingga berhenti tumbuh
+4. Folikel mengalami **miniaturisasi progresif**, rambut semakin tipis, pendek, hingga berhenti tumbuh
 
-### Gen AR — Target Utama
+### Gen AR (Target Utama)
 
 Gen **AR** (Androgen Receptor) adalah gen kunci dalam patogenesis AGA:
 
@@ -80,9 +80,9 @@ Exon 1 gen AR mengandung sekuens trinukleotida **(CAG)n** yang mengkode poliglut
 | CAG Repeats | Kategori Risiko | Mekanisme |
 |-------------|-----------------|-----------|
 | < 18 | SANGAT TINGGI | Reseptor sangat sensitif DHT |
-| 18 – 21 | TINGGI | Sensitivitas AR tinggi |
-| 22 – 24 | SEDANG | Sensitivitas moderat |
-| 25 – 29 | RENDAH | Sensitivitas rendah |
+| 18 - 21 | TINGGI | Sensitivitas AR tinggi |
+| 22 - 24 | SEDANG | Sensitivitas moderat |
+| 25 - 29 | RENDAH | Sensitivitas rendah |
 | ≥ 30 | PROTEKTIF | Efek protektif |
 
 > Referensi: Choong et al. 1996; Hillmer et al. 2005 (Am J Hum Genet)
@@ -106,7 +106,7 @@ Input Data
                                                      HybridPRSCalculator
                                                                 │
                                                                 ▼
-                                               RiskScore (0–100) + Kategori
+                                               RiskScore (0-100) + Kategori
                                                                 │
                                                                 ▼
                                                     Rekomendasi Medis
@@ -131,7 +131,7 @@ HybridScore = 0.45 × GeneticScore + 0.30 × ClinicalScore + 0.15 × FamilyScore
 
 Setelah itu dikali **age modifier**:
 - Usia < 25 tahun: × 1.15 (onset sangat dini = sinyal genetik kuat)
-- Usia 25–29 tahun: × 1.08
+- Usia 25-29 tahun: × 1.08
 - Usia ≥ 50 tahun: × 0.90
 
 ### Mode Klinis Saja (Tanpa DNA)
@@ -140,7 +140,7 @@ Setelah itu dikali **age modifier**:
 ClinicalOnlyScore = 0.55 × ClinicalScore + 0.30 × FamilyScore + 0.15 × LifestyleScore
 ```
 
-### Komponen GeneticScore (0–100)
+### Komponen GeneticScore (0-100)
 
 ```
 GeneticScore = 0.40 × CagScore + 0.15 × GgnScore + 0.45 × SNPScore
@@ -150,7 +150,7 @@ GeneticScore = 0.40 × CagScore + 0.15 × GgnScore + 0.45 × SNPScore
 - **GgnScore:** Berdasarkan threshold GGN (< 18 → 75, ≥ 24 → 20)
 - **SNPScore:** Normalized sum dari PRS weight × (OR − 1) untuk tiap SNP risiko
 
-### Komponen ClinicalScore (0–100)
+### Komponen ClinicalScore (0-100)
 
 | Sub-komponen | Bobot | Sumber |
 |--------------|-------|--------|
@@ -161,7 +161,7 @@ GeneticScore = 0.40 × CagScore + 0.15 × GgnScore + 0.45 × SNPScore
 | Miniaturisasi (diameter) | 10% | Trichoscopy criteria |
 | Durasi gejala | 10% | Chronicity of AGA |
 
-### Komponen FamilyScore (0–100)
+### Komponen FamilyScore (0-100)
 
 | Anggota Keluarga | Bobot | Alasan |
 |------------------|-------|--------|
@@ -172,7 +172,7 @@ GeneticScore = 0.40 × CagScore + 0.15 × GgnScore + 0.45 × SNPScore
 | Ibu (penipisan) | 8% | X carrier |
 | Jumlah generasi | 7% | Penetrance estimation |
 
-### Komponen LifestyleScore (0–100)
+### Komponen LifestyleScore (0-100)
 
 | Faktor | Bobot | Mekanisme |
 |--------|-------|-----------|
@@ -186,11 +186,11 @@ GeneticScore = 0.40 × CagScore + 0.15 × GgnScore + 0.45 × SNPScore
 
 | Skor | Kategori | Warna |
 |------|----------|-------|
-| 0–19 | MINIMAL | Hijau (#2ecc71) |
-| 20–39 | RENDAH | Hijau tua (#27ae60) |
-| 40–59 | SEDANG | Oranye (#f39c12) |
-| 60–79 | TINGGI | Merah oranye (#e67e22) |
-| 80–100 | SANGAT TINGGI | Merah (#e74c3c) |
+| 0-19 | MINIMAL | Hijau (#2ecc71) |
+| 20-39 | RENDAH | Hijau tua (#27ae60) |
+| 40-59 | SEDANG | Oranye (#f39c12) |
+| 60-79 | TINGGI | Merah oranye (#e67e22) |
+| 80-100 | SANGAT TINGGI | Merah (#e74c3c) |
 
 ---
 
@@ -212,7 +212,7 @@ GeneticScore = 0.40 × CagScore + 0.15 × GgnScore + 0.45 × SNPScore
 
 ## Instalasi
 
-### Cara Tercepat — Docker (Direkomendasikan)
+### Cara Tercepat: Docker
 
 Tidak perlu install Python atau dependencies apapun, cukup punya **Docker Desktop**.
 
@@ -241,7 +241,7 @@ docker compose down
 
 ---
 
-### Cara Manual (Tanpa Docker)
+### Cara Manual
 
 #### Prasyarat
 
@@ -336,7 +336,7 @@ jadi image yang sama jalan di mana saja.
 
 1. Push repo ke GitHub
 2. Buka [dashboard.render.com](https://dashboard.render.com) → **New** → **Blueprint**
-3. Pilih repo ini — Render akan baca `render.yaml` otomatis
+3. Pilih repo ini, Render akan baca `render.yaml` otomatis
 4. Tunggu ~5 menit build → URL public siap pakai
 
 Health check di `/api/health` otomatis di-monitor. Auto-deploy nyala saat push ke `main`.
@@ -347,7 +347,7 @@ Health check di `/api/health` otomatis di-monitor. Auto-deploy nyala saat push k
 2. `railway login && railway init && railway up`
 3. Atau via dashboard: connect repo, Railway auto-detect Dockerfile + `railway.json`
 
-### ✈️ Fly.io (terdekat ke Indonesia — region `sin` Singapura)
+### ✈️ Fly.io (terdekat ke Indonesia, region `sin` Singapura)
 
 ```bash
 # Sekali set up:
@@ -457,12 +457,12 @@ rs523349	G
 
 | Input | Normal | Abnormal |
 |-------|--------|----------|
-| Rontok per hari | 50–100 helai | > 150 helai |
+| Rontok per hari | 50-100 helai | > 150 helai |
 | Durasi | < 1 bulan | > 6 bulan (kronis) |
 | Pola | Difus/tidak ada | M-shape atau vertex = AGA klasik |
 | Diameter | Tidak berubah | Mengecil = miniaturisasi = hallmark AGA |
-| Norwood (pria) | I–II | III–VII (semakin parah) |
-| Ludwig (wanita) | I | II–III (semakin parah) |
+| Norwood (pria) | I-II | III-VII (semakin parah) |
+| Ludwig (wanita) | I | II-III (semakin parah) |
 
 ### Bagian 3: Hair Pull Test
 
@@ -474,7 +474,7 @@ Instruksi standar klinis:
 | Hasil | Interpretasi |
 |-------|-------------|
 | ≤ 3 rambut | Normal |
-| 4–6 rambut | Borderline |
+| 4-6 rambut | Borderline |
 | > 6 rambut | Aktif rontok (telogen effluvium atau AGA aktif) |
 
 ### Bagian 4: Riwayat Keluarga
@@ -483,7 +483,7 @@ Pembobotan berdasarkan mekanisme pewarisan X-linked:
 
 - **Kakek dari ibu (35%):** Paling penting. Pria warisi AR dari ibu, ibu dari ayahnya
 - **Ayah (25%):** Penting untuk komponen autosomal dan interaksi kompleks
-- **Onset dini (<30 tahun):** Multiplier risiko 1.15–1.20×
+- **Onset dini (<30 tahun):** Multiplier risiko 1.15-1.20×
 
 ### Bagian 5: Gaya Hidup & Kesehatan
 
@@ -572,8 +572,8 @@ curl -X POST http://localhost:8000/api/analyze \
     "interpretation": "Your AR profile is moderately shorter than the NCBI reference..."
   },
   "recommendations": [
-    "Warning: AGA risk is high — early intervention is strongly recommended.",
-    "See a dermatologist within the next 1–3 months.",
+    "Warning: AGA risk is high, early intervention is strongly recommended.",
+    "See a dermatologist within the next 1-3 months.",
     "..."
   ],
   "disclaimer": "This is an educational risk assessment, not a medical diagnosis..."
@@ -613,7 +613,7 @@ folliscope/
 │   ├── clinical_analyzer.py     ← Kuesioner scorer (5 sections)
 │   ├── phenotype_inference.py   ← Phenotype → CAG estimate + confidence
 │   ├── risk_score.py            ← Hybrid PRS calculator
-│   ├── ncbi.py                  ← NCBI Entrez — live fetch AR reference (NM_000044.6)
+│   ├── ncbi.py                  ← NCBI Entrez, live fetch AR reference (NM_000044.6)
 │   ├── parser_23andme.py        ← Parser file raw data 23andMe
 │   └── api.py                   ← REST endpoints (FastAPI Router)
 │
@@ -751,41 +751,37 @@ Edit dictionary `RECOMMENDATIONS` di `backend/reference_data.py` untuk menambah 
 
 6. **Belum divalidasi secara klinis:** Sistem ini belum diuji pada kohort pasien AGA yang terdiagnosis secara klinis.
 
-### Disclaimer Etik
+### Penggunaan yang tepat
 
-- ❌ Folliscope **BUKAN** alat diagnostik medis
-- ❌ Hasil Folliscope **TIDAK** menggantikan pemeriksaan dermatologis
-- ❌ **JANGAN** membuat keputusan medis berdasarkan output Folliscope semata
-- ✅ Gunakan Folliscope sebagai **alat edukasi** tentang genetika AGA
-- ✅ Selalu konsultasikan kondisi rambut dengan **dokter atau dermatolog berlisensi**
+Folliscope adalah alat edukasi tentang genetika AGA. Bukan alat diagnostik dan bukan pengganti pemeriksaan dermatologis. Untuk evaluasi medis, konsultasi dengan dokter atau dermatolog berlisensi.
 
 ---
 
 ## Referensi Literatur
 
-1. **Hillmer AM, et al. (2005).** Genetic variation in the human androgen receptor gene is the major determinant of common early-onset androgenetic alopecia. *Am J Hum Genet*, 77(1):140–148.
+1. **Hillmer AM, et al. (2005).** Genetic variation in the human androgen receptor gene is the major determinant of common early-onset androgenetic alopecia. *Am J Hum Genet*, 77(1):140-148.
 
 2. **Heilmann-Heimbach S, et al. (2017).** Meta-analysis identifies novel risk loci and yields systematic insights into the biology of male-pattern baldness. *Nat Commun*, 8:14694.
 
-3. **Choong CS, et al. (1996).** Reduced androgen receptor gene expression with first exon CAG repeat expansion. *Mol Endocrinol*, 10(12):1527–1535.
+3. **Choong CS, et al. (1996).** Reduced androgen receptor gene expression with first exon CAG repeat expansion. *Mol Endocrinol*, 10(12):1527-1535.
 
-4. **Ellis JA, et al. (2001).** Polymorphism of the androgen receptor gene is associated with male pattern baldness. *J Invest Dermatol*, 116(3):452–455.
+4. **Ellis JA, et al. (2001).** Polymorphism of the androgen receptor gene is associated with male pattern baldness. *J Invest Dermatol*, 116(3):452-455.
 
-5. **Prodi DA, et al. (2008).** EDA2R is associated with androgenetic alopecia. *J Invest Dermatol*, 128(9):2268–2270.
+5. **Prodi DA, et al. (2008).** EDA2R is associated with androgenetic alopecia. *J Invest Dermatol*, 128(9):2268-2270.
 
-6. **Norwood OT. (1975).** Male pattern baldness: Classification and incidence. *South Med J*, 68(11):1359–1365.
+6. **Norwood OT. (1975).** Male pattern baldness: Classification and incidence. *South Med J*, 68(11):1359-1365.
 
-7. **Ludwig E. (1977).** Classification of the types of androgenetic alopecia occurring in the female sex. *Br J Dermatol*, 97(3):247–254.
+7. **Ludwig E. (1977).** Classification of the types of androgenetic alopecia occurring in the female sex. *Br J Dermatol*, 97(3):247-254.
 
-8. **Giovannucci E, et al. (1997).** The CAG repeat within the androgen receptor gene and its relationship to prostate cancer. *Proc Natl Acad Sci USA*, 94(7):3320–3323.
+8. **Giovannucci E, et al. (1997).** The CAG repeat within the androgen receptor gene and its relationship to prostate cancer. *Proc Natl Acad Sci USA*, 94(7):3320-3323.
 
-9. **Yip L, et al. (2009).** Gene-wide association study between the aromatase gene (CYP19A1) and female pattern hair loss. *Br J Dermatol*, 161(2):289–294.
+9. **Yip L, et al. (2009).** Gene-wide association study between the aromatase gene (CYP19A1) and female pattern hair loss. *Br J Dermatol*, 161(2):289-294.
 
 ---
 
 ## Lisensi
 
-MIT License — untuk penggunaan edukasi dan non-komersial.
+MIT License, untuk penggunaan edukasi dan non-komersial.
 
 ---
 

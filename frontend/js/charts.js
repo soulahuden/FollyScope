@@ -1,4 +1,4 @@
-// charts.js — Chart.js visualizations for Folliscope
+// charts.js, Chart.js visualizations for Folliscope
 // Exposed via window.FolliscopeCharts so analyze.html can call .init(withGenetic)
 
 (function () {
@@ -173,7 +173,7 @@
   function init(withGenetic) {
     const result = window._folliscopeResult;
     if (!result) {
-      // No real result yet — charts were already drawn by analyze.html's inline fallback
+      // No real result yet, charts were already drawn by analyze.html's inline fallback
       return;
     }
 

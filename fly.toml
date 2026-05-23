@@ -2,7 +2,7 @@
 # Deploy: install `flyctl`, then `fly launch --copy-config` (first time)
 # or `fly deploy` (subsequent).
 app = "folliscope"
-primary_region = "sin"   # Singapore — closest to Indonesia
+primary_region = "sin"   # Singapore, closest to Indonesia
 
 [build]
   dockerfile = "Dockerfile"

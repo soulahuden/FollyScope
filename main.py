@@ -1,5 +1,5 @@
 """
-Folliscope — Sistem Peringatan Kebotakan Dini berbasis Computational Biology
+Folliscope, Sistem Peringatan Kebotakan Dini berbasis Computational Biology
 Entry point: uvicorn main:app --reload
 """
 
@@ -29,7 +29,7 @@ BASE_DIR = os.path.dirname(__file__)
 frontend_dir = os.path.join(BASE_DIR, "frontend")
 sample_data_dir = os.path.join(BASE_DIR, "sample_data")
 
-# ── 1. API routes — harus didaftarkan paling awal ─────────────────────────────
+# ── 1. API routes, harus didaftarkan paling awal ─────────────────────────────
 app.include_router(router)
 
 # ── 2. HTML page routes (clean URL tanpa .html) ───────────────────────────────
@@ -49,7 +49,7 @@ async def serve_about():
 async def serve_database():
     return FileResponse(os.path.join(frontend_dir, "database.html"))
 
-# ── 3. Static mounts — harus paling bawah (catch-all terakhir) ───────────────
+# ── 3. Static mounts, harus paling bawah (catch-all terakhir) ───────────────
 # /sample_data/* → file FASTA & TSV contoh (dipakai tombol "Sample Data" di JS)
 if os.path.exists(sample_data_dir):
     app.mount("/sample_data", StaticFiles(directory=sample_data_dir), name="sample_data")

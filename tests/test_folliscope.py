@@ -1,5 +1,5 @@
 """
-Unit tests for Folliscope — 45+ test cases covering:
+Unit tests for Folliscope, 45+ test cases covering:
   - CAG repeat counting and risk classification
   - GGN repeat counting and risk classification
   - SNP detection and scoring

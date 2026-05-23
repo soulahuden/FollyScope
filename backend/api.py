@@ -89,10 +89,10 @@ _RECOMMENDATIONS_EN: Dict[str, List[str]] = {
         "Consider re-evaluating every 5 years or sooner if symptoms appear.",
     ],
     "RENDAH": [
-        "Track your daily shedding — anything under ~100 hairs a day is normal.",
+        "Track your daily shedding, anything under ~100 hairs a day is normal.",
         "Prioritize protein, biotin, zinc, vitamin D, and iron in your diet.",
         "Keep your scalp healthy with a mild, appropriate shampoo.",
-        "Manage stress and aim for 7–8 hours of sleep nightly.",
+        "Manage stress and aim for 7-8 hours of sleep nightly.",
         "Consider a dermatology consult if you notice any visible change.",
     ],
     "SEDANG": [
@@ -104,8 +104,8 @@ _RECOMMENDATIONS_EN: Dict[str, List[str]] = {
         "Re-evaluate every 12 months.",
     ],
     "TINGGI": [
-        "Warning: AGA risk is high — early intervention is strongly recommended.",
-        "See a dermatologist within the next 1–3 months.",
+        "Warning: AGA risk is high, early intervention is strongly recommended.",
+        "See a dermatologist within the next 1-3 months.",
         "Topical minoxidil 5% (available over the counter) is a reasonable first step.",
         "For men: ask your doctor about prescription oral finasteride 1 mg daily.",
         "Address modifiable factors: stress, sleep, smoking, nutrition.",
@@ -280,7 +280,7 @@ async def analyze(request: AnalyzeRequest):
       - Transparent confidence reporting
 
     Genetic data (FASTA / SNP / 23andMe) is an optional advanced path that
-    raises confidence — it does not gate the analysis.
+    raises confidence, it does not gate the analysis.
     """
     try:
         # 1. Optional genetic analysis (advanced path)
@@ -369,8 +369,8 @@ async def analyze(request: AnalyzeRequest):
                 "delta_vs_reference":     inference.delta_vs_reference,
             },
             "disclaimer": (
-                "This is an educational risk assessment, not a medical diagnosis. "
-                "Always consult a licensed dermatologist or trichologist for clinical evaluation."
+                "Educational risk assessment, not a medical diagnosis. "
+                "For clinical evaluation, see a licensed dermatologist or trichologist."
             ),
         }
 
@@ -437,9 +437,9 @@ def _risk_description_en(category: str) -> str:
     return {
         "MINIMAL":       "Minimal risk profile detected.",
         "RENDAH":        "Low risk profile detected.",
-        "SEDANG":        "Moderate risk profile detected — worth monitoring.",
-        "TINGGI":        "High risk profile detected — early intervention recommended.",
-        "SANGAT_TINGGI": "Very high risk profile detected — clinical consultation recommended.",
+        "SEDANG":        "Moderate risk profile detected, worth monitoring.",
+        "TINGGI":        "High risk profile detected, early intervention recommended.",
+        "SANGAT_TINGGI": "Very high risk profile detected, clinical consultation recommended.",
     }.get(category, "Risk profile assessed.")
 
 
@@ -526,7 +526,7 @@ async def analyze_23andme_upload(file: UploadFile = File(...)):
             snp_summary.append({
                 "rs_id":       rs_id,
                 "gene":        snp_record.gene,
-                "genotype":    parsed.genotype if parsed else "—",
+                "genotype":    parsed.genotype if parsed else ", ",
                 "risk_allele": snp_record.risk_allele,
                 "status":      "NO_CALL" if (parsed and parsed.is_no_call) else "NOT_FOUND",
                 "risk_dosage": 0.0,

@@ -1,4 +1,4 @@
-// main.js — Folliscope front-end integration
+// main.js, Folliscope front-end integration
 // Collects questionnaire data, calls /api/analyze, and renders the
 // risk profile, NCBI comparison, confidence indicator, and phenotype
 // inference returned by the backend.
@@ -272,7 +272,7 @@
     if (userCagVal) {
       userCagVal.textContent = (cmp.user_value_type === 'measured' || userMin === userMax)
         ? String(userMid)
-        : `${userMin}–${userMax}`;
+        : `${userMin}-${userMax}`;
     }
 
     // Axis: 10..40 CAG → 0..100% width
@@ -563,7 +563,7 @@
     const ncbiCag = cmp.ncbi_reference_cag || 22;
     const userCagText = cmp.user_value_type === 'measured'
       ? `${cmp.user_cag_midpoint} CAG (measured)`
-      : `${cmp.user_cag_midpoint} CAG (estimated · range ${cmp.user_cag_min}–${cmp.user_cag_max})`;
+      : `${cmp.user_cag_midpoint} CAG (estimated · range ${cmp.user_cag_min}-${cmp.user_cag_max})`;
 
     doc.setFontSize(9);
     doc.setTextColor(...INK_600);
@@ -669,7 +669,7 @@
       doc.line(M, PAGE_H - 50, PAGE_W - M, PAGE_H - 50);
       doc.setFontSize(7);
       doc.setTextColor(...INK_400);
-      const disclaimer = r.disclaimer || 'Educational risk assessment only — not a medical diagnosis.';
+      const disclaimer = r.disclaimer || 'Educational risk assessment only, not a medical diagnosis.';
       const dLines = doc.splitTextToSize(disclaimer, PAGE_W - 2 * M);
       doc.text(dLines, M, PAGE_H - 38);
       doc.text(`Folliscope · page ${p} / ${pageCount}`, PAGE_W - M, PAGE_H - 20, { align: 'right' });
@@ -681,7 +681,7 @@
   // Fallback plain-text writer (if jsPDF fails to load)
   function downloadReportText(r) {
     const lines = [
-      'FOLLISCOPE — EARLY-WARNING HAIR-LOSS RISK ASSESSMENT',
+      'FOLLISCOPE, EARLY-WARNING HAIR-LOSS RISK ASSESSMENT',
       `Score: ${r.scores.hybrid_score.toFixed(1)} / 100`,
       `Category: ${r.risk_category_label || r.risk_category}`,
       `Confidence: ${r.confidence?.percent || 0}%`,

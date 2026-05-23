@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Risk Assessment — Folliscope</title>
+  <title>Risk Assessment | Folliscope</title>
   <link rel="stylesheet" href="css/style.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
@@ -33,7 +33,7 @@
   <div class="container">
     <span class="eyebrow">Risk assessment</span>
     <h1>Find your AGA risk profile</h1>
-    <p>Fill in the clinical questionnaire — we'll automatically compare your inferred AR profile against the NCBI reference. DNA data is optional but raises confidence.</p>
+    <p>Fill in the clinical questionnaire, we'll automatically compare your inferred AR profile against the NCBI reference. DNA data is optional but raises confidence.</p>
   </div>
 </section>
 
@@ -78,13 +78,13 @@
           <div class="card-body">
             <div class="field-row">
               <div class="field">
-                <label for="age">Age <span class="hint">(15–80)</span></label>
+                <label for="age">Age <span class="hint">(15-80)</span></label>
                 <input type="number" id="age" name="age" class="input" min="15" max="80" placeholder="e.g. 30" />
               </div>
               <div class="field">
                 <label for="ethnicity">Ethnicity</label>
                 <select id="ethnicity" name="ethnicity" class="select">
-                  <option value="">— Select —</option>
+                  <option value="">,  Select , </option>
                   <option value="Asia">Asian</option>
                   <option value="Kaukasian">Caucasian</option>
                   <option value="Afrika">African</option>
@@ -109,7 +109,7 @@
 
             <div class="field">
               <label for="puberty_age">
-                Age at puberty <span class="hint">(optional · 9–18)</span>
+                Age at puberty <span class="hint">(optional · 9-18)</span>
               </label>
               <input type="number" id="puberty_age" name="puberty_age" class="input input--sm" min="9" max="18" placeholder="Optional" style="max-width:160px;" />
             </div>
@@ -133,7 +133,7 @@
               <div class="range-marks"><span>0</span><span>100</span><span>200</span><span>300</span></div>
               <div class="info info--info">
                 <i class="fa-solid fa-circle-info"></i>
-                <span>Normal range is roughly 50–100 hairs/day. Consistently above 100 is worth tracking.</span>
+                <span>Normal range is roughly 50-100 hairs/day. Consistently above 100 is worth tracking.</span>
               </div>
             </div>
 
@@ -181,7 +181,7 @@
             <!-- Norwood (male) -->
             <div class="male-only" id="norwoodGroup">
               <div class="field">
-                <label>Norwood–Hamilton scale <span class="hint">(male)</span></label>
+                <label>Norwood-Hamilton scale <span class="hint">(male)</span></label>
                 <div class="scale-grid" id="norwoodScale">
                   <label class="scale-tile"><input type="radio" name="norwood_scale" value="1" />
                     <div class="scale-name">Norwood I</div><div class="scale-desc">No noticeable loss</div></label>
@@ -239,7 +239,7 @@
               </li>
               <li style="display:flex;gap:var(--s-3);margin-bottom:var(--s-3);">
                 <div style="width:26px;height:26px;border-radius:50%;background:var(--brand-600);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:0.8rem;flex-shrink:0;">2</div>
-                <span>Pull <strong>firmly but slowly</strong> from root to tip — no jerking.</span>
+                <span>Pull <strong>firmly but slowly</strong> from root to tip, no jerking.</span>
               </li>
               <li style="display:flex;gap:var(--s-3);margin-bottom:var(--s-3);">
                 <div style="width:26px;height:26px;border-radius:50%;background:var(--brand-600);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:0.8rem;flex-shrink:0;">3</div>
@@ -247,7 +247,7 @@
               </li>
             </ol>
             <div class="field">
-              <label for="pull_test">Strands released <span class="hint">(0–60)</span></label>
+              <label for="pull_test">Strands released <span class="hint">(0-60)</span></label>
               <input type="number" id="pull_test" name="pull_test" class="input" min="0" max="60" placeholder="Leave empty to skip" style="max-width:200px;" />
             </div>
           </div>
@@ -279,7 +279,7 @@
               <label>Does (or did) your <strong>maternal grandfather</strong> experience baldness?</label>
               <div class="info info--warn" style="margin:var(--s-2) 0 var(--s-3);">
                 <i class="fa-solid fa-triangle-exclamation"></i>
-                <span><strong>Strongest single predictor.</strong> The AR gene is on the X chromosome — men inherit theirs from their mother, who inherits her X from her father.</span>
+                <span><strong>Strongest single predictor.</strong> The AR gene is on the X chromosome, men inherit theirs from their mother, who inherits her X from her father.</span>
               </div>
               <div class="choice-group">
                 <label class="choice"><input type="radio" name="maternal_gf_bald" value="yes" /> Yes</label>
@@ -372,8 +372,8 @@
                 <label>Exercise frequency</label>
                 <div class="choice-group choice-group--col">
                   <label class="choice"><input type="radio" name="exercise_frequency" value="none" /> Never</label>
-                  <label class="choice"><input type="radio" name="exercise_frequency" value="light" checked /> Light (1–2&times;/wk)</label>
-                  <label class="choice"><input type="radio" name="exercise_frequency" value="moderate" /> Moderate (3–4&times;)</label>
+                  <label class="choice"><input type="radio" name="exercise_frequency" value="light" checked /> Light (1-2&times;/wk)</label>
+                  <label class="choice"><input type="radio" name="exercise_frequency" value="moderate" /> Moderate (3-4&times;)</label>
                   <label class="choice"><input type="radio" name="exercise_frequency" value="heavy" /> Heavy (5&times;+)</label>
                 </div>
               </div>
@@ -444,11 +444,6 @@
             </div>
 
           </div>
-        </div>
-
-        <div class="info info--warn" style="margin-top:var(--s-5);">
-          <i class="fa-solid fa-triangle-exclamation"></i>
-          <span>This output is an <strong>educational risk estimate</strong>, not a clinical diagnosis. Always confirm with a licensed dermatologist.</span>
         </div>
       </div>
 
@@ -588,7 +583,7 @@
           <div id="result23andme" style="display:none;margin-top:var(--s-4);">
             <div class="info info--success" id="msg23andmeOk" style="display:none;">
               <i class="fa-solid fa-circle-check"></i>
-              <div><strong><span id="txt23andmeCallable"></span>/9 SNPs detected.</strong> Auto-filled into the table — switch back to <em>Manual</em> to review.</div>
+              <div><strong><span id="txt23andmeCallable"></span>/9 SNPs detected.</strong> Auto-filled into the table, switch back to <em>Manual</em> to review.</div>
             </div>
             <div class="info info--warn" id="msg23andmePartial" style="display:none;">
               <i class="fa-solid fa-triangle-exclamation"></i>
@@ -640,8 +635,8 @@
       <!-- Risk gauge -->
       <div class="card gauge-card" style="margin-bottom:var(--s-5);">
         <span class="badge badge--ink" id="analysisTypeBadge"><i class="fa-solid fa-clipboard-list"></i> Questionnaire</span>
-        <div class="gauge-score" id="riskScore">—</div>
-        <span class="risk-pill" id="riskCategory">—</span>
+        <div class="gauge-score" id="riskScore">, </div>
+        <span class="risk-pill" id="riskCategory">, </span>
         <div class="gauge-track">
           <div class="gauge-marker" id="gaugeMarker" style="left:0%"></div>
         </div>
@@ -658,7 +653,7 @@
           <span class="pct" id="confidencePct">70%</span>
         </div>
         <div class="bar"><div class="fill" id="confidenceFill" style="width:70%"></div></div>
-        <p class="desc" id="confidenceDesc">Questionnaire only — upload DNA for higher confidence.</p>
+        <p class="desc" id="confidenceDesc">Questionnaire only, upload DNA for higher confidence.</p>
         <div class="inputs" id="confidenceInputs"></div>
       </div>
 
@@ -696,7 +691,7 @@
 
         <div class="cag-legend">
           <div class="item"><span class="sw sw--ncbi"></span> NCBI reference (<span id="ncbiCagVal">22</span> CAG)</div>
-          <div class="item"><span class="sw sw--user"></span> Your profile (<span id="userCagVal">—</span> CAG)</div>
+          <div class="item"><span class="sw sw--user"></span> Your profile (<span id="userCagVal">, </span> CAG)</div>
         </div>
 
         <p style="margin-top:var(--s-5);font-size:0.95rem;color:var(--ink-700);line-height:1.6;" id="compareInterpretation"></p>
@@ -709,7 +704,7 @@
         <!-- Collapsible: actual NCBI reference sequence (proof of live fetch) -->
         <div class="collapse" id="ncbiSeqCollapse" style="margin-top:var(--s-5);display:none;">
           <div class="collapse-head" onclick="toggleCollapse(this)">
-            <span><i class="fa-solid fa-code" style="color:var(--brand-600);margin-right:8px;"></i> Reference sequence preview · <span class="text-mono" id="ncbiSeqLen">—</span> bp from NCBI</span>
+            <span><i class="fa-solid fa-code" style="color:var(--brand-600);margin-right:8px;"></i> Reference sequence preview · <span class="text-mono" id="ncbiSeqLen">, </span> bp from NCBI</span>
             <i class="fa-solid fa-chevron-down"></i>
           </div>
           <div class="collapse-body">
@@ -717,7 +712,7 @@
               First 150 nucleotides of the AR mRNA, freshly retrieved from NCBI RefSeq just now.
               CAG codons (the ones we count) are highlighted.
             </p>
-            <div class="seq-preview" id="ncbiSeqPreview">—</div>
+            <div class="seq-preview" id="ncbiSeqPreview">, </div>
             <p style="font-size:0.78rem;color:var(--ink-500);margin-top:var(--s-2);text-align:right;">
               Source: <a href="https://www.ncbi.nlm.nih.gov/nuccore/NM_000044.6" target="_blank" rel="noopener" style="font-family:var(--font-mono);">NM_000044.6</a> · <a href="/api/ncbi/ar-reference" target="_blank" rel="noopener">raw JSON</a>
             </p>
@@ -729,22 +724,22 @@
       <div class="score-cards">
         <div class="score-card" id="geneticScoreCard">
           <div class="lbl"><i class="fa-solid fa-dna" style="color:#3b82f6;"></i> Genetic</div>
-          <div class="val" id="geneticScoreVal">—</div>
+          <div class="val" id="geneticScoreVal">, </div>
           <div class="bar"><div class="bar-fill" id="geneticScoreBar" style="width:0%;background:#3b82f6;"></div></div>
         </div>
         <div class="score-card">
           <div class="lbl"><i class="fa-solid fa-stethoscope" style="color:var(--brand-600);"></i> Clinical</div>
-          <div class="val" id="clinicalScoreVal">—</div>
+          <div class="val" id="clinicalScoreVal">, </div>
           <div class="bar"><div class="bar-fill" id="clinicalScoreBar" style="width:0%;background:var(--brand-600);"></div></div>
         </div>
         <div class="score-card">
           <div class="lbl"><i class="fa-solid fa-people-group" style="color:var(--warning);"></i> Family</div>
-          <div class="val" id="familyScoreVal">—</div>
+          <div class="val" id="familyScoreVal">, </div>
           <div class="bar"><div class="bar-fill" id="familyScoreBar" style="width:0%;background:var(--warning);"></div></div>
         </div>
         <div class="score-card">
           <div class="lbl"><i class="fa-solid fa-heart-pulse" style="color:var(--danger);"></i> Lifestyle</div>
-          <div class="val" id="lifestyleScoreVal">—</div>
+          <div class="val" id="lifestyleScoreVal">, </div>
           <div class="bar"><div class="bar-fill" id="lifestyleScoreBar" style="width:0%;background:var(--danger);"></div></div>
         </div>
       </div>
@@ -786,7 +781,7 @@
         <div class="card-body">
           <p style="font-size:0.92rem;color:var(--ink-600);margin-bottom:var(--s-5);">
             Modifiable factors below are recomputed live. The genetic and family-history
-            parts of your score stay the same — this only shows what's in your control.
+            parts of your score stay the same, this only shows what's in your control.
           </p>
 
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--s-5);margin-bottom:var(--s-5);" id="simGrid">
@@ -835,7 +830,7 @@
           <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:var(--s-4);padding:var(--s-5);background:var(--ink-50);border-radius:var(--r-md);">
             <div style="text-align:center;">
               <div style="font-family:var(--font-mono);font-size:0.72rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--ink-500);">Current</div>
-              <div id="simCurrentScore" style="font-family:var(--font-head);font-size:1.8rem;font-weight:700;color:var(--ink-900);margin-top:4px;">—</div>
+              <div id="simCurrentScore" style="font-family:var(--font-head);font-size:1.8rem;font-weight:700;color:var(--ink-900);margin-top:4px;">, </div>
             </div>
             <div style="text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center;">
               <div id="simDelta" style="font-family:var(--font-head);font-size:1.05rem;font-weight:600;color:var(--ink-500);">→</div>
@@ -843,7 +838,7 @@
             </div>
             <div style="text-align:center;">
               <div style="font-family:var(--font-mono);font-size:0.72rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--ink-500);">Projected</div>
-              <div id="simProjectedScore" style="font-family:var(--font-head);font-size:1.8rem;font-weight:700;color:var(--brand-700);margin-top:4px;">—</div>
+              <div id="simProjectedScore" style="font-family:var(--font-head);font-size:1.8rem;font-weight:700;color:var(--brand-700);margin-top:4px;">, </div>
             </div>
           </div>
 
@@ -863,7 +858,7 @@
           </div>
 
           <p style="font-size:0.82rem;color:var(--ink-500);margin-top:var(--s-4);text-align:center;">
-            <i class="fa-solid fa-circle-info"></i> Lifestyle is only 10–15% of the total score, but it's the part you can change today.
+            <i class="fa-solid fa-circle-info"></i> Lifestyle is only 10-15% of the total score, but it's the part you can change today.
           </p>
         </div>
       </div>
@@ -886,7 +881,7 @@
   </div>
 </div>
 
-<!-- ===== DATA SOURCES STRIP (always visible — establishes provenance) ===== -->
+<!-- ===== DATA SOURCES STRIP (always visible, establishes provenance) ===== -->
 <section class="data-sources">
   <div class="container">
     <span class="label"><i class="fa-solid fa-database"></i> Built on authoritative data</span>
@@ -908,7 +903,7 @@
 <div class="modal-overlay hidden" id="disclaimerModal">
   <div class="modal">
     <h3><i class="fa-solid fa-triangle-exclamation" style="color:var(--warning);margin-right:8px;"></i>Important</h3>
-    <p>Folliscope provides an <strong>educational risk estimate</strong> from a simplified model — it is <strong>not a clinical diagnosis</strong>.</p>
+    <p>Folliscope provides an <strong>educational risk estimate</strong> from a simplified model, it is <strong>not a clinical diagnosis</strong>.</p>
     <p>Many AGA-relevant factors are outside this analysis. Use it as a starting point for discussion with a licensed dermatologist or trichologist.</p>
     <div class="modal-foot">
       <button class="btn btn--ghost" onclick="document.getElementById('disclaimerModal').classList.add('hidden')">Cancel</button>
@@ -1075,7 +1070,7 @@
         document.getElementById('msg23andmePartial').style.display = 'flex';
         document.getElementById('txt23andmePartial').textContent = callable;
       }
-      const statusLabel = { HOMOZYGOUS_RISK: '🔴 Homozygous risk', HETEROZYGOUS: '🟡 Heterozygous', NORMAL: '🟢 Normal', NO_CALL: '⚪ No call', NOT_FOUND: '— Not found' };
+      const statusLabel = { HOMOZYGOUS_RISK: '🔴 Homozygous risk', HETEROZYGOUS: '🟡 Heterozygous', NORMAL: '🟢 Normal', NO_CALL: '⚪ No call', NOT_FOUND: ',  Not found' };
       document.getElementById('tbody23andme').innerHTML = result.snp_summary.map(s => `
         <tr><td><strong style="color:#3b82f6;">${s.rs_id}</strong></td><td>${s.gene}</td>
         <td><code>${s.genotype}</code></td>
@@ -1084,7 +1079,7 @@
       window._23andmeGenotypes = result.snp_genotypes;
       area.innerHTML = `<i class="fa-solid fa-circle-check icon" style="color:var(--brand-600);"></i><p style="color:var(--brand-700);"><strong>${file.name}</strong> parsed</p>`;
     } catch (err) {
-      area.innerHTML = '<i class="fa-solid fa-circle-xmark icon" style="color:var(--danger);"></i><p style="color:var(--danger);">Could not parse — check the file format.</p>';
+      area.innerHTML = '<i class="fa-solid fa-circle-xmark icon" style="color:var(--danger);"></i><p style="color:var(--danger);">Could not parse, check the file format.</p>';
     }
   }
 
@@ -1155,7 +1150,7 @@
     // Update slider value displays
     document.getElementById('simStressVal').textContent = document.getElementById('simStress').value;
     document.getElementById('simSleepVal').textContent  = document.getElementById('simSleep').value;
-    // Debounce — wait 500ms after last input change
+    // Debounce, wait 500ms after last input change
     clearTimeout(_simTimer);
     _simTimer = setTimeout(runSimulation, 500);
   }

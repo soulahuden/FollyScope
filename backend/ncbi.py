@@ -1,7 +1,7 @@
 """
 NCBI Entrez integration for Folliscope.
 
-Fetches the human Androgen Receptor (AR) reference mRNA — NM_000044.6 —
+Fetches the human Androgen Receptor (AR) reference mRNA, NM_000044.6 , 
 from NCBI RefSeq via Biopython Entrez. Used as the baseline against
 which users' AR profiles are compared.
 

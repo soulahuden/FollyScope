@@ -1,4 +1,4 @@
-// api.js — Backend communication layer for Folliscope
+// api.js, Backend communication layer for Folliscope
 // Handles all HTTP requests to the FastAPI backend at /api/
 
 const API_BASE = '/api';
@@ -174,7 +174,7 @@ async function withRetry(fn, maxRetries = 2, delayMs = 800) {
 
 /**
  * Check backend availability with a timeout.
- * Resolves true/false — does not throw.
+ * Resolves true/false, does not throw.
  *
  * @param {number} timeoutMs
  * @returns {Promise<boolean>}
@@ -223,5 +223,5 @@ async function upload23andMe(file) {
     return response.json();
 }
 
-// All functions are in global scope — no ES module export needed
+// All functions are in global scope, no ES module export needed
 // since analyze.html loads this as a plain <script> tag.

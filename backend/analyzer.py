@@ -61,7 +61,7 @@ def parse_fasta(fasta_text: str) -> str:
 def count_cag_repeats(sequence: str) -> RepeatResult:
     """
     Count CAG trinucleotide repeats in AR exon 1.
-    Pattern: (CAG){5,} — minimum 5 consecutive repeats.
+    Pattern: (CAG){5,}, minimum 5 consecutive repeats.
     Ref: Choong et al. 1996, Hillmer et al. 2005
     """
     pattern = r'(?:CAG){5,}'

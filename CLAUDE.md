@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## About
 
-**Folliscope** is an educational computational biology project — an early-warning androgenetic alopecia (AGA/baldness) risk system. It combines genetic analysis (CAG/GGN repeat counting, SNP panel) with a clinical questionnaire to produce a hybrid polygenic risk score (PRS). It is **not** a clinical diagnostic tool.
+**Folliscope** is an educational computational biology project, an early-warning androgenetic alopecia (AGA/baldness) risk system. It combines genetic analysis (CAG/GGN repeat counting, SNP panel) with a clinical questionnaire to produce a hybrid polygenic risk score (PRS). It is **not** a clinical diagnostic tool.
 
 The system supports three input modes:
 - **Genetic-only:** CAG/GGN repeats + SNP panel from FASTA/TSV/23andMe raw data
@@ -13,7 +13,7 @@ The system supports three input modes:
 
 ## Commands
 
-### Quick start (Docker — recommended)
+### Quick start (Docker, recommended)
 
 ```bash
 docker compose up --build    # First time, or after code changes
@@ -138,7 +138,7 @@ ClinicalOnlyScore = (0.55 × ClinicalScore + 0.30 × FamilyScore + 0.15 × Lifes
 
 When no DNA sequence is provided, **phenotype_inference.py** estimates a probable CAG-repeat range from clinical signals:
 - Weighted combination of Norwood/Ludwig severity, family history (especially maternal grandfather), and early-onset signals
-- Estimates range (min–max) + midpoint, mapped to risk bands (PROTECTIVE → VERY_HIGH)
+- Estimates range (min-max) + midpoint, mapped to risk bands (PROTECTIVE → VERY_HIGH)
 - Returns explicit confidence level: **low** (limited signals) → **medium** (strong corroborating evidence)
 - Always displays NCBI reference (NM_000044.6, ~22 CAG) for educational context
 
@@ -154,9 +154,9 @@ This enables users without DNA data to still receive an interpretable, science-g
 | CAG Count | Risk Level | Score |
 |-----------|------------|-------|
 | < 18 | SANGAT_TINGGI | 100 |
-| 18–21 | TINGGI | 80 |
-| 22–24 | SEDANG | 60 |
-| 25–29 | RENDAH | 30 |
+| 18-21 | TINGGI | 80 |
+| 22-24 | SEDANG | 60 |
+| 25-29 | RENDAH | 30 |
 | ≥ 30 | PROTEKTIF | 10 |
 
 ### Validation Status & Design Decisions
@@ -164,15 +164,15 @@ This enables users without DNA data to still receive an interpretable, science-g
 **Validated (from peer-reviewed literature):**
 - CAG repeat thresholds and mechanism (30+ years of consensus)
 - 9 SNPs and their Odds Ratios (from GWAS studies)
-- Skala Norwood (pria) / Ludwig (wanita) — clinical standard
+- Skala Norwood (pria) / Ludwig (wanita), clinical standard
 - X-linked inheritance logic (family history weighting)
 - Individual risk factors (stres → kortisol, merokok → vasokonstriksi, etc.)
 
 **Design choices (not empirically validated):**
-- Hybrid formula weights (0.45, 0.30, 0.15, 0.10) — chosen manually, not from regression on patient data
-- Age modifiers (1.15×, 1.08×, etc.) — estimates, not from clinical cohort
-- Sub-component weights within ClinicalScore (e.g., Norwood = 35%, hair pull = 15%) — manual design
-- Risk category cut-offs (0–19, 20–39, 40–59, etc.) — not validated against real patient outcomes
+- Hybrid formula weights (0.45, 0.30, 0.15, 0.10), chosen manually, not from regression on patient data
+- Age modifiers (1.15×, 1.08×, etc.), estimates, not from clinical cohort
+- Sub-component weights within ClinicalScore (e.g., Norwood = 35%, hair pull = 15%), manual design
+- Risk category cut-offs (0-19, 20-39, 40-59, etc.), not validated against real patient outcomes
 
 **Key limitation:** Folliscope acts like a **compass** (shows direction) not a **GPS** (precise prediction). The direction and type of risk factors are scientifically sound. The exact numerical score is **indidicative, not clinical prediction**.
 
@@ -182,7 +182,7 @@ This enables users without DNA data to still receive an interpretable, science-g
 - **Frontend static file mounting:** Routes must be registered in order:
   1. API routes (`/api/*`)
   2. Explicit HTML routes (`/`, `/analyze`, `/about`, `/database`)
-  3. Static mounts — `/sample_data/` then `/` (catch-all)
+  3. Static mounts, `/sample_data/` then `/` (catch-all)
   
   Mounting `/` last ensures it doesn't shadow earlier routes.
 
@@ -208,10 +208,10 @@ This enables users without DNA data to still receive an interpretable, science-g
 
 `sample_data/` contains synthetic test data (not real patient data):
 
-- `high_risk_sample.fasta` — CAG=17, GGN=23 (demonstrating high risk)
-- `medium_risk_sample.fasta` — CAG=23, GGN=22
-- `low_risk_sample.fasta` — CAG=29, GGN=20
-- `protective_sample.fasta` — CAG=33, GGN=18
-- `*_genotype.tsv` — TSV files with alleles for each SNP
+- `high_risk_sample.fasta`, CAG=17, GGN=23 (demonstrating high risk)
+- `medium_risk_sample.fasta`, CAG=23, GGN=22
+- `low_risk_sample.fasta`, CAG=29, GGN=20
+- `protective_sample.fasta`, CAG=33, GGN=18
+- `*_genotype.tsv`, TSV files with alleles for each SNP
 
 Used by `sample_data/` button in the web UI for quick testing.

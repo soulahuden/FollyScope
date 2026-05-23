@@ -4,7 +4,14 @@
       "Bash(git reset *)",
       "Bash(pytest tests/test_folliscope.py -q)",
       "Bash(git add *)",
-      "Bash(git commit -m 'README: add Fitur Utama section, fix broken refs, sync project structure *)"
+      "Bash(git commit -m 'README: add Fitur Utama section, fix broken refs, sync project structure *)",
+      "Bash(pkill -f \"python main.py\")",
+      "Bash(python main.py)",
+      "Bash(sed -i 's/Folliscope, Early-Warning Hair-Loss Risk Assessment/Folliscope: Early-Warning Hair-Loss Risk Assessment/g' README.md frontend/index.html)",
+      "Bash(sed -i 's/Risk Assessment, Folliscope/Risk Assessment | Folliscope/g' frontend/analyze.html)",
+      "Bash(sed -i 's/### Gen AR, Target Utama/### Gen AR \\(Target Utama\\)/' README.md)",
+      "Bash(sed -i 's/### Cara Tercepat, Docker \\(Direkomendasikan\\)/### Cara Tercepat: Docker/' README.md)",
+      "Bash(sed -i 's/### Cara Manual \\(Tanpa Docker\\)/### Cara Manual/' README.md)"
     ]
   }
 }
