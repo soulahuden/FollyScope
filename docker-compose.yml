@@ -13,15 +13,15 @@ services:
       dockerfile: Dockerfile
     image: folliscope:local
     ports:
-      - "${HOST_PORT:-9090}:9090"
+      - "${HOST_PORT:-8000}:8000"
     environment:
-      PORT: "9090"
+      PORT: "8000"
       # Pass your own email to NCBI if you want the Entrez rate-limit
       # quota attributed to you instead of the default placeholder.
       FOLLISCOPE_ENTREZ_EMAIL: "${FOLLISCOPE_ENTREZ_EMAIL:-folliscope.education@example.com}"
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "curl", "--fail", "--silent", "http://127.0.0.1:9090/api/health"]
+      test: ["CMD", "curl", "--fail", "--silent", "http://127.0.0.1:8000/api/health"]
       interval: 30s
       timeout: 5s
       start_period: 15s
