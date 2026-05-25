@@ -3,7 +3,7 @@
 # Folliscope multi-stage Dockerfile.
 #
 # Build:  docker build -t folliscope .
-# Run:    docker run --rm -p 8000:8000 folliscope
+# Run:    docker run --rm -p 9090:9090 folliscope
 # Or:     docker compose up --build
 #
 # Honors $PORT so the same image deploys to Render / Railway / Fly /
@@ -38,7 +38,7 @@ FROM python:3.12-slim-bookworm AS runtime
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
-    PORT=8000 \
+    PORT=9090 \
     # Tell Bio.Entrez who's calling. Override in deploy env if you want
     # to use your own email for NCBI rate-limit accounting.
     FOLLISCOPE_ENTREZ_EMAIL="folliscope.education@example.com"
@@ -64,12 +64,12 @@ COPY --chown=app:app . .
 
 USER app
 
-EXPOSE 8000
+EXPOSE 9090
 
 HEALTHCHECK --interval=30s --timeout=5s --start-period=15s --retries=3 \
-    CMD curl --fail --silent http://127.0.0.1:${PORT:-8000}/api/health || exit 1
+    CMD curl --fail --silent http://127.0.0.1:${PORT:-9090}/api/health || exit 1
 
 # `sh -c` so $PORT expansion happens at container start (PaaS providers
 # inject it dynamically). Single-process uvicorn keeps things simple;
 # scale horizontally via the orchestrator, not workers in a single pod.
-CMD ["sh", "-c", "exec uvicorn main:app --host 0.0.0.0 --port ${PORT:-8000}"]
+CMD ["sh", "-c", "exec uvicorn main:app --host 0.0.0.0 --port ${PORT:-9090}"]
